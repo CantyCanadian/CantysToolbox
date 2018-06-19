@@ -22,6 +22,23 @@ public class UISizeToggle : MonoBehaviour
         m_TrueSize = m_FalseSize + SizeDifference;
     }
 
+    public void Initialize(Vector2 newOrigin)
+    {
+        m_Transform = GetComponent<RectTransform>();
+
+        m_FalseSize = newOrigin;
+        m_TrueSize = m_FalseSize + SizeDifference;
+    }
+
+    public void Initialize(Vector2 newOrigin, Vector2 newDifference)
+    {
+        m_Transform = GetComponent<RectTransform>();
+        SizeDifference = newDifference;
+
+        m_FalseSize = newOrigin;
+        m_TrueSize = m_FalseSize + SizeDifference;
+    }
+
     public void Play(bool state)
     {
         if (m_Transform == null)
@@ -36,6 +53,23 @@ public class UISizeToggle : MonoBehaviour
         
         m_State = state;
         m_CoroutineRef = StartCoroutine(PlayLoop());
+    }
+
+    public IEnumerator PlayCoroutine(bool state)
+    {
+        if (m_Transform == null)
+        {
+            Initialize();
+        }
+
+        if (m_CoroutineRef != null)
+        {
+            Stop();
+        }
+
+        m_State = state;
+        
+        yield return StartCoroutine(PlayLoop());
     }
 
     public void Toggle()
@@ -68,7 +102,7 @@ public class UISizeToggle : MonoBehaviour
 
         StopCoroutine(m_CoroutineRef);
         m_CoroutineRef = null;
-        m_Transform.sizeDelta = m_State ? m_FalseSize : m_TrueSize;
+        m_Transform.sizeDelta = m_State ? m_TrueSize : m_FalseSize;
     }
 
     private IEnumerator PlayLoop()
@@ -79,7 +113,7 @@ public class UISizeToggle : MonoBehaviour
         {
             delta += Time.deltaTime;
 
-            m_Transform.sizeDelta = m_State ? Vector3.Lerp(m_TrueSize, m_FalseSize, delta / TransitionTime) : Vector3.Lerp(m_FalseSize, m_TrueSize, delta / TransitionTime);
+            m_Transform.sizeDelta = m_State ? Vector3.Lerp(m_FalseSize, m_TrueSize, delta / TransitionTime) : Vector3.Lerp(m_TrueSize, m_FalseSize, delta / TransitionTime);
 
             yield return null;
         }

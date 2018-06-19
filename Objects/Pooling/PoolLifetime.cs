@@ -6,10 +6,7 @@ public class PoolLifetime : MonoBehaviour, IPoolComponent
 {
     public float Lifetime;
 
-    public void Initialize()
-    {
-        m_Lifetime = lifetime;
-    }
+    public void Initialize() { }
 
     public void OnTrigger()
     {
@@ -18,7 +15,7 @@ public class PoolLifetime : MonoBehaviour, IPoolComponent
 
     public void OnDiscard()
     {
-        StopAllCoroutine();
+        StopAllCoroutines();
         PoolManager.Instance.DiscardObject(gameObject);
     }
 

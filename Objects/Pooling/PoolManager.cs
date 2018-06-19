@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PoolManager : ManagerBase<PoolManager>
+public class PoolManager : Singleton<PoolManager>
 {
     private Dictionary<string, Pool> m_Pools;
 
@@ -28,7 +28,7 @@ public class PoolManager : ManagerBase<PoolManager>
 
     public void CreatePool(string key, GameObject original, int count)
     {
-        CreatePool(key, original, count, count, -1.0f);
+        CreatePool(key, original, count, count);
     }
 
     public void CreatePool(string key, GameObject original, int count, int maximum)
@@ -57,9 +57,9 @@ public class PoolManager : ManagerBase<PoolManager>
             obj.SetActive(false);
 
             IPoolComponent[] poolComponents = obj.GetComponents<IPoolComponent>();
-            for(int i = 0; i < poolComponents.Length; i++)
+            for(int j = 0; j < poolComponents.Length; j++)
             {
-                poolComponents[i].Initialize();
+                poolComponents[j].Initialize();
             }
 
             newPool.Objects.Add(obj);

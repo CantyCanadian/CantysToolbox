@@ -2,9 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class ManagerBase<T> : MonoBehaviour where T : Component
+/// <summary>
+/// Parent class turning child into a singleton implementation.
+/// </summary>
+/// <typeparam name="T">Object type of the child.</typeparam>
+public abstract class Singleton<T> : MonoBehaviour where T : Component
 {
-    private static T s_Instance = null;
     public static T Instance
     {
         get
@@ -30,4 +33,6 @@ public abstract class ManagerBase<T> : MonoBehaviour where T : Component
             return s_Instance;
         }
     }
+
+    private static T s_Instance = null;
 }

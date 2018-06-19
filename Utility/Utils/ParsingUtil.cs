@@ -4,7 +4,14 @@ using UnityEngine;
 
 public static class ParsingUtil
 {
-    public static Dictionary<string, string> LoadCSV_IDColumn(string filename, int column)
+    /// <summary>
+    /// Parse CSV file to extract a single column. Assumes column 0 is the data key.
+    /// </summary>
+    /// <param name="path">Path where the file should be.</param>
+    /// <param name="filename">Filename without extention (it'll add it automatically).</param>
+    /// <param name="column">Extracted column.</param>
+    /// <returns>Dictionary containing extracted data.</returns>
+    public static Dictionary<string, string> LoadCSV_IDColumn(string path, string filename, int column)
     {
         if (column == -1)
         {
@@ -12,7 +19,7 @@ public static class ParsingUtil
             return null;
         }
 
-        string finalFilename = "Assets/Assets/Localization/" + filename + ".csv";
+        string finalFilename = path + filename + ".csv";
 
         System.IO.FileStream readStream = System.IO.File.OpenRead(finalFilename);
 
@@ -165,9 +172,16 @@ public static class ParsingUtil
         return localization;
     }
 
-    public static List<List<string>> LoadCSV_IDMultipleColumn(string filename, int[] columns)
+    /// <summary>
+    /// Parse CSV file to extract multiple columns. Assumes column 0 is the data key.
+    /// </summary>
+    /// <param name="path">Path where the file should be.</param>
+    /// <param name="filename">Filename without extention (it'll add it automatically).</param>
+    /// <param name="columns">Extracted columns.</param>
+    /// <returns>Dictionary containing extracted data.</returns>
+    public static Dictionary<string, List<string>> LoadCSV_IDMultipleColumn(string path, string filename, int[] columns)
     {
-        string finalFilename = "Assets/Assets/Localization/" + filename + ".csv";
+        string finalFilename = path + filename + ".csv";
 
         System.IO.FileStream readStream = System.IO.File.OpenRead(finalFilename);
 
@@ -178,7 +192,7 @@ public static class ParsingUtil
 
         readStream.Dispose();
 
-        List<List<string>> finalLocalization = new List<List<string>>();
+        Dictionary<string, List<string>> finalLocalization = new Dictionary<string, List<string>>();
 
         string data = System.IO.File.ReadAllText(finalFilename);
 
@@ -188,23 +202,13 @@ public static class ParsingUtil
 
             foreach(KeyValuePair<string, string> pair in localization)
             {
-                bool success = false;
-
-                for(int j = 0; j < finalLocalization.Count; j++)
+                if (finalLocalization.ContainsKey(pair.Key))
                 {
-                    if (finalLocalization[j][0] == pair.Key)
-                    {
-                        finalLocalization[j].Add(pair.Value);
-                        success = true;
-                    }
+                    finalLocalization[pair.Key].Add(pair.Value);
                 }
-
-                if (success == false)
+                else
                 {
-                    List<string> newList = new List<string>();
-                    newList.Add(pair.Key);
-                    newList.Add(pair.Value);
-                    finalLocalization.Add(newList);
+                    finalLocalization.Add(pair.Key, new List<string> { pair.Value });
                 }
             }
         }
@@ -212,9 +216,15 @@ public static class ParsingUtil
         return finalLocalization;
     }
 
-    public static List<List<string>> LoadCSV_AllColumn(string filename)
+    /// <summary>
+    /// Parse CSV file to extract all columns. Assumes column 0 is the data key.
+    /// </summary>
+    /// <param name="path">Path where the file should be.</param>
+    /// <param name="filename">Filename without extention (it'll add it automatically).</param>
+    /// <returns>Dictionary containing extracted data.</returns>
+    public static Dictionary<string, List<string>> LoadCSV_AllColumn(string path, string filename)
     {
-        string finalFilename = "Assets/Assets/Localization/" + filename + ".csv";
+        string finalFilename = path + filename + ".csv";
 
         System.IO.FileStream readStream = System.IO.File.OpenRead(finalFilename);
 
@@ -225,7 +235,7 @@ public static class ParsingUtil
 
         readStream.Dispose();
 
-        List<List<string>> localization = new List<List<string>>();
+        Dictionary<string, List<string>> localization = new Dictionary<string, List<string>>();
 
         string[] file = System.IO.File.ReadAllText(finalFilename).Split('\n');
         bool skipFirst = false;
@@ -298,12 +308,15 @@ public static class ParsingUtil
                 index = newIndex + 1;
             }
 
-            localization.Add(row);
+            string key = row[0];
+            row.RemoveAt(0);
+            localization.Add(key, row);
         }
 
         return localization;
     }
 
+    //Used for LoadCSV_IDMultipleColumn.
     private static Dictionary<string, string> LoadCSV_PartialIDColumn(string data, int column, string filename)
     {
         Dictionary<string, string> localization = new Dictionary<string, string>();
