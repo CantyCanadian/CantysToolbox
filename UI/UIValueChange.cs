@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class DropdownValueChange : MonoBehaviour
+public class UIValueChange : MonoBehaviour
 {
     public Text UIText;
 
