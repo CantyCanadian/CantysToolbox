@@ -9,7 +9,6 @@ public class LiquidShader : MonoBehaviour
 {
     public float MaxWobble = 0.03f;
     public float WobbleSpeed = 1f;
-    public float Recovery = 1f;
     public float Drag = 0f;
     public float WorldScale = 10.0f;
 
