@@ -1,4 +1,6 @@
-﻿public static class ArrayExtention
+﻿using UnityEngine;
+
+public static class ArrayExtention
 {
     /// <summary>
     /// Applies a passed function to every member of the array.
@@ -10,5 +12,15 @@
         {
             target[i] = action.Invoke(target[i]);
         }
+    }
+
+    /// <summary>
+    /// Gets a random object from the array.
+    /// </summary>
+    /// <returns>Random object.</returns>
+    public static I GetRandom<I>(this I[] target)
+    {
+        int index = Random.Range(0, target.Length);
+        return target[index];
     }
 }

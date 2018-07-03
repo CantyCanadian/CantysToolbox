@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using UnityEngine;
 
 public static class ListExtention
 {
@@ -246,5 +247,48 @@ public static class ListExtention
         {
             target[i] = action.Invoke(target[i]);
         }
+    }
+
+    /// <summary>
+    /// Applies a passed function to every member of the 2D list.
+    /// </summary>
+    /// <param name="action">Function with a single Item argument and with an Item return type.</param>
+    public static void DoOnAll<I, J>(this List<I> target, System.Func<J, J> action) where I : List<J>
+    {
+        for (int i = 0; i < target.Count; i++)
+        {
+            for(int j = 0; j < target[i].Count; j++)
+            {
+                target[i][j] = action.Invoke(target[i][j]);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Gets a random object from the list.
+    /// </summary>
+    /// <returns>Random object.</returns>
+    public static I GetRandom<I>(this List<I> target)
+    {
+        int index = Random.Range(0, target.Count);
+        return target[index];
+    }
+
+    /// <summary>
+    /// Converts the values of a list to another type using a passed-in conversion method.
+    /// </summary>
+    /// <typeparam name="NI">New value object type.</typeparam>
+    /// <param name="valueConverter">Value conversion method.</param>
+    /// <returns>List using new object types.</returns>
+    public static List<NI> ConvertUsing<I, NI>(this List<I> target, System.Func<I, NI> valueConverter)
+    {
+        List<NI> result = new List<NI>();
+
+        foreach (I value in target)
+        {
+            result.Add(valueConverter.Invoke(value));
+        }
+
+        return result;
     }
 }
