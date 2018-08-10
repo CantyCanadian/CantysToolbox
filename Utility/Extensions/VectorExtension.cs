@@ -254,12 +254,12 @@ public static class VectorExtention
     }
 
     /// <summary>
-    /// Return vector filled with its original values passed through NumberUtil.Sign.
+    /// Return vector filled with its original values passed through MathUtil.Sign.
     /// </summary>
     /// <returns>The sign vector.</returns>
     public static Vector2Int Sign(this Vector2Int target)
     {
-        return new Vector2Int(NumberUtil.Sign(target.x), NumberUtil.Sign(target.y));
+        return new Vector2Int(MathUtil.Sign(target.x), MathUtil.Sign(target.y));
     }
 
     /// <summary>
@@ -272,12 +272,12 @@ public static class VectorExtention
     }
 
     /// <summary>
-    /// Return vector filled with its original values passed through NumberUtil.Sign.
+    /// Return vector filled with its original values passed through MathUtil.Sign.
     /// </summary>
     /// <returns>The sign vector.</returns>
     public static Vector3Int Sign(this Vector3Int target)
     {
-        return new Vector3Int(NumberUtil.Sign(target.x), NumberUtil.Sign(target.y), NumberUtil.Sign(target.z));
+        return new Vector3Int(MathUtil.Sign(target.x), MathUtil.Sign(target.y), MathUtil.Sign(target.z));
     }
 
     /// <summary>
@@ -313,8 +313,8 @@ public static class VectorExtention
     /// <returns>The added vector.</returns>
     public static Vector2Int SignAdd(this Vector2Int target, int value)
     {
-        target.x += value * NumberUtil.Sign(target.x);
-        target.y += value * NumberUtil.Sign(target.y);
+        target.x += value * MathUtil.Sign(target.x);
+        target.y += value * MathUtil.Sign(target.y);
 
         return target;
     }
@@ -340,9 +340,9 @@ public static class VectorExtention
     /// <returns>The added vector.</returns>
     public static Vector3Int SignAdd(this Vector3Int target, int value)
     {
-        target.x += value * NumberUtil.Sign(target.x);
-        target.y += value * NumberUtil.Sign(target.y);
-        target.z += value * NumberUtil.Sign(target.z);
+        target.x += value * MathUtil.Sign(target.x);
+        target.y += value * MathUtil.Sign(target.y);
+        target.z += value * MathUtil.Sign(target.z);
 
         return target;
     }
@@ -386,8 +386,8 @@ public static class VectorExtention
     /// <returns>The minused vector.</returns>
     public static Vector2Int SignMinus(this Vector2Int target, int value)
     {
-        target.x -= Mathf.Abs(target.x) <= Mathf.Abs(value) ? target.x : value * NumberUtil.Sign(target.x);
-        target.y -= Mathf.Abs(target.y) <= Mathf.Abs(value) ? target.y : value * NumberUtil.Sign(target.y);
+        target.x -= Mathf.Abs(target.x) <= Mathf.Abs(value) ? target.x : value * MathUtil.Sign(target.x);
+        target.y -= Mathf.Abs(target.y) <= Mathf.Abs(value) ? target.y : value * MathUtil.Sign(target.y);
 
         return target;
     }
@@ -413,9 +413,9 @@ public static class VectorExtention
     /// <returns>The minused vector.</returns>
     public static Vector3Int SignMinus(this Vector3Int target, int value)
     {
-        target.x -= Mathf.Abs(target.x) <= Mathf.Abs(value) ? target.x : value * NumberUtil.Sign(target.x);
-        target.y -= Mathf.Abs(target.y) <= Mathf.Abs(value) ? target.y : value * NumberUtil.Sign(target.y);
-        target.z -= Mathf.Abs(target.z) <= Mathf.Abs(value) ? target.z : value * NumberUtil.Sign(target.z);
+        target.x -= Mathf.Abs(target.x) <= Mathf.Abs(value) ? target.x : value * MathUtil.Sign(target.x);
+        target.y -= Mathf.Abs(target.y) <= Mathf.Abs(value) ? target.y : value * MathUtil.Sign(target.y);
+        target.z -= Mathf.Abs(target.z) <= Mathf.Abs(value) ? target.z : value * MathUtil.Sign(target.z);
 
         return target;
     }

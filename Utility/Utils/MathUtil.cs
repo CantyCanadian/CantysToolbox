@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public static class NumberUtil
+public static class MathUtil
 {
     /// <summary>
     /// Decrements a value, wrapping to max if it goes under min.
@@ -52,5 +52,22 @@ public static class NumberUtil
     public static int Sign(int value)
     {
         return (value > 0 ? 1 : 0) - (value < 0 ? 1 : 0);
+    }
+
+    /// <summary>
+    /// Calculates the average of a set of integers.
+    /// </summary>
+    /// <param name="values">Integers to use.</param>
+    /// <returns>Set average.</returns>
+    public static int Average(params int[] values)
+    {
+        int result = 0;
+
+        for(int i = 0; i < values.Length; i++)
+        {
+            result += values[i];
+        }
+
+        return result / values.Length;
     }
 }

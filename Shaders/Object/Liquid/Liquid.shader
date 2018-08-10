@@ -1,5 +1,5 @@
 ﻿// Original shader made by @minionsart on Twitter, heavily modified by @cantycanadian.
-// Special thanks to @bgolus for the grabpass hack I used to make my highly specific blending.
+// Special thanks to @bgolus for the grabpass hack I used to make the highly specific blending I wanted.
 
 // Known bug : You can't see another liquid through a transparent liquid. Won't fix since I have no clue how to actually fix that. I already had issues getting the transparency right...
 Shader "Unlit/Canty/Liquid"
@@ -115,7 +115,6 @@ Shader "Unlit/Canty/Liquid"
 
 				// color of backfaces/ top
 				float4 topColor = _TopColor * (foam + result);
-				//topColor.a = _Alpha;
 
 				// sample the background
 				float2 screenuv = i.uv_back.xy / i.uv_back.w;
@@ -229,7 +228,6 @@ Shader "Unlit/Canty/Liquid"
 				// both together, with the texture
 				float4 finalResult = resultColored;
 				finalResult.rgb = lerp(finalResult.rgb, RimResult.rgb, RimResult.a);
-				//finalResult.a = _Alpha;
 
 				// color of backfaces/ top
 				float4 topColor = _TopColor * (foam + result);
