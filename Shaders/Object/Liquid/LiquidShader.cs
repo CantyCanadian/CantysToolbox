@@ -14,7 +14,6 @@ public class LiquidShader : MonoBehaviour
 
     private Renderer m_Renderer;
     private Vector3 m_LastWorldPosition;
-    private Vector3 m_AngularVelocity;
     private Vector3 m_CurrentPosition;
     private Vector3 m_CurrentVelocity = Vector3.zero;
 

@@ -44,13 +44,13 @@ public static class NoiseUtil
         int floorLast8BitsY = Mathf.FloorToInt(y) & 0xff;
         int floorLast8BitsZ = Mathf.FloorToInt(z) & 0xff;
 
-        float x = Mathf.Floor(x);
-        float y = Mathf.Floor(y);
-        float z = Mathf.Floor(z);
+        float floorX = Mathf.Floor(x);
+        float floorY = Mathf.Floor(y);
+        float floorZ = Mathf.Floor(z);
 
-        float fadeX = Fade(x);
-        float fadeY = Fade(y);
-        float fadeZ = Fade(z);
+        float fadeX = Fade(floorX);
+        float fadeY = Fade(floorY);
+        float fadeZ = Fade(floorZ);
 
         int last8BitsA = (PermanentValues[floorLast8BitsX] + floorLast8BitsY) & 0xff;
         int last8BitsB = (PermanentValues[floorLast8BitsX + 1] + floorLast8BitsY) & 0xff;
@@ -59,7 +59,7 @@ public static class NoiseUtil
         int last8BitsAB = (PermanentValues[last8BitsA + 1] + floorLast8BitsZ) & 0xff;
         int last8BitsBB = (PermanentValues[last8BitsB + 1] + floorLast8BitsZ) & 0xff;
 
-        return Mathf.Lerp(fadeZ, Mathf.Lerp(fadeY, Mathf.Lerp(fadeX, Gradient(PermanentValues[last8BitsAA], x, y, z), Gradient(PermanentValues[last8BitsBA], x - 1, y, z)), Lerp(fadeX, Gradient(PermanentValues[last8BitsAB], x, y - 1, z), Gradient(PermanentValues[last8BitsBB], x - 1, y - 1, z))), Mathf.Lerp(fadeY, Mathf.Lerp(fadeX, Gradient(PermanentValues[last8BitsAA + 1], x, y, z - 1), Gradient(PermanentValues[last8BitsBA + 1], x - 1, y, z - 1)), Mathf.Lerp(fadeX, Gradient(PermanentValues[last8BitsAB + 1], x, y - 1, z - 1), Gradient(PermanentValues[last8BitsBB + 1], x - 1, y - 1, z - 1))));
+        return Mathf.Lerp(fadeZ, Mathf.Lerp(fadeY, Mathf.Lerp(fadeX, Gradient(PermanentValues[last8BitsAA], floorX, floorY, floorZ), Gradient(PermanentValues[last8BitsBA], floorX - 1, floorY, floorZ)), Mathf.Lerp(fadeX, Gradient(PermanentValues[last8BitsAB], floorX, floorY - 1, floorZ), Gradient(PermanentValues[last8BitsBB], floorX - 1, floorY - 1, floorZ))), Mathf.Lerp(fadeY, Mathf.Lerp(fadeX, Gradient(PermanentValues[last8BitsAA + 1], floorX, floorY, floorZ - 1), Gradient(PermanentValues[last8BitsBA + 1], floorX - 1, floorY, floorZ - 1)), Mathf.Lerp(fadeX, Gradient(PermanentValues[last8BitsAB + 1], floorX, floorY - 1, floorZ - 1), Gradient(PermanentValues[last8BitsBB + 1], floorX - 1, floorY - 1, floorZ - 1))));
     }
 
     public static float PerlinNoise(Vector3 coord)

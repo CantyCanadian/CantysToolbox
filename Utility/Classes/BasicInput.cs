@@ -1,13 +1,14 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
-public class BasicMovement : MonoBehaviour
+public class BasicInput : MonoBehaviour
 {
-    public Dictionary<KeyCode, UnityEvent> KeyEvent;
+    public KeyCodeUnityEventDictionary KeyEvent;
     
     private void Update()
     {
-        foreach(KeyValuePair<KeyCode, Direction> kvp in KeyEvent)
+        foreach(KeyValuePair<KeyCode, UnityEvent> kvp in KeyEvent)
         {
             if (Input.GetKey(kvp.Key))
             {
@@ -15,4 +16,6 @@ public class BasicMovement : MonoBehaviour
             }
         }
     }
+
+    [System.Serializable] public class KeyCodeUnityEventDictionary : SerializableDictionary<KeyCode, UnityEvent> { }
 }

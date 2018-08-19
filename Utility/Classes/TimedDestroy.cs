@@ -1,13 +1,12 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class AutoDestroy : MonoBehaviour
+public class TimedDestroy : MonoBehaviour
 {
-    public float secondsToWait = 5.0f;
+    public float SecondsToWait = 5.0f;
 
     private void Update()
     {
-        float timer = secondsToWait;
+        float timer = SecondsToWait;
 
         while(timer > 0.0f)
         {

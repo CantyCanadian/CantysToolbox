@@ -2,7 +2,7 @@
 // Special thanks to @bgolus for the grabpass hack I used to make the highly specific blending I wanted.
 
 // Known bug : You can't see another liquid through a transparent liquid. Won't fix since I have no clue how to actually fix that. I already had issues getting the transparency right...
-Shader "Unlit/Canty/Liquid"
+Shader "Custom/Unlit/Liquid"
 {
 	Properties
 	{
