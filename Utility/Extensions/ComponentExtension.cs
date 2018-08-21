@@ -1,8 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public static class MonoBehaviourExtension
+public static class ComponentExtension
 {
     /// <summary>
     /// Gets a component from the object or adds it if it doesn't exist.
