@@ -20,20 +20,16 @@ Shader "Custom/Surface/Dissolve"
 	}
 	SubShader 
 	{
-		Tags 
-    	{
-        	"Queue"="Transparent" 
-        	"RenderType"="Transparent" 
-		}
+		Tags { "Queue"="Transparent" "RenderType"="Transparent" }
+
 		LOD 200
+
+		Blend SrcAlpha OneMinusSrcAlpha
 		
 		CGPROGRAM
-		#pragma surface surf Standard fullforwardshadows alpha:fade
 
+		#pragma surface Surface Standard fullforwardshadows alpha:fade
 		#pragma target 3.0
-
-		sampler2D _MainTex;
-		sampler2D _Noise;
 
 		struct Input 
 		{
@@ -41,16 +37,22 @@ Shader "Custom/Surface/Dissolve"
 			float2 uv_Noise;
 		};
 
+		sampler2D _MainTex;
+		sampler2D _Noise;
+
 		half _Glossiness;
 		half _Metallic;
+
 		fixed4 _Color;
 		fixed4 _EdgeColor;
+
 		float _EdgeThreshold;
+
 		bool _Invert;
 
 		uniform float _Dissolve; //Set in script
 
-		void surf (Input IN, inout SurfaceOutputStandard o) 
+		void Surface(Input IN, inout SurfaceOutputStandard o) 
 		{
 			fixed4 noiseSample = tex2D(_Noise, IN.uv_Noise);
 			fixed4 col = tex2D (_MainTex, IN.uv_MainTex) * _Color;

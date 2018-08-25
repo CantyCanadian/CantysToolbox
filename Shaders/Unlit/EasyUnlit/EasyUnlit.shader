@@ -6,7 +6,6 @@ Shader "Custom/Unlit/EasyUnlit"
 		_MainTex ("Main Texture", 2D) = "white" {}
 		_Color ("Color", Color) = (1,1,1,1)
 
-		//[Enum(Zero, 0, One,1, DstColor,2, SrcColor,3, OneMinusDstColor,4, SrcAlpha, 5, OneMinusSrcColor, 6, DstAlpha, 7, OneMinusDstAlpha, 8, SrcAlphaSaturate, 9, OneMinusSrcAlpha,10)] _BlendModeSourceColor ("Source Color BlendMode", Int) = 1
 		[Enum(UnityEngine.Rendering.BlendMode)] _BlendModeSourceColor ("Source Color BlendMode", Int) = 1
 		[Enum(UnityEngine.Rendering.BlendMode)] _BlendModeDestinationColor ("Destination Color BlendMode", Int) = 0
 		[Enum(UnityEngine.Rendering.BlendMode)] _BlendModeSourceAlpha ("Source Alpha BlendMode", Int) = 1
