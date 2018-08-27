@@ -34,12 +34,11 @@ Shader "Custom/Surface/Masks/AlphaMaskCulled"
 			
 		void Surface(Input IN, inout SurfaceOutputStandard o)
 		{
-			// Albedo comes from a texture tinted by color
-			fixed4 c = tex2D (_MainTex, IN.uv_MainTex);
-			float aMask = tex2D (_AlphaMask, IN.uv_AlphaMask).g - _AlphaAmount;
+			fixed4 col = tex2D (_MainTex, IN.uv_MainTex);
+			float alphaMask = tex2D (_AlphaMask, IN.uv_AlphaMask).g - _AlphaAmount;
 
-			o.Albedo = c.rgb;
-			o.Alpha = aMask;
+			o.Albedo = col.rgb;
+			o.Alpha = alphaMask;
 		}
 		ENDCG
 	}

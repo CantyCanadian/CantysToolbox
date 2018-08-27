@@ -26,6 +26,8 @@ Shader "Custom/Surface/Masks/ColorAlphaMaskCulled"
 		struct Input
 		{
 			float2 uv_MainTex;
+			float2 uv_ColorMask;
+			float2 uv_SecondTex;
 			float2 uv_AlphaMask;
 		};
 
@@ -49,6 +51,6 @@ Shader "Custom/Surface/Masks/ColorAlphaMaskCulled"
 		}
 		ENDCG
 	}
-	
+
 	Fallback off
 }

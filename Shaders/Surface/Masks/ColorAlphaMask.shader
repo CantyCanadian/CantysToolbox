@@ -27,6 +27,8 @@ Shader "Custom/Surface/Masks/ColorAlphaMask"
 		struct Input
 		{
 			float2 uv_MainTex;
+			float2 uv_ColorMask;
+			float2 uv_SecondTex;
 			float2 uv_AlphaMask;
 		};
 

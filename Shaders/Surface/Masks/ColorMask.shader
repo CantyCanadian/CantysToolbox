@@ -1,5 +1,5 @@
 ﻿// Taken from ellioman's Shader Project. https://github.com/ellioman/ShaderProject
-Shader "Custom/Surface/Masks/AlphaMaskCulled" 
+Shader "Custom/Surface/Masks/ColorMask" 
 {
 	Properties
 	{

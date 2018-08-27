@@ -1,5 +1,5 @@
 ﻿// Original shader found here : https://github.com/JPBotelho/Unity-Camera-cutout, modified by @CantyCanadian on Twitter.
-Shader "Camera/Canty/Cutout"
+Shader "Custom/PostProcess/Cutout"
 {
 	Properties
 	{
