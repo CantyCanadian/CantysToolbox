@@ -93,6 +93,14 @@ public static class PlayerPrefsUtil
         SetVector4(key, value);
     }
 
+    /// <summary>
+    /// Store an enum as a player pref (as a string).
+    /// </summary>
+    public static void SetEnum(string key, Enum value)
+    {
+        PlayerPrefs.SetString(key, value.ToString());
+    }
+
     #endregion
 
     #region Set Encrypted
@@ -175,6 +183,14 @@ public static class PlayerPrefsUtil
     public static void SetEncryptedColor(string key, Color value)
     {
         SetEncryptedVector4(key, value);
+    }
+
+    /// <summary>
+    /// Encrypted version of PlayerPrefsUtil.SetEnum(), stored key and value is encrypted in player prefs.
+    /// </summary>
+    public static void SetEncryptedEnum(string key, Enum value)
+    {
+        SetEncryptedString(key, value.ToString());
     }
 
     #endregion
@@ -365,6 +381,21 @@ public static class PlayerPrefsUtil
         SetVector4Array(key, values);
     }
 
+    /// <summary>
+    /// Encrypted version of PlayerPrefsUtil.SetEnum(), stored key and value is encrypted in player prefs.
+    /// </summary>
+    public static void SetEnumArray(string key, Enum[] values)
+    {
+        string[] strings = new string[values.Length];
+
+        for(int i = 0; i < value.Length; i++)
+        {
+            strings[i] = values[i];
+        }
+        
+        SetStringArray(key, strings);
+    }
+
     #endregion
 
     #region Set Encrypted Array
@@ -549,32 +580,313 @@ public static class PlayerPrefsUtil
         SetEncryptedVector4Array(key, values);
     }
 
+    /// <summary>
+    /// Encrypted version of PlayerPrefsUtil.SetEnum(), stored key and value is encrypted in player prefs.
+    /// </summary>
+    public static void SetEncryptedEnumArray(string key, Enum[] values)
+    {
+        string[] strings = new string[values.Length];
+
+        for (int i = 0; i < value.Length; i++)
+        {
+            strings[i] = values[i];
+        }
+
+        SetEncryptedStringArray(key, strings);
+    }
+
     #endregion
 
 
+    #region Get
 
+    /// <summary>
+    /// A key is passed, returning a bool.
+    /// </summary>
+    public static bool GetBool(string key, bool defaultValue = false)
+    {
+        return PlayerPrefs.GetInt(result) == 1;
+    }
 
+    /// <summary>
+    /// A key is passed, returning a vector2.
+    /// </summary>
+    public static Vector2 GetVector2(string key, Vector2 defaultValue = new Vector2())
+    {
+        float[] floats = GetFloatArray(key);
 
-    #region GetFloat
+        if (floats.Length < 2)
+        {
+            return defaultValue;
+        }
+
+        return new Vector2(floats[0], floats[1]);
+    }
+
+    /// <summary>
+    /// A key is passed, returning a vector2Int.
+    /// </summary>
+    public static Vector2Int GetVector2Int(string key, Vector2Int defaultValue = new Vector2Int())
+    {
+        int[] ints = GetIntArray(key);
+
+        if (ints.Length < 2)
+        {
+            return defaultValue;
+        }
+
+        return new Vector2Int(ints[0], ints[1]);
+    }
+
+    /// <summary>
+    /// A key is passed, returning a vector3.
+    /// </summary>
+    public static Vector3 GetVector3(string key, Vector3 defaultValue = new Vector3())
+    {
+        float[] floats = GetFloatArray(key);
+
+        if (floats.Length < 3)
+        {
+            return defaultValue;
+        }
+
+        return new Vector2(floats[0], floats[1], floats[2]);
+    }
+
+    /// <summary>
+    /// A key is passed, returning a vector3Int.
+    /// </summary>
+    public static Vector3Int GetVector3Int(string key, Vector3Int defaultValue = new Vector3Int())
+    {
+        int[] ints = GetIntArray(key);
+
+        if (ints.Length < 3)
+        {
+            return defaultValue;
+        }
+
+        return new Vector3Int(ints[0], ints[1], ints[2]);
+    }
+
+    /// <summary>
+    /// A key is passed, returning a vector4.
+    /// </summary>
+    public static Vector4 GetVector4(string key, Vector4 defaultValue = new Vector4())
+    {
+        float[] floats = GetFloatArray(key);
+
+        if (floats.Length < 4)
+        {
+            return defaultValue;
+        }
+
+        return new Vector4(floats[0], floats[1], floats[2], floats[3]);
+    }
+
+    /// <summary>
+    /// A key is passed, returning a Color.
+    /// </summary>
+    public static Color GetColor(string key, Color defaultValue = new Color())
+    {
+        return GetVector4(key, defaultValue);
+    }
+
+    /// <summary>
+    /// A key is passed, returning an Enum of the passed type.
+    /// </summary>
+    public static T GetEnum<T>(string key, T defaultValue = default(T)) where T : struct
+    {
+        string stringValue = PlayerPrefs.GetString(key);
+
+        if (!string.IsNullOrEmpty(stringValue))
+        {
+            // Existing value, so parse it using the supplied generic type and cast before returning it
+            return (T)Enum.Parse(typeof(T), stringValue);
+        }
+        else
+        {
+            // No player pref for this, just return default. If no default is supplied this will be the enum's default.
+            return defaultValue;
+        }
+    }
+
+    #endregion
+
+    #region Get Encrypted
 
     /// <summary>
     /// Encrypted version of PlayerPrefs.GetFloat(), an unencrypted key is passed and the value is returned decrypted.
     /// </summary>
     public static float GetEncryptedFloat(string key, float defaultValue = 0.0f)
     {
-        string encryptedKey = KEY_PREFIX + EncryptionUtil.EncryptString(key);
-        string fetchedString = PlayerPrefs.GetString(encryptedKey);
+        string result;
 
-        if (!string.IsNullOrEmpty(fetchedString))
-        {            
-            return EncryptionUtil.DecryptFloat(fetchedString);
+        if (Decrypt(key, ref result))
+        {
+            return EncryptionUtil.DecryptFloat(result);
         }
         else
         {
-            // No existing player pref value, so return defaultValue instead.
             return defaultValue;
         }
     }
+
+    /// <summary>
+    /// Encrypted version of PlayerPrefs.GetInt(), an unencrypted key is passed and the value is returned decrypted
+    /// </summary>
+    public static int GetEncryptedInt(string key, int defaultValue = 0)
+    {
+        string result;
+
+        if (Decrypt(key, ref result))
+        {
+            return EncryptionUtil.DecryptInt(result);
+        }
+        else
+        {
+            return defaultValue;
+        }
+    }
+
+    /// <summary>
+    /// Encrypted version of PlayerPrefs.GetString(), an unencrypted key is passed and the value is returned decrypted
+    /// </summary>
+    public static string GetEncryptedString(string key, string defaultValue = "")
+    {
+        string result;
+
+        if (Decrypt(key, ref result))
+        {
+            return EncryptionUtil.DecryptString(result);
+        }
+        else
+        {
+            return defaultValue;
+        }
+    }
+
+    /// <summary>
+    /// Encrypted version of PlayerPrefsUtils.GetBool(), an unencrypted key is passed and the value is returned decrypted
+    /// </summary>
+    public static bool GetEncryptedBool(string key, bool defaultValue = false)
+    {
+        string result;
+
+        if (Decrypt(key, ref result))
+        {
+            return EncryptionUtil.DecryptInt(result) == 1;
+        }
+        else
+        {
+            return defaultValue;
+        }
+    }
+
+    /// <summary>
+    /// Encrypted version of PlayerPrefsUtils.GetVector2(), an unencrypted key is passed and the value is returned decrypted
+    /// </summary>
+    public static Vector2 GetEncryptedVector2(string key, Vector2 defaultValue = new Vector2())
+    {
+        float[] floats = GetEncryptedFloatArray(key);
+
+        if (floats.Length < 2)
+        {
+            return defaultValue;
+        }
+
+        return new Vector2(floats[0], floats[1]);
+    }
+
+    /// <summary>
+    /// Encrypted version of PlayerPrefsUtils.GetVector2Int(), an unencrypted key is passed and the value is returned decrypted
+    /// </summary>
+    public static Vector2Int GetEncryptedVector2Int(string key, Vector2Int defaultValue = new Vector2Int())
+    {
+        int[] ints = GetEncryptedIntArray(key);
+
+        if (ints.Length < 2)
+        {
+            return defaultValue;
+        }
+
+        return new Vector2Int(ints[0], ints[1]);
+    }
+
+    /// <summary>
+    /// Encrypted version of PlayerPrefsUtils.GetVector3(), an unencrypted key is passed and the value is returned decrypted
+    /// </summary>
+    public static Vector3 GetEncryptedVector3(string key, Vector3 defaultValue = new Vector3())
+    {
+        float[] floats = GetEncryptedFloatArray(key);
+
+        if (floats.Length < 3)
+        {
+            return defaultValue;
+        }
+
+        return new Vector2(floats[0], floats[1], floats[2]);
+    }
+
+    /// <summary>
+    /// Encrypted version of PlayerPrefsUtils.GetVector3Int(), an unencrypted key is passed and the value is returned decrypted
+    /// </summary>
+    public static Vector3Int GetEncryptedVector3Int(string key, Vector3Int defaultValue = new Vector3Int())
+    {
+        int[] ints = GetEncryptedIntArray(key);
+
+        if (ints.Length < 3)
+        {
+            return defaultValue;
+        }
+
+        return new Vector3Int(ints[0], ints[1], ints[2]);
+    }
+
+    /// <summary>
+    /// Encrypted version of PlayerPrefsUtils.GetVector4(), an unencrypted key is passed and the value is returned decrypted
+    /// </summary>
+    public static Vector4 GetEncryptedVector4(string key, Vector4 defaultValue = new Vector4())
+    {
+        float[] floats = GetEncryptedFloatArray(key);
+
+        if (floats.Length < 4)
+        {
+            return defaultValue;
+        }
+
+        return new Vector4(floats[0], floats[1], floats[2], floats[3]);
+    }
+
+    /// <summary>
+    /// Encrypted version of PlayerPrefsUtils.GetColor(), an unencrypted key is passed and the value is returned decrypted
+    /// </summary>
+    public static Color GetEncryptedColor(string key, Color defaultValue = new Color())
+    {
+        return GetEncryptedVector4(key, defaultValue);
+    }
+
+    /// <summary>
+    /// Encrypted version of PlayerPrefsUtils.GetEnum(), an unencrypted key is passed and the value is returned decrypted
+    /// </summary>
+    public static T GetEncryptedEnum<T>(string key, T defaultValue = default(T)) where T : struct
+    {
+        string stringValue = PlayerPrefs.GetEncryptedString(key);
+
+        if (!string.IsNullOrEmpty(stringValue))
+        {
+            // Existing value, so parse it using the supplied generic type and cast before returning it
+            return (T)Enum.Parse(typeof(T), stringValue);
+        }
+        else
+        {
+            // No player pref for this, just return default. If no default is supplied this will be the enum's default.
+            return defaultValue;
+        }
+    }
+
+    #endregion
+
+    #region Get Array
 
     public static float[] GetFloatArray(string key, float defaultValue = 0.0f)
     {
@@ -589,6 +901,21 @@ public static class PlayerPrefsUtil
 
         return result;
     }
+
+    #endregion
+
+    #region Get Encrypted Array
+
+
+
+    #endregion
+
+
+    #region GetFloat
+
+
+
+
 
     public static float[] GetEncryptedFloatArray(string key, float defaultValue = 0.0f)
     {
@@ -608,24 +935,7 @@ public static class PlayerPrefsUtil
 
     #region GetInt
 
-    /// <summary>
-    /// Encrypted version of PlayerPrefs.GetInt(), an unencrypted key is passed and the value is returned decrypted
-    /// </summary>
-    public static int GetEncryptedInt(string key, int defaultValue = 0)
-    {
-        string encryptedKey = KEY_PREFIX + EncryptionUtil.EncryptString(key);
-        string fetchedString = PlayerPrefs.GetString(encryptedKey);
 
-        if (!string.IsNullOrEmpty(fetchedString))
-        {
-            return EncryptionUtil.DecryptInt(fetchedString);
-        }
-        else
-        {
-            // No existing player pref value, so return defaultValue instead.
-            return defaultValue;
-        }
-    }
 
     public static int[] GetIntArray(string key, int defaultValue = 0)
     {
@@ -659,24 +969,7 @@ public static class PlayerPrefsUtil
 
     #region GetString
 
-    /// <summary>
-    /// Encrypted version of PlayerPrefs.GetString(), an unencrypted key is passed and the value is returned decrypted
-    /// </summary>
-    public static string GetEncryptedString(string key, string defaultValue = "")
-    {
-        string encryptedKey = EncryptionUtil.EncryptString(key);
-        string fetchedString = PlayerPrefs.GetString(encryptedKey);
 
-        if (!string.IsNullOrEmpty(fetchedString))
-        {
-            return EncryptionUtil.DecryptString(fetchedString);
-        }
-        else
-        {
-            // No existing player pref value, so return defaultValue instead.
-            return defaultValue;
-        }
-    }
 
     public static string[] GetStringArray(string key, string defaultValue = 0)
     {
@@ -726,24 +1019,7 @@ public static class PlayerPrefsUtil
         }
     }
 
-    /// <summary>
-    /// Encrypted version of PlayerPrefsUtils.GetBool(), an unencrypted key is passed and the value is returned decrypted
-    /// </summary>
-    public static bool GetEncryptedBool(string key, bool defaultValue = false)
-    {
-        string encryptedKey = EncryptionUtil.EncryptString(key);
-        string fetchedString = PlayerPrefs.GetString(encryptedKey);
 
-        if (PlayerPrefs.HasKey(key))
-        {
-            return GetEncryptedInt(key) == 1;
-        }
-        else
-        {
-            // No existing player pref value, so return defaultValue instead.
-            return defaultValue;
-        }
-    }
 
     public static bool[] GetBoolArray(string key, bool defaultValue = false)
     {
@@ -787,35 +1063,28 @@ public static class PlayerPrefsUtil
 
     #endregion
 
-    /// <summary>
-    /// Helper method to store an enum value in PlayerPrefs (stored using the string name of the enum).
-    /// </summary>
-    public static void SetEnum(string key, Enum value)
-    {
-        PlayerPrefs.SetString(key, value.ToString());
-    }
 
-    /// <summary>
-    /// Generic helper method to retrieve an enum value from PlayerPrefs and parse it from its stored string into the specified generic type.
-    /// </summary>
-    public static T GetEnum<T>(string key, T defaultValue = default(T)) where T : struct
-    {
-        string stringValue = PlayerPrefs.GetString(key);
 
-        if (!string.IsNullOrEmpty(stringValue))
-        {
-            // Existing value, so parse it using the supplied generic type and cast before returning it
-            return (T)Enum.Parse(typeof(T), stringValue);
-        }
-        else
-        {
-            // No player pref for this, just return default. If no default is supplied this will be the enum's default.
-            return defaultValue;
-        }
-    }
+
 
     private static void Encrypt(string key, string value)
     {
-        PlayerPrefs.SetString(KEY_PREFIX + encryptedKey, encryptedValue);
+        PlayerPrefs.SetString(KEY_PREFIX + encryptedKey, value);
+    }
+
+    private static bool Decrypt(string key, ref string result)
+    {
+        string encryptedKey = EncryptionUtil.EncryptString(key);
+        string fetchedString = PlayerPrefs.GetString(encryptedKey);
+
+        if (!string.IsNullOrEmpty(fetchedString))
+        {
+            result = fetchedString;
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 }
