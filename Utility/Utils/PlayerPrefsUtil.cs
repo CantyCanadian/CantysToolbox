@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -244,14 +244,14 @@ public static class PlayerPrefsUtil
     /// </summary>
     public static void SetBoolArray(string key, bool[] values)
     {
-        int[] ints = BitwiseUtil.MergeBoolsToInt(values);
+        uint[] ints = BitwiseUtil.MergeBoolsToInt(values);
 
         // The key itself points at the bool quantity, not ints.
         PlayerPrefs.SetInt(key, values.Length);
 
         for (int i = 0; i < ints.Length; i++)
         {
-            PlayerPrefs.SetInt(key + i.ToString(), ints[i]);
+            PlayerPrefs.SetInt(key + i.ToString(), (int)ints[i]);
         }
     }
 
@@ -282,7 +282,7 @@ public static class PlayerPrefsUtil
             ints[i] = (i % 2 == 0 ? values[Mathf.FloorToInt(i / 2)].x : values[Mathf.FloorToInt(i / 2)].y);
         }
 
-        SetIntArray(key, floats);
+        SetIntArray(key, ints);
     }
 
     /// <summary>
@@ -338,7 +338,7 @@ public static class PlayerPrefsUtil
             }
         }
 
-        SetIntArray(key, floats);
+        SetIntArray(key, ints);
     }
 
     /// <summary>
@@ -378,7 +378,7 @@ public static class PlayerPrefsUtil
     /// </summary>
     public static void SetColorArray(string key, Color[] values)
     {
-        SetVector4Array(key, values);
+        SetVector4Array(key, values.ConvertUsing<Color, Vector4>((obj) => { return obj; }).ToArray());
     }
 
     /// <summary>
@@ -605,7 +605,7 @@ public static class PlayerPrefsUtil
     /// </summary>
     public static bool GetBool(string key, bool defaultValue = false)
     {
-        return PlayerPrefs.GetInt(result) == 1;
+        return PlayerPrefs.GetInt(key, defaultValue ? 1 : 0) == 1;
     }
 
     /// <summary>
@@ -650,7 +650,7 @@ public static class PlayerPrefsUtil
             return defaultValue;
         }
 
-        return new Vector2(floats[0], floats[1], floats[2]);
+        return new Vector3(floats[0], floats[1], floats[2]);
     }
 
     /// <summary>
@@ -1002,22 +1002,6 @@ public static class PlayerPrefsUtil
     #endregion
 
     #region GetBool
-
-    /// <summary>
-    /// Helper method to retrieve a bool from PlayerPrefs (stored as an int)
-    /// </summary>
-    public static bool GetBool(string key, bool defaultValue = false)
-    {
-        if (PlayerPrefs.HasKey(key))
-        {
-            return PlayerPrefs.GetInt(key) == 1;
-        }
-        else
-        {
-            // No existing player pref value, so return defaultValue instead.
-            return defaultValue;
-        }
-    }
 
 
 

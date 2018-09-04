@@ -2,50 +2,40 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Inherits from ICollection. Contains utility functions that applies to any containers that can be indexed.
+/// </summary>
 public static class IListExtension
 {
     /// <summary>
-    /// Applies a passed function to every member of the collection.
+    /// Applies a passed function to every member of the IList. Passed in function changes the item itself.
     /// </summary>
-    /// <param name="action">Function with a single Item argument and with an Item return type.</param>
-    public static void DoOnAll<I>(this IList<I> target, System.Func<I, I> action)
+    /// <param name="function">Function with a single Item argument and with an Item return type.</param>
+    public static void DoOnAll<I>(this IList<I> target, System.Func<I, I> function)
     {
         for (int i = 0; i < target.Count; i++)
         {
-            target[i] = action.Invoke(target[i]);
+            target[i] = function.Invoke(target[i]);
         }
     }
 
     /// <summary>
-    /// Gets a random object from the array.
+    /// Applies a passed function to every member of the 2D list. Passed in function changes the item itself.
     /// </summary>
-    /// <returns>Random object.</returns>
-    public static I GetRandom<I>(this IList<I> target)
+    /// <param name="action">Function with a single Item argument and with an Item return type.</param>
+    public static void DoOnAll<I, J>(this IList<I> target, System.Func<J, J> function) where I : IList<J>
     {
-        int index = Random.Range(0, target.Count);
-        return target[index];
-    }
-
-    /// <summary>
-    /// Return a debug string containing every values, separated by commas.
-    /// </summary>
-    /// <returns>String containing every values.</returns>
-    public static string ToDebugString<I>(this IList<I> target)
-    {
-        string result = "";
-
-        for (int i = 0; i < target.Count - 1; i++)
+        for (int i = 0; i < target.Count; i++)
         {
-            result += target[i].ToString() + ", ";
+            for (int j = 0; j < target[i].Count; j++)
+            {
+                target[i][j] = function.Invoke(target[i][j]);
+            }
         }
-
-        result += target[target.Count - 1].ToString();
-
-        return result;
     }
 
     /// <summary>
-    /// Returns a portion of the original collection.
+    /// Returns a portion of the original IList.
     /// </summary>
     /// <param name="start">First index.</param>
     /// <param name="end">Last index (non-included).</param>
@@ -72,7 +62,7 @@ public static class IListExtension
     }
 
     /// <summary>
-    /// Adds an item to the collection, but only if that item doesn't already exists.
+    /// Adds an item to the IList, but only if that item doesn't already exists.
     /// </summary>
     /// <param name="item">Item being added.</param>
     /// <returns>If the value got added.</returns>
@@ -89,7 +79,7 @@ public static class IListExtension
 
 
     /// <summary>
-    /// Adds a collection of items to another collection, but only if those items don't already exist.
+    /// Adds a generic collection of items to IList, but only if those items don't already exist.
     /// </summary>
     /// <param name="items">Item set being added.</param>
     public static void AddRangeOnce<I>(this IList<I> target, IEnumerable<I> items)
@@ -101,93 +91,6 @@ public static class IListExtension
                 target.Add(i);
             }
         }
-    }
-
-
-    /// <summary>
-    /// Removes any duplicates inside a collection.
-    /// </summary>
-    /// <returns>Modified object.</returns>
-    public static IList<I> RemoveDuplicates<I>(this IList<I> target)
-    {
-        List<I> result = new List<I>();
-
-        foreach (I item in target)
-        {
-            if (!result.Contains(item))
-            {
-                result.Add(item);
-            }
-        }
-
-        return result;
-    }
-
-    /// <summary>
-    /// Extracts any duplicates inside a collection.
-    /// </summary>
-    /// <returns>Collection containing any duplicates (but without any duplicate items).</returns>
-    public static IList<I> ExtractDuplicates<I>(this IList<I> target)
-    {
-        Dictionary<I, bool> dupes = new Dictionary<I, bool>();
-
-        foreach (I i in target)
-        {
-            if (dupes.ContainsKey(i))
-            {
-                dupes[i] = true;
-            }
-            else
-            {
-                dupes.Add(i, false);
-            }
-        }
-
-        List<I> result = new List<I>();
-
-        foreach (KeyValuePair<I, bool> kv in dupes)
-        {
-            if (kv.Value)
-            {
-                result.Add(kv.Key);
-            }
-        }
-
-        return result;
-    }
-
-    /// <summary>
-    /// Extracts duplicates inside a collection. However, the item must be found over [dupeCount] times before being extracted.
-    /// </summary>
-    /// <param name="dupeCount">How many times the item needs to be found before being extracted.</param>
-    /// <returns>Collection containing duplicates (but without any duplicate items).</returns>
-    public static IList<I> ExtractDuplicates<I>(this IList<I> target, int dupeCount)
-    {
-        Dictionary<I, int> dupes = new Dictionary<I, int>();
-
-        foreach (I i in target)
-        {
-            if (dupes.ContainsKey(i))
-            {
-                dupes[i]++;
-            }
-            else
-            {
-                dupes.Add(i, 1);
-            }
-        }
-
-        List<I> result = new List<I>();
-
-        foreach (KeyValuePair<I, int> kv in dupes)
-        {
-            if (kv.Value >= dupeCount)
-            {
-                result.Add(kv.Key);
-            }
-        }
-
-        return result;
     }
 
     /// <summary>
@@ -226,20 +129,5 @@ public static class IListExtension
         }
 
         return result;
-    }
-
-    /// <summary>
-    /// Applies a passed function to every member of the 2D list.
-    /// </summary>
-    /// <param name="action">Function with a single Item argument and with an Item return type.</param>
-    public static void DoOnAll<I, J>(this List<I> target, System.Func<J, J> action) where I : List<J>
-    {
-        for (int i = 0; i < target.Count; i++)
-        {
-            for (int j = 0; j < target[i].Count; j++)
-            {
-                target[i][j] = action.Invoke(target[i][j]);
-            }
-        }
     }
 }
