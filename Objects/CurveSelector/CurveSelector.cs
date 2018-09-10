@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public class Curve
+public class CurveSelector
 {
     public enum CurveTypes
     {
