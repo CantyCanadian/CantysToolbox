@@ -137,21 +137,4 @@ public static class IEnumerableExtension
 
         return result;
     }
-
-    /// <summary>
-    /// Converts the IEnumerable from type I to type NI using a passed in conversion function.
-    /// </summary>
-    /// <param name="valueConverter">Conversion function taking a item I and returning an item NI.</param>
-    /// <returns>IEnumerable containing original list, but converted.</returns>
-    public static IEnumerable<NI> ConvertUsing<I, NI>(this IEnumerable<I> target, System.Func<I, NI> valueConverter)
-    {
-        List<NI> result = new List<NI>();
-
-        foreach (I value in target)
-        {
-            result.Add(valueConverter.Invoke(value));
-        }
-
-        return result;
-    }
 }

@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [ExecuteInEditMode]
-public class BarsTransitionPostProcessShader : MonoBehaviour
+public class CrissCrossTransitionPostProcessShader : MonoBehaviour
 {
     public Material ShaderMaterial;
+
+    public int BarCount;
 
     [Range(0.0f, 1.0f)]
     public float TransitionValue;

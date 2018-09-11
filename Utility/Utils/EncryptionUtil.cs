@@ -1,7 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System;
 using System.Security.Cryptography;
-using UnityEngine;
+using System.Text;
 
 // Taken from sabresaurus's PlayerPrefsEditor code. https://github.com/sabresaurus/PlayerPrefsEditor
 public static class EncryptionUtil
@@ -99,7 +98,7 @@ public static class EncryptionUtil
             PrepareEncryptor();
         }
 
-        byte[] bytes = BitConverter.GetBytes(value);
+        byte[] bytes = BitConverter.GetBytes(toEncrypt);
         
         string base64 = Convert.ToBase64String(bytes);
         
@@ -110,7 +109,7 @@ public static class EncryptionUtil
     /// Decrypts the passed in float using the static key in the util file.
     /// </summary>
     /// <returns>Decrypted float.</returns>
-    public static float DecryptFloat(float toDecrypt)
+    public static float DecryptFloat(string toDecrypt)
     {
         if (s_Encriptor == null)
         {
@@ -128,7 +127,7 @@ public static class EncryptionUtil
     {
         // Using the Rijndael encryption algorithm with a simple per-block mode.
         s_Encriptor = new RijndaelManaged();
-        s_Encriptor.Key = s_Key;
+        s_Encriptor.Key = Encoding.UTF8.GetBytes(s_Key);
         s_Encriptor.Mode = CipherMode.ECB;
     }
 }

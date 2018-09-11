@@ -4,8 +4,9 @@ Shader "Custom/PostProcess/Transition/Circle"
 {
 	Properties
 	{
-		_MainTex ("Texture", 2D) = "white" {}
-		_Color ("Color", Color) = (1.0, 1.0, 1.0, 1.0)
+		[HideInInspector]_MainTex ("Main Texture", 2D) = "white" {}
+		_TransitionTex ("Transition Texture", 2D) = "white" {}
+		_Color ("Transition Color", Color) = (1.0, 1.0, 1.0, 1.0)
 		_TextureColor ("Texture-Color Amount", Range(0.0, 1.0)) = 0.0
 	}
 	SubShader
@@ -17,9 +18,9 @@ Shader "Custom/PostProcess/Transition/Circle"
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
-			#pragma fragmentoption ARB_precision_hint_fastest
-			#pragma target 3.0
-			#pragma glsl
+			//#pragma fragmentoption ARB_precision_hint_fastest
+			//#pragma target 3.0
+			//#pragma glsl
 
 			#include "UnityCG.cginc"
 
@@ -38,6 +39,7 @@ Shader "Custom/PostProcess/Transition/Circle"
 			};
 
 			sampler2D _MainTex;
+			sampler2D _TransitionTex;
 
 			float4 _ScreenResolution;
 			float4 _Color;
@@ -63,18 +65,19 @@ Shader "Custom/PostProcess/Transition/Circle"
 			fixed4 frag (v2f i) : SV_Target
 			{
 				float4 tex = tex2D(_MainTex, i.uv);
-				float4 final = lerp(tex, _Color, _TextureColor);
+				float4 transitionTex = tex2D(_TransitionTex, i.uv);
+				float4 final = lerp(transitionTex, _Color, _TextureColor);
 
 				float2 uv = i.uv.xy;
 				float2 center = float2(_PositionX * _ScreenResolution.x, _PositionY * _ScreenResolution.y);
-				float light = clamp(distance(center.xy, (i.uv.xy * _ScreenResolution.xy)) - _Size + 1, 0.0, 1.0);
+				float value = clamp(distance(center.xy, (i.uv.xy * _ScreenResolution.xy)) - _Size + 1, 0.0, 1.0);
 
 				if (_Reverse == 0)
 				{
-					light = 1.0f - light;
+					value = 1.0f - value;
 				}
 
-				return final * light;
+				return lerp(final, tex, value);
 			}
 			ENDCG
 		}

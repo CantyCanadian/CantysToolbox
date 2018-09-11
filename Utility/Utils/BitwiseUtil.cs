@@ -26,7 +26,7 @@ public static class BitwiseUtil
     /// </summary>
     /// <param name="valuesInOrder">Bools that gets merged. Make sure the order is right in your array.</param>
     /// <returns>Unsigned int containing bools as bits.</returns>
-    public static uint[] MergeBoolsToInt(bool[] valuesInOrder)
+    public static int[] MergeBoolsToInt(bool[] valuesInOrder)
     {
         int[] result = new int[Mathf.FloorToInt(valuesInOrder.Length / 32) + 1];
 
@@ -38,7 +38,7 @@ public static class BitwiseUtil
             {
                 if (valuesInOrder[i])
                 {
-                    SetBitAtPosition(ref result, i);
+                    SetBitAtPosition(ref result[i], i);
                 }
             }
         }
@@ -59,11 +59,13 @@ public static class BitwiseUtil
         {
             result[i] = GetBitAtPosition(value, i);
         }
+
+        return result;
     }
 
     public static bool GetBitAtPosition(int value, int position)
     {
-        return (value >> position) & 1;
+        return ((value >> position) & 1) == 1;
     }
 
     public static void SetBitAtPosition(ref int value, int position)

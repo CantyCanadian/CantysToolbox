@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// Inherits from ICollection. Contains utility functions that applies to any containers that can be counted.
+/// Inherits from IEnumerable. Contains utility functions that applies to any containers that can be counted.
 /// </summary>
 public static class ICollectionExtension
 {
@@ -39,6 +39,23 @@ public static class ICollectionExtension
     {
         I[] result = new I[target.Count];
         target.CopyTo(result, 0);
+        return result;
+    }
+
+    /// <summary>
+    /// Converts the ICollection from type I to type NI using a passed in conversion function and returns it as the passed in generic ICollection list.
+    /// </summary>
+    /// <param name="valueConverter">Conversion function taking a item I and returning an item NI.</param>
+    /// <returns>IEnumerable containing original list, but converted.</returns>
+    public static NC ConvertUsing<I, NI, NC>(this ICollection<I> target, System.Func<I, NI> valueConverter) where NC : ICollection<NI>, new()
+    {
+        NC result = new NC();
+
+        foreach (I value in target)
+        {
+            result.Add(valueConverter.Invoke(value));
+        }
+
         return result;
     }
 }

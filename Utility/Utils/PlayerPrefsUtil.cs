@@ -8,33 +8,6 @@ public static class PlayerPrefsUtil
     // Prefix to know if the string is a key.
     public const string KEY_PREFIX = "ENC-";
 
-    /// <summary>
-	/// Check if the string given is an encrypted key.
-	/// </summary>
-	public static bool IsEncryptedKey(string value)
-    {
-        return value.StartsWith(KEY_PREFIX);
-    }
-
-    /// <summary>
-    /// Decrypts the passed-in key.
-    /// </summary>
-    public static string DecryptKey(string encryptedKey)
-    {
-        if (encryptedKey.StartsWith(KEY_PREFIX))
-        {
-            // Remove the prefix.
-            string strippedKey = encryptedKey.Substring(KEY_PREFIX.Length);
-
-            return EncryptionUtil.DecryptString(strippedKey);
-        }
-        else
-        {
-            Debug.Log("PlayerPrefsUtil : Key given doesn't contain proper data header.");
-            return encryptedKey;
-        }
-    }
-
     #region Set
 
     /// <summary>
@@ -110,7 +83,7 @@ public static class PlayerPrefsUtil
     /// </summary>
     public static void SetEncryptedFloat(string key, float value)
     {
-        Encrypt(EncryptionUtil.EncryptString(key), EncryptionUtil.EncryptFloat(value));
+        PlayerPrefs.SetString(KEY_PREFIX + EncryptionUtil.EncryptString(key), EncryptionUtil.EncryptFloat(value));
     }
 
     /// <summary>
@@ -118,7 +91,7 @@ public static class PlayerPrefsUtil
     /// </summary>
     public static void SetEncryptedInt(string key, int value)
     {
-        Encrypt(EncryptionUtil.EncryptString(key), EncryptionUtil.EncryptInt(value));
+        PlayerPrefs.SetString(KEY_PREFIX + EncryptionUtil.EncryptString(key), EncryptionUtil.EncryptFloat(value));
     }
 
     /// <summary>
@@ -126,7 +99,7 @@ public static class PlayerPrefsUtil
     /// </summary>
     public static void SetEncryptedString(string key, string value)
     {
-        Encrypt(EncryptionUtil.EncryptString(key), EncryptionUtil.EncryptString(value));
+        PlayerPrefs.SetString(KEY_PREFIX + EncryptionUtil.EncryptString(key), EncryptionUtil.EncryptString(value));
     }
 
     /// <summary>
@@ -134,7 +107,7 @@ public static class PlayerPrefsUtil
     /// </summary>
     public static void SetEncryptedBool(string key, bool value)
     {
-        Encrypt(EncryptionUtil.EncryptString(key), EncryptionUtil.EncryptInt(value ? 1 : 0));
+        PlayerPrefs.SetString(KEY_PREFIX + EncryptionUtil.EncryptString(key), EncryptionUtil.EncryptInt(value ? 1 : 0));
     }
 
     /// <summary>
@@ -244,7 +217,7 @@ public static class PlayerPrefsUtil
     /// </summary>
     public static void SetBoolArray(string key, bool[] values)
     {
-        uint[] ints = BitwiseUtil.MergeBoolsToInt(values);
+        int[] ints = BitwiseUtil.MergeBoolsToInt(values);
 
         // The key itself points at the bool quantity, not ints.
         PlayerPrefs.SetInt(key, values.Length);
@@ -378,22 +351,15 @@ public static class PlayerPrefsUtil
     /// </summary>
     public static void SetColorArray(string key, Color[] values)
     {
-        SetVector4Array(key, values.ConvertUsing<Color, Vector4>((obj) => { return obj; }).ToArray());
+        SetVector4Array(key, values.ConvertUsing<Color, Vector4, List<Vector4>>((obj) => { return obj; }).ToArray());
     }
 
     /// <summary>
     /// Encrypted version of PlayerPrefsUtil.SetEnum(), stored key and value is encrypted in player prefs.
     /// </summary>
     public static void SetEnumArray(string key, Enum[] values)
-    {
-        string[] strings = new string[values.Length];
-
-        for(int i = 0; i < value.Length; i++)
-        {
-            strings[i] = values[i];
-        }
-        
-        SetStringArray(key, strings);
+    {     
+        SetStringArray(key, values.ConvertUsing<Enum, string, List<string>>((obj) => { return obj.ToString(); }).ToArray());
     }
 
     #endregion
@@ -485,7 +451,7 @@ public static class PlayerPrefsUtil
             ints[i] = (i % 2 == 0 ? values[Mathf.FloorToInt(i / 2)].x : values[Mathf.FloorToInt(i / 2)].y);
         }
 
-        SetEncryptedIntArray(key, floats);
+        SetEncryptedIntArray(key, ints);
     }
 
     /// <summary>
@@ -541,7 +507,7 @@ public static class PlayerPrefsUtil
             }
         }
 
-        SetEncryptedIntArray(key, floats);
+        SetEncryptedIntArray(key, ints);
     }
 
     /// <summary>
@@ -577,7 +543,7 @@ public static class PlayerPrefsUtil
     /// </summary>
     public static void SetEncryptedColorArray(string key, Color[] values)
     {
-        SetEncryptedVector4Array(key, values);
+        SetEncryptedVector4Array(key, values.ConvertUsing<Color, Vector4, List<Vector4>>((obj) => { return obj; }).ToArray());
     }
 
     /// <summary>
@@ -585,14 +551,7 @@ public static class PlayerPrefsUtil
     /// </summary>
     public static void SetEncryptedEnumArray(string key, Enum[] values)
     {
-        string[] strings = new string[values.Length];
-
-        for (int i = 0; i < value.Length; i++)
-        {
-            strings[i] = values[i];
-        }
-
-        SetEncryptedStringArray(key, strings);
+        SetEncryptedStringArray(key, values.ConvertUsing<Enum, string, List<string>>((obj) => { return obj.ToString(); }).ToArray());
     }
 
     #endregion
@@ -694,7 +653,7 @@ public static class PlayerPrefsUtil
     /// <summary>
     /// A key is passed, returning an Enum of the passed type.
     /// </summary>
-    public static T GetEnum<T>(string key, T defaultValue = default(T)) where T : struct
+    public static T GetEnum<T>(string key, T defaultValue = default(T)) where T : struct, IConvertible
     {
         string stringValue = PlayerPrefs.GetString(key);
 
@@ -719,7 +678,7 @@ public static class PlayerPrefsUtil
     /// </summary>
     public static float GetEncryptedFloat(string key, float defaultValue = 0.0f)
     {
-        string result;
+        string result = "";
 
         if (Decrypt(key, ref result))
         {
@@ -736,7 +695,7 @@ public static class PlayerPrefsUtil
     /// </summary>
     public static int GetEncryptedInt(string key, int defaultValue = 0)
     {
-        string result;
+        string result = "";
 
         if (Decrypt(key, ref result))
         {
@@ -753,7 +712,7 @@ public static class PlayerPrefsUtil
     /// </summary>
     public static string GetEncryptedString(string key, string defaultValue = "")
     {
-        string result;
+        string result = "";
 
         if (Decrypt(key, ref result))
         {
@@ -770,7 +729,7 @@ public static class PlayerPrefsUtil
     /// </summary>
     public static bool GetEncryptedBool(string key, bool defaultValue = false)
     {
-        string result;
+        string result = "";
 
         if (Decrypt(key, ref result))
         {
@@ -824,7 +783,7 @@ public static class PlayerPrefsUtil
             return defaultValue;
         }
 
-        return new Vector2(floats[0], floats[1], floats[2]);
+        return new Vector3(floats[0], floats[1], floats[2]);
     }
 
     /// <summary>
@@ -868,9 +827,9 @@ public static class PlayerPrefsUtil
     /// <summary>
     /// Encrypted version of PlayerPrefsUtils.GetEnum(), an unencrypted key is passed and the value is returned decrypted
     /// </summary>
-    public static T GetEncryptedEnum<T>(string key, T defaultValue = default(T)) where T : struct
+    public static T GetEncryptedEnum<T>(string key, T defaultValue = default(T)) where T : struct, IConvertible
     {
-        string stringValue = PlayerPrefs.GetEncryptedString(key);
+        string stringValue = PlayerPrefsUtil.GetEncryptedString(key);
 
         if (!string.IsNullOrEmpty(stringValue))
         {
@@ -888,6 +847,9 @@ public static class PlayerPrefsUtil
 
     #region Get Array
 
+    /// <summary>
+    /// Just like PlayerPrefsUtil.GetFloatUtil(), but to store an array of item at once.
+    /// </summary>
     public static float[] GetFloatArray(string key, float defaultValue = 0.0f)
     {
         int count = PlayerPrefs.GetInt(key, 0);
@@ -902,41 +864,9 @@ public static class PlayerPrefsUtil
         return result;
     }
 
-    #endregion
-
-    #region Get Encrypted Array
-
-
-
-    #endregion
-
-
-    #region GetFloat
-
-
-
-
-
-    public static float[] GetEncryptedFloatArray(string key, float defaultValue = 0.0f)
-    {
-        int count = GetEncryptedInt(key, 0);
-
-        float[] result = new float[count];
-
-        for (int i = 0; i < count; i++)
-        {
-            result[i] = GetEncryptedFloat(key + i.ToString(), defaultValue);
-        }
-
-        return result;
-    }
-
-    #endregion
-
-    #region GetInt
-
-
-
+    /// <summary>
+    /// Just like PlayerPrefsUtil.GetIntUtil(), but to store an array of item at once.
+    /// </summary>
     public static int[] GetIntArray(string key, int defaultValue = 0)
     {
         int count = PlayerPrefs.GetInt(key, 0);
@@ -951,6 +881,260 @@ public static class PlayerPrefsUtil
         return result;
     }
 
+    /// <summary>
+    /// Just like PlayerPrefsUtil.GetStringUtil(), but to store an array of item at once.
+    /// </summary>
+    public static string[] GetStringArray(string key, string defaultValue = "")
+    {
+        int count = PlayerPrefs.GetInt(key, 0);
+
+        string[] result = new string[count];
+
+        for (int i = 0; i < count; i++)
+        {
+            result[i] = PlayerPrefs.GetString(key + i.ToString(), defaultValue);
+        }
+
+        return result;
+    }
+
+    /// <summary>
+    /// Just like PlayerPrefsUtil.GetBoolUtil(), but to store an array of item at once.
+    /// </summary>
+    public static bool[] GetBoolArray(string key, bool defaultValue = false)
+    {
+        int count = PlayerPrefs.GetInt(key, 0);
+
+        bool[] result = new bool[count];
+
+        for (int i = 0; i < Mathf.FloorToInt(count / 32) + 1; i++)
+        {
+            int flag = PlayerPrefs.GetInt(key + i.ToString(), defaultValue ? int.MaxValue : 0);
+            bool[] flags = BitwiseUtil.SplitIntIntoBools(flag);
+
+            for (int j = 0; j < Mathf.Min(32, count - (32 * i)); j++)
+            {
+                result[j + (32 * i)] = flags[j];
+            }
+        }
+
+        return result;
+    }
+
+    /// <summary>
+    /// Just like PlayerPrefsUtil.GetFloatUtil(), but to store an array of item at once.
+    /// </summary>
+    public static Vector2[] GetVector2Array(string key, Vector2 defaultValue = new Vector2())
+    {
+        int count = PlayerPrefs.GetInt(key, 0);
+
+        if (count <= 0 || count % 2 != 0)
+        {
+            return new Vector2[] { defaultValue };
+        }
+        
+        Vector2[] result = new Vector2[count / 2];
+
+        for (int i = 0; i < count; i++)
+        {
+            switch(i % 2)
+            {
+                case 0:
+                    result[Mathf.FloorToInt(i / 2)].x = PlayerPrefs.GetFloat(key + i.ToString(), defaultValue.x);
+                    break;
+
+                case 1:
+                    result[Mathf.FloorToInt(i / 2)].y = PlayerPrefs.GetFloat(key + i.ToString(), defaultValue.y);
+                    break;
+            }
+        }
+        
+        return result;
+    }
+
+    /// <summary>
+    /// Just like PlayerPrefsUtil.GetVector2Util(), but to store an array of item at once.
+    /// </summary>
+    public static Vector2Int[] GetVector2Array(string key, Vector2Int defaultValue = new Vector2Int())
+    {
+        int count = PlayerPrefs.GetInt(key, 0);
+
+        if (count <= 0 || count % 2 != 0)
+        {
+            return new Vector2Int[] { defaultValue };
+        }
+
+        Vector2Int[] result = new Vector2Int[count / 2];
+
+        for (int i = 0; i < count; i++)
+        {
+            switch (i % 2)
+            {
+                case 0:
+                    result[Mathf.FloorToInt(i / 2)].x = PlayerPrefs.GetInt(key + i.ToString(), defaultValue.x);
+                    break;
+
+                case 1:
+                    result[Mathf.FloorToInt(i / 2)].y = PlayerPrefs.GetInt(key + i.ToString(), defaultValue.y);
+                    break;
+            }
+        }
+
+        return result;
+    }
+
+    /// <summary>
+    /// Just like PlayerPrefsUtil.GetVector3Util(), but to store an array of item at once.
+    /// </summary>
+    public static Vector3[] GetVector3Array(string key, Vector3 defaultValue = new Vector3())
+    {
+        int count = PlayerPrefs.GetInt(key, 0);
+
+        if (count <= 0 || count % 3 != 0)
+        {
+            return new Vector3[] { defaultValue };
+        }
+
+        Vector3[] result = new Vector3[count / 3];
+
+        for (int i = 0; i < count; i++)
+        {
+            switch (i % 3)
+            {
+                case 0:
+                    result[Mathf.FloorToInt(i / 3)].x = PlayerPrefs.GetFloat(key + i.ToString(), defaultValue.x);
+                    break;
+
+                case 1:
+                    result[Mathf.FloorToInt(i / 3)].y = PlayerPrefs.GetFloat(key + i.ToString(), defaultValue.y);
+                    break;
+
+                case 2:
+                    result[Mathf.FloorToInt(i / 3)].z = PlayerPrefs.GetFloat(key + i.ToString(), defaultValue.z);
+                    break;
+            }
+        }
+
+        return result;
+    }
+
+    /// <summary>
+    /// Just like PlayerPrefsUtil.GetVector3IntUtil(), but to store an array of item at once.
+    /// </summary>
+    public static Vector3Int[] GetVector3IntArray(string key, Vector3Int defaultValue = new Vector3Int())
+    {
+        int count = PlayerPrefs.GetInt(key, 0);
+
+        if (count <= 0 || count % 3 != 0)
+        {
+            return new Vector3Int[] { defaultValue };
+        }
+
+        Vector3Int[] result = new Vector3Int[count / 3];
+
+        for (int i = 0; i < count; i++)
+        {
+            switch (i % 3)
+            {
+                case 0:
+                    result[Mathf.FloorToInt(i / 3)].x = PlayerPrefs.GetInt(key + i.ToString(), defaultValue.x);
+                    break;
+
+                case 1:
+                    result[Mathf.FloorToInt(i / 3)].y = PlayerPrefs.GetInt(key + i.ToString(), defaultValue.y);
+                    break;
+
+                case 2:
+                    result[Mathf.FloorToInt(i / 3)].z = PlayerPrefs.GetInt(key + i.ToString(), defaultValue.z);
+                    break;
+            }
+        }
+
+        return result;
+    }
+
+    /// <summary>
+    /// Just like PlayerPrefsUtil.GetVector4Util(), but to store an array of item at once.
+    /// </summary>
+    public static Vector4[] GetVector4Array(string key, Vector4 defaultValue = new Vector4())
+    {
+        int count = PlayerPrefs.GetInt(key, 0);
+
+        if (count <= 0 || count % 4 != 0)
+        {
+            return new Vector4[] { defaultValue };
+        }
+
+        Vector4[] result = new Vector4[count / 4];
+
+        for (int i = 0; i < count; i++)
+        {
+            switch (i % 4)
+            {
+                case 0:
+                    result[Mathf.FloorToInt(i / 4)].x = PlayerPrefs.GetFloat(key + i.ToString(), defaultValue.x);
+                    break;
+
+                case 1:
+                    result[Mathf.FloorToInt(i / 4)].y = PlayerPrefs.GetFloat(key + i.ToString(), defaultValue.y);
+                    break;
+
+                case 2:
+                    result[Mathf.FloorToInt(i / 4)].z = PlayerPrefs.GetFloat(key + i.ToString(), defaultValue.z);
+                    break;
+
+                case 3:
+                    result[Mathf.FloorToInt(i / 4)].w = PlayerPrefs.GetFloat(key + i.ToString(), defaultValue.w);
+                    break;
+            }
+        }
+
+        return result;
+    }
+
+    /// <summary>
+    /// Just like PlayerPrefsUtil.GetColorUtil(), but to store an array of item at once.
+    /// </summary>
+    public static Color[] GetColorArray(string key, Color defaultValue = new Color())
+    {
+        return GetVector4Array(key, defaultValue).ConvertUsing<Vector4, Color, List<Color>>((obj) => { return obj; }).ToArray();
+    }
+
+
+    /// <summary>
+    /// Just like PlayerPrefsUtil.GetEnumUtil(), but to store an array of item at once.
+    /// </summary>
+    public static T[] GetEnumArray<T>(string key, T defaultValue = default(T)) where T : struct, IConvertible
+    {
+        string[] stringValue = GetStringArray(key, defaultValue.ToString());
+
+        return stringValue.ConvertUsing<string, T, List<T>>((obj) => { return (T)Enum.Parse(typeof(T), obj); }).ToArray();
+    }
+
+    #endregion
+
+    #region Get Encrypted Array
+
+    /// <summary>
+    /// Encrypted version of PlayerPrefsUtil.GetFloatArray(), an unencrypted key is passed and the value is returned decrypted.
+    /// </summary>
+    public static float[] GetEncryptedFloatArray(string key, float defaultValue = 0.0f)
+    {
+        int count = GetEncryptedInt(key, 0);
+
+        float[] result = new float[count];
+
+        for (int i = 0; i < count; i++)
+        {
+            result[i] = GetEncryptedFloat(key + i.ToString(), defaultValue);
+        }
+
+        return result;
+    }
+
+    /// <summary>
+    /// Encrypted version of PlayerPrefsUtil.GetIntArray(), an unencrypted key is passed and the value is returned decrypted.
+    /// </summary>
     public static int[] GetEncryptedIntArray(string key, int defaultValue = 0)
     {
         int count = GetEncryptedInt(key, 0);
@@ -965,27 +1149,10 @@ public static class PlayerPrefsUtil
         return result;
     }
 
-    #endregion
-
-    #region GetString
-
-
-
-    public static string[] GetStringArray(string key, string defaultValue = 0)
-    {
-        int count = PlayerPrefs.GetInt(key, 0);
-
-        string[] result = new string[count];
-
-        for (int i = 0; i < count; i++)
-        {
-            result[i] = PlayerPrefs.GetString(key + i.ToString(), defaultValue);
-        }
-
-        return result;
-    }
-
-    public static string[] GetEncryptedStringArray(string key, string defaultValue = 0)
+    /// <summary>
+    /// Encrypted version of PlayerPrefsUtil.GetStringArray(), an unencrypted key is passed and the value is returned decrypted.
+    /// </summary>
+    public static string[] GetEncryptedStringArray(string key, string defaultValue = "")
     {
         int count = GetEncryptedInt(key, 0);
 
@@ -999,39 +1166,16 @@ public static class PlayerPrefsUtil
         return result;
     }
 
-    #endregion
-
-    #region GetBool
-
-
-
-    public static bool[] GetBoolArray(string key, bool defaultValue = false)
-    {
-        int count = PlayerPrefs.GetInt(key, 0);
-
-        bool[] result = new bool[count];
-
-        for (int i = 0; i < Mathf.FloorToInt(values.Length / 32) + 1; i++)
-        {
-            int flag = PlayerPrefs.GetInt(key + i.ToString(), defaultValue ? int.MaxValue : 0);
-            bool[] flags = BitwiseUtil.SplitIntIntoBools(flag);
-
-            for(int j = 0; j < Mathf.Min(32, count - (32 * i)); j++)
-            {
-                result[j + (32 * i)] = flags[j];
-            }
-        }
-
-        return result;
-    }
-
+    /// <summary>
+    /// Encrypted version of PlayerPrefsUtil.GetBoolArray(), an unencrypted key is passed and the value is returned decrypted.
+    /// </summary>
     public static bool[] GetEncryptedBoolArray(string key, bool defaultValue = false)
     {
         int count = GetEncryptedInt(key, 0);
 
         bool[] result = new bool[count];
 
-        for (int i = 0; i < Mathf.FloorToInt(values.Length / 32) + 1; i++)
+        for (int i = 0; i < Mathf.FloorToInt(count / 32) + 1; i++)
         {
             int flag = GetEncryptedInt(key + i.ToString(), defaultValue ? int.MaxValue : 0);
             bool[] flags = BitwiseUtil.SplitIntIntoBools(flag);
@@ -1045,17 +1189,231 @@ public static class PlayerPrefsUtil
         return result;
     }
 
+    /// <summary>
+    /// Encrypted version of PlayerPrefsUtil.GetVector2Array(), an unencrypted key is passed and the value is returned decrypted.
+    /// </summary>
+    public static Vector2[] GetEncryptedVector2Array(string key, Vector2 defaultValue = new Vector2())
+    {
+        int count = GetEncryptedInt(key, 0);
+
+        if (count <= 0 || count % 2 != 0)
+        {
+            return new Vector2[] { defaultValue };
+        }
+
+        Vector2[] result = new Vector2[count / 2];
+
+        for (int i = 0; i < count; i++)
+        {
+            switch (i % 2)
+            {
+                case 0:
+                    result[Mathf.FloorToInt(i / 2)].x = GetEncryptedFloat(key + i.ToString(), defaultValue.x);
+                    break;
+
+                case 1:
+                    result[Mathf.FloorToInt(i / 2)].y = GetEncryptedFloat(key + i.ToString(), defaultValue.y);
+                    break;
+            }
+        }
+
+        return result;
+    }
+
+    /// <summary>
+    /// Encrypted version of PlayerPrefsUtil.GetVector2IntArray(), an unencrypted key is passed and the value is returned decrypted.
+    /// </summary>
+    public static Vector2Int[] GetEncryptedVector2IntArray(string key, Vector2Int defaultValue = new Vector2Int())
+    {
+        int count = GetEncryptedInt(key, 0);
+
+        if (count <= 0 || count % 2 != 0)
+        {
+            return new Vector2Int[] { defaultValue };
+        }
+
+        Vector2Int[] result = new Vector2Int[count / 2];
+
+        for (int i = 0; i < count; i++)
+        {
+            switch (i % 2)
+            {
+                case 0:
+                    result[Mathf.FloorToInt(i / 2)].x = GetEncryptedInt(key + i.ToString(), defaultValue.x);
+                    break;
+
+                case 1:
+                    result[Mathf.FloorToInt(i / 2)].y = GetEncryptedInt(key + i.ToString(), defaultValue.y);
+                    break;
+            }
+        }
+
+        return result;
+    }
+
+    /// <summary>
+    /// Encrypted version of PlayerPrefsUtil.GetVector3Array(), an unencrypted key is passed and the value is returned decrypted.
+    /// </summary>
+    public static Vector3[] GetEncryptedVector3Array(string key, Vector3 defaultValue = new Vector3())
+    {
+        int count = GetEncryptedInt(key, 0);
+
+        if (count <= 0 || count % 3 != 0)
+        {
+            return new Vector3[] { defaultValue };
+        }
+
+        Vector3[] result = new Vector3[count / 3];
+
+        for (int i = 0; i < count; i++)
+        {
+            switch (i % 3)
+            {
+                case 0:
+                    result[Mathf.FloorToInt(i / 3)].x = GetEncryptedFloat(key + i.ToString(), defaultValue.x);
+                    break;
+
+                case 1:
+                    result[Mathf.FloorToInt(i / 3)].y = GetEncryptedFloat(key + i.ToString(), defaultValue.y);
+                    break;
+
+                case 2:
+                    result[Mathf.FloorToInt(i / 3)].z = GetEncryptedFloat(key + i.ToString(), defaultValue.z);
+                    break;
+            }
+        }
+
+        return result;
+    }
+
+    /// <summary>
+    /// Encrypted version of PlayerPrefsUtil.GetVector3IntArray(), an unencrypted key is passed and the value is returned decrypted.
+    /// </summary>
+    public static Vector3Int[] GetEncryptedVector3IntArray(string key, Vector3Int defaultValue = new Vector3Int())
+    {
+        int count = GetEncryptedInt(key, 0);
+
+        if (count <= 0 || count % 3 != 0)
+        {
+            return new Vector3Int[] { defaultValue };
+        }
+
+        Vector3Int[] result = new Vector3Int[count / 3];
+
+        for (int i = 0; i < count; i++)
+        {
+            switch (i % 3)
+            {
+                case 0:
+                    result[Mathf.FloorToInt(i / 3)].x = GetEncryptedInt(key + i.ToString(), defaultValue.x);
+                    break;
+
+                case 1:
+                    result[Mathf.FloorToInt(i / 3)].y = GetEncryptedInt(key + i.ToString(), defaultValue.y);
+                    break;
+
+                case 2:
+                    result[Mathf.FloorToInt(i / 3)].z = GetEncryptedInt(key + i.ToString(), defaultValue.z);
+                    break;
+            }
+        }
+
+        return result;
+    }
+
+    /// <summary>
+    /// Encrypted version of PlayerPrefsUtil.GetVector4Array(), an unencrypted key is passed and the value is returned decrypted.
+    /// </summary>
+    public static Vector4[] GetEncryptedVector4Array(string key, Vector4 defaultValue = new Vector4())
+    {
+        int count = GetEncryptedInt(key, 0);
+
+        if (count <= 0 || count % 4 != 0)
+        {
+            return new Vector4[] { defaultValue };
+        }
+
+        Vector4[] result = new Vector4[count / 4];
+
+        for (int i = 0; i < count; i++)
+        {
+            switch (i % 4)
+            {
+                case 0:
+                    result[Mathf.FloorToInt(i / 4)].x = GetEncryptedFloat(key + i.ToString(), defaultValue.x);
+                    break;
+
+                case 1:
+                    result[Mathf.FloorToInt(i / 4)].y = GetEncryptedFloat(key + i.ToString(), defaultValue.y);
+                    break;
+
+                case 2:
+                    result[Mathf.FloorToInt(i / 4)].z = GetEncryptedFloat(key + i.ToString(), defaultValue.z);
+                    break;
+
+                case 3:
+                    result[Mathf.FloorToInt(i / 4)].w = GetEncryptedFloat(key + i.ToString(), defaultValue.w);
+                    break;
+            }
+        }
+
+        return result;
+    }
+
+    /// <summary>
+    /// Encrypted version of PlayerPrefsUtil.GetColorArray(), an unencrypted key is passed and the value is returned decrypted.
+    /// </summary>
+    public static Color[] GetEncryptedColorArray(string key, Color defaultValue = new Color())
+    {
+        return GetEncryptedVector4Array(key, defaultValue).ConvertUsing<Vector4, Color, List<Color>>((obj) => { return obj; }).ToArray();
+    }
+
+    /// <summary>
+    /// Encrypted version of PlayerPrefsUtil.GetEnumArray(), an unencrypted key is passed and the value is returned decrypted.
+    /// </summary>
+    public static T[] GetEncryptedEnumArray<T>(string key, T defaultValue = default(T)) where T : struct, IConvertible
+    {
+        string[] stringValue = GetEncryptedStringArray(key, defaultValue.ToString());
+
+        return stringValue.ConvertUsing<string, T, List<T>>((obj) => { return (T)Enum.Parse(typeof(T), obj); }).ToArray();
+    }
+
     #endregion
 
 
+    #region Utility Functions
 
-
-
-    private static void Encrypt(string key, string value)
+    /// <summary>
+    /// Check if the string given is an encrypted key.
+    /// </summary>
+    private static bool IsEncryptedKey(string value)
     {
-        PlayerPrefs.SetString(KEY_PREFIX + encryptedKey, value);
+        return value.StartsWith(KEY_PREFIX);
     }
 
+    /// <summary>
+    /// Decrypts the passed-in key.
+    /// </summary>
+    private static string DecryptKey(string encryptedKey)
+    {
+        if (encryptedKey.StartsWith(KEY_PREFIX))
+        {
+            // Remove the prefix.
+            string strippedKey = encryptedKey.Substring(KEY_PREFIX.Length);
+
+            return EncryptionUtil.DecryptString(strippedKey);
+        }
+        else
+        {
+            Debug.Log("PlayerPrefsUtil : Key given doesn't contain proper data header.");
+            return encryptedKey;
+        }
+    }
+
+    /// <summary>
+    /// Decrypts key, returning if the encrypted key actually resulted in a valid encrypted string. Said string is passed by reference.
+    /// </summary>
+    /// <returns></returns>
     private static bool Decrypt(string key, ref string result)
     {
         string encryptedKey = EncryptionUtil.EncryptString(key);
@@ -1071,4 +1429,6 @@ public static class PlayerPrefsUtil
             return false;
         }
     }
+
+    #endregion
 }

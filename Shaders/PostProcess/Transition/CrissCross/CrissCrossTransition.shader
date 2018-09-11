@@ -1,7 +1,5 @@
-﻿// Original code from ellioman's Shader Project. https://github.com/ellioman/ShaderProject
-// Heavily modified by CantyCanadian to support custom angles.
-// Make sure to use the BarsTransitionPostProcessShader script instead of the regular PostProcessShader script.
-Shader "Custom/PostProcess/Transition/Bars"
+﻿// Make sure to use the CrissCrossTransitionPostProcessShader script instead of the regular PostProcessShader script.
+Shader "Custom/PostProcess/Transition/CrissCross"
 {
 	Properties
 	{
@@ -42,15 +40,13 @@ Shader "Custom/PostProcess/Transition/Bars"
 			sampler2D _MainTex;
 			sampler2D _TransitionTex;
 
-			float4 _ScreenResolution;
 			float4 _Color;
 
 			float _TransitionValue;
-			float _PositionX;
-			float _PositionY;
 			float _TextureColor;
 			float _Angle;
 
+			int _BarCount;
 			int _Reverse;
 
 			v2f vert (appdata v)
@@ -70,13 +66,9 @@ Shader "Custom/PostProcess/Transition/Bars"
 				float4 transitionTex = tex2D(_TransitionTex, i.uv);
 				float4 final = lerp(transitionTex, _Color, _TextureColor);
 
-				float2 center = float2(_PositionX * _ScreenResolution.x, _PositionY * _ScreenResolution.y);
+				float barSize = 1.0f / max(_BarCount, 1);
 
-				float2 newUV = (i.uv * 2.0f) - float2(1.0f, 1.0f);
-				float angle = 1.0f - abs((_Angle - 90.0f) / 90.0f);
-
-				float cutoff = _Angle <= 90.0f ? lerp(newUV.x, newUV.y, angle) : lerp(-newUV.x, newUV.y, angle);
-				float value = cutoff < _TransitionValue && cutoff > -_TransitionValue ? 1.0f : 0.0f;
+				float value = (i.uv.y / barSize) % 2 == 0 ? 1.0f : 0.0f;
 				
 				if (_Reverse == 0)
 				{
