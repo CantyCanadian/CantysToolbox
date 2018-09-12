@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public static class ParsingUtil
+public static class CSVUtil
 {
     /// <summary>
     /// Parse CSV file to extract a single column. Assumes column 0 is the data key.
@@ -11,7 +11,7 @@ public static class ParsingUtil
     /// <param name="filename">Filename without extention (it'll add it automatically).</param>
     /// <param name="column">Extracted column.</param>
     /// <returns>Dictionary containing extracted data.</returns>
-    public static Dictionary<string, string> LoadCSV_IDColumn(string path, string filename, int column)
+    public static Dictionary<string, string> LoadSingleColumn(string path, string filename, int column)
     {
         if (column == -1)
         {
@@ -179,7 +179,7 @@ public static class ParsingUtil
     /// <param name="filename">Filename without extention (it'll add it automatically).</param>
     /// <param name="columns">Extracted columns.</param>
     /// <returns>Dictionary containing extracted data.</returns>
-    public static Dictionary<string, List<string>> LoadCSV_IDMultipleColumn(string path, string filename, int[] columns)
+    public static Dictionary<string, List<string>> LoadMultipleColumns(string path, string filename, int[] columns)
     {
         string finalFilename = path + filename + ".csv";
 
@@ -198,7 +198,7 @@ public static class ParsingUtil
 
         foreach(int i in columns)
         {
-            Dictionary<string, string> localization = LoadCSV_PartialIDColumn(data, i, filename);
+            Dictionary<string, string> localization = LoadPartialColumn(data, i, filename);
 
             foreach(KeyValuePair<string, string> pair in localization)
             {
@@ -222,7 +222,7 @@ public static class ParsingUtil
     /// <param name="path">Path where the file should be.</param>
     /// <param name="filename">Filename without extention (it'll add it automatically).</param>
     /// <returns>Dictionary containing extracted data.</returns>
-    public static Dictionary<string, List<string>> LoadCSV_AllColumn(string path, string filename)
+    public static Dictionary<string, List<string>> LoadAllColumns(string path, string filename)
     {
         string finalFilename = path + filename + ".csv";
 
@@ -316,8 +316,8 @@ public static class ParsingUtil
         return localization;
     }
 
-    //Used for LoadCSV_IDMultipleColumn.
-    private static Dictionary<string, string> LoadCSV_PartialIDColumn(string data, int column, string filename)
+    //Used for LoadIDMultipleColumn.
+    private static Dictionary<string, string> LoadPartialColumn(string data, int column, string filename)
     {
         Dictionary<string, string> localization = new Dictionary<string, string>();
 
