@@ -7,21 +7,21 @@ public class ExternalDataManager : Singleton<ExternalDataManager>
     public static string ExternalDataPath { get { return "Assets/Assets/External/"; } }
 
     private Dictionary<string, int[]> m_PreparedFiles = null;
-    private Dictionary<string, string> m_Data = null;
+    private Dictionary<string, string[]> m_Data = null;
 
     public bool HasData(string key)
     {
         return m_Data.ContainsKey(key);
     }
 
-    public string GetData(string key)
+    public string[] GetData(string key)
     {
         return m_Data[key];
     }
 
-    public T GetData<T>(string key) where T : IConvertible
+    public T[] GetData<T>(string key) where T : IConvertible
     {
-        return m_Data[key].ConvertTo<T>();
+        return m_Data[key].ConvertUsing<string, T, List<T>>((obj) => { return obj.ConvertTo<T>(); }).toArray();
     }
 
     public void PrepareFile(string fileName)
@@ -64,16 +64,19 @@ public class ExternalDataManager : Singleton<ExternalDataManager>
             {
                 if (file.Value[0] == -1)
                 {
-                    m_Data.AddRange(CSVUtil.LoadAllColumns(ExternalDataPath, file.Key));
+                    Dictionary<string, List<string>> loadedData = CSVUtil.LoadAllColumns(ExternalDataPath, file.Key);
+                    m_Data.Add(loadedData.ExtractKeys(), loadedData.ExtractValues().toArray());
                 }
                 else
                 {
-                    m_Data.AddRange(CSVUtil.LoadSingleColumn(ExternalDataPath, file.Key, file.Value[0]));
+                    Dictionary<string, string> loadedData = CSVUtil.LoadSingleColumn(ExternalDataPath, file.Key, file.Value[0]);
+                    m_Data.Add(loadedData.ExtractKeys(), new string[] { loadedData.ExtractValues() });
                 }
             }
             else
             {
-                m_Data.AddRange(CSVUtil.LoadMultipleColumns(ExternalDataPath, file.Key, file.Value));
+                Dictionary<string, List<string>> loadedData = CSVUtil.LoadMultipleColumns(ExternalDataPath, file.Key, file.Value);
+                m_Data.Add(loadedData.ExtractKeys(), loadedData.ExtractValues().toArray());
             }
         }
     }
