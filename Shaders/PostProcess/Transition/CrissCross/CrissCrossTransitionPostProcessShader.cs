@@ -20,6 +20,7 @@ public class CrissCrossTransitionPostProcessShader : MonoBehaviour
     private void OnRenderImage(RenderTexture src, RenderTexture dst)
     {
         ShaderMaterial.SetFloat("_TransitionValue", ReverseEffect ? 1.0f - TransitionValue : TransitionValue);
+        ShaderMaterial.SetInt("_BarCount", BarCount);
         ShaderMaterial.SetInt("_Reverse", ReverseEffect ? 1 : 0);
         ShaderMaterial.SetFloat("_Angle", Angle);
 
