@@ -1,5 +1,4 @@
-﻿// Original code from ellioman's Shader Project. https://github.com/ellioman/ShaderProject
-// Heavily modified by CantyCanadian to support custom angles.
+﻿// Taken from ellioman's Shader Project. https://github.com/ellioman/ShaderProject
 // Make sure to use the BarsTransitionPostProcessShader script instead of the regular PostProcessShader script.
 Shader "Custom/PostProcess/Transition/Bars"
 {

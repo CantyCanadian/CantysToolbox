@@ -1,10 +1,10 @@
-﻿// Original shader found here : https://github.com/JPBotelho/Unity-Camera-cutout, modified by @CantyCanadian on Twitter.
+﻿// Make sure to use the CutoutPostProcessShader script instead of the regular PostProcessShader script.
+// Original shader found here : https://github.com/JPBotelho/Unity-Camera-cutout, modified by @CantyCanadian on Twitter.
 Shader "Custom/PostProcess/Cutout"
 {
 	Properties
 	{
 		[HideInInspector]_MainTex ("Texture", 2D) = "white" {}
-		_Mask ("Cutout", 2D) = "white" {}
 		_Color ("Color", Color) = (1, 1, 1, 1)
 		_Alpha ("Alpha", Range(0.0, 1.0)) = 1.0
 	}

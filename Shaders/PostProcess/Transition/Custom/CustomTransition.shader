@@ -1,4 +1,6 @@
 ﻿// Make sure to use the CustomTransitionPostProcessShader script instead of the regular PostProcessShader script.
+// Packaged transition graphics are made by Makin' Stuff Look Good on Youtube : https://www.youtube.com/channel/UCEklP9iLcpExB8vp_fWQseg
+// Minus the Diamonds texture made by stellarNull on Twitter :  https://twitter.com/stellarNull 
 Shader "Custom/PostProcess/Transition/Custom"
 {
 	Properties
@@ -7,6 +9,7 @@ Shader "Custom/PostProcess/Transition/Custom"
 		_TransitionTex ("Transition Texture", 2D) = "white" {}
 		_Color ("Transition Color", Color) = (1.0, 1.0, 1.0, 1.0)
 		_TextureColor ("Texture-Color Amount", Range(0.0, 1.0)) = 0.0
+		_Blur ("Texture Blur", Range(0.0, 1.0)) = 0.05
 	}
 	SubShader
 	{
@@ -17,9 +20,6 @@ Shader "Custom/PostProcess/Transition/Custom"
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
-			#pragma fragmentoption ARB_precision_hint_fastest
-			#pragma target 3.0
-			#pragma glsl
 
 			#include "UnityCG.cginc"
 
@@ -47,6 +47,7 @@ Shader "Custom/PostProcess/Transition/Custom"
 
 			float _Transition;
 			float _TextureColor;
+			float _Blur;
 
 			int _Reverse;
 
@@ -75,8 +76,29 @@ Shader "Custom/PostProcess/Transition/Custom"
 				float4 transitionTex = tex2D(_TransitionTex, i.uv);
 				float4 final = lerp(transitionTex, _Color, _TextureColor);
 
-				float4 transitionPattern = tex2D(_TransitionPattern, i.uv);
-				float value = transitionPattern.r >= _Transition ? 1.0f : 0.0f;
+				float transitionPattern = tex2D(_TransitionPattern, i.uv).r;
+				float value = 0.0f;
+				float alpha = 1.0f;
+
+				if (transitionPattern >= _Transition + _Blur)
+				{
+					value = 1.0f;
+				}
+				else if (transitionPattern >= _Transition)
+				{
+					float blurLevel = min(_Blur, _Transition);
+
+					if (blurLevel > 0.0f)
+					{
+						float percent = (transitionPattern - _Transition) / blurLevel;
+
+						value = smoothstep(0.0f, 1.0f, percent);
+					}
+					else
+					{
+						value = 1.0f;
+					}
+				}
 
 				if (_Reverse == 0)
 				{
