@@ -137,4 +137,28 @@ public static class IEnumerableExtension
 
         return result;
     }
+
+    /// <summary>
+    /// Utility function for the cases when using an IEnumerable containing components. Calls SetActive on the attached GameObject.
+    /// </summary>
+    /// <param name="flag">Flag passed to SetActive</param>
+    public static void SetAllActive<I>(this IEnumerable<I> target, bool flag) where I : Component
+    {
+        foreach(I obj in target)
+        {
+            obj.gameObject.SetActive(flag);
+        }
+    }
+
+    /// <summary>
+    /// Utility function for the cases when using an IEnumerable containing game objects. Calls SetActive on each.
+    /// </summary>
+    /// <param name="flag">Flag passed to SetActive</param>
+    public static void SetAllActive(this IEnumerable<GameObject> target, bool flag)
+    {
+        foreach (GameObject obj in target)
+        {
+            obj.SetActive(flag);
+        }
+    }
 }

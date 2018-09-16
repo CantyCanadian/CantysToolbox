@@ -8,7 +8,7 @@ Material:
   m_PrefabInternal: {fileID: 0}
   m_Name: BasicPushTransitionMat
   m_Shader: {fileID: 4800000, guid: 83364dfc486b8394eb056d7e63bff359, type: 3}
-  m_ShaderKeywords: 
+  m_ShaderKeywords: _SPLITIMAGE_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -74,7 +74,7 @@ Material:
     - _Reverse: 0
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
-    - _SplitImage: 0
+    - _SplitImage: 1
     - _SrcBlend: 1
     - _TextureColor: 1
     - _UVSec: 0

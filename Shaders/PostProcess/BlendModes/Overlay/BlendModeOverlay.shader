@@ -3,7 +3,7 @@ Shader "Custom/PostProcess/BlendMode/Overlay"
 {
 	Properties
 	{
-		_MainTex ("Base (RGB)", 2D) = "white" {}
+		[HideInInspector]_MainTex ("Base (RGB)", 2D) = "white" {}
 		_BlendTex ("Blend Texture (RGB)", 2D) = "white" {}
 		_Opacity ("Blend Opacity", Range(0.0, 1.0)) = 1.0
 	}
@@ -14,16 +14,15 @@ Shader "Custom/PostProcess/BlendMode/Overlay"
 		Pass
 		{
 			CGPROGRAM
-			#pragma vertex vert_img
+			#pragma vertex vert
 			#pragma fragment frag
-			#pragma fragmentoption ARB_precision_hint_fastest
 			
 			#include "UnityCG.cginc"
 
 			struct appdata
 			{
-				float4 vertex : POSITION;
 				float2 uv : TEXCOORD0;
+				float4 vertex : POSITION;
 			};
 
 			struct v2f
@@ -36,6 +35,16 @@ Shader "Custom/PostProcess/BlendMode/Overlay"
 			sampler2D _BlendTex;
 
 			float _Opacity;
+
+			v2f vert (appdata v)
+			{
+				v2f o;
+
+				o.vertex = UnityObjectToClipPos(v.vertex);
+                o.uv = v.uv;
+
+				return o;
+			}
 
 			fixed OverlayBlendMode(fixed basePixel, fixed blendPixel)
 			{

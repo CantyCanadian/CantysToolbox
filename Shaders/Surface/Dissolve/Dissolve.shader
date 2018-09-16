@@ -11,6 +11,8 @@ Shader "Custom/Surface/Dissolve"
 		_Glossiness ("Smoothness", Range(0,1)) = 0.5
 		_Metallic ("Metallic", Range(0,1)) = 0.0
 
+		_Dissolve ("Dissolve", Range(0,1)) = 0.0
+
 		_Noise ("Noise", 2D) = "white" {}
 
 		_EdgeThreshold ("Edge", Range (0, 0.25)) = 0
@@ -50,7 +52,7 @@ Shader "Custom/Surface/Dissolve"
 
 		bool _Invert;
 
-		uniform float _Dissolve; //Set in script
+		float _Dissolve; //Set in script
 
 		void Surface(Input IN, inout SurfaceOutputStandard o) 
 		{

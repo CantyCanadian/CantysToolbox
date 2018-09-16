@@ -7,8 +7,23 @@ public class TransitionPostProcessShader : MonoBehaviour
 {
     public Material ShaderMaterial;
 
+    public CurvedTimer TransitionTimer;
+
     [Range(0.0f, 1.0f)]
     public float TransitionValue;
+
+    public void Play(bool backwards = false)
+    {
+        TransitionTimer.Play(backwards);
+    }
+
+    public void Update()
+    {
+        if (TransitionTimer.isPlaying)
+        {
+            TransitionValue = TransitionTimer.Value;
+        }
+    }
 
     private void OnRenderImage(RenderTexture src, RenderTexture dst)
     {

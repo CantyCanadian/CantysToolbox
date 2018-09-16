@@ -3,7 +3,7 @@ Shader "Custom/PostProcess/BlendMode/Multiply"
 {
 	Properties
 	{
-		_MainTex ("Base (RGB)", 2D) = "white" {}
+		[HideInInspector]_MainTex ("Base (RGB)", 2D) = "white" {}
 		_BlendTex ("Blend Texture (RGB)", 2D) = "white" {}
 		_Opacity ("Blend Opacity", Range(0.0, 1.0)) = 1.0
 	}
@@ -14,9 +14,8 @@ Shader "Custom/PostProcess/BlendMode/Multiply"
 		Pass
 		{
 			CGPROGRAM
-			#pragma vertex vert_img
+			#pragma vertex vert
 			#pragma fragment frag
-			#pragma fragmentoption ARB_precision_hint_fastest
 			
 			#include "UnityCG.cginc"
 
@@ -36,6 +35,16 @@ Shader "Custom/PostProcess/BlendMode/Multiply"
 			sampler2D _BlendTex;
 
 			float _Opacity;
+
+			v2f vert (appdata v)
+			{
+				v2f o;
+
+				o.vertex = UnityObjectToClipPos(v.vertex);
+                o.uv = v.uv;
+
+				return o;
+			}
 
 			fixed4 frag (v2f i) : COLOR
 			{

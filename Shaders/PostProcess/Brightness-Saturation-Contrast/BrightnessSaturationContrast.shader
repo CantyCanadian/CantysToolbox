@@ -3,8 +3,8 @@ Shader "Custom/PostProcess/BrightnessSaturationContrast"
 {
 	Properties
 	{
-		_MainTex ("Base (RGB)", 2D) = "white" {}
-		_RGBAAffect ("RGBA Effect", vector) = (0.5, 0.5, 0.5, 1.0)
+		[HideInInspector]_MainTex ("Base (RGB)", 2D) = "white" {}
+		_RGBAAffect ("RGBA Effect", vector) = (0.5, 0.5, 0.5, 0.0)
 		_BrightnessAmount ("Brightness Amount", Range(0.0, 1.0)) = 1.0
 		_SaturationAmount ("Saturation Amount", Range(0.0, 1.0)) = 1.0
 		_ContrastAmount ("Contrast Amount", Range(0.0, 1.0)) = 1.0
@@ -20,7 +20,7 @@ Shader "Custom/PostProcess/BrightnessSaturationContrast"
 		Pass
 		{
 			CGPROGRAM
-			#pragma vertex vert_img
+			#pragma vertex vert
 			#pragma fragment frag
 			#pragma fragmentoption ARB_precision_hint_fastest
 			
@@ -28,8 +28,8 @@ Shader "Custom/PostProcess/BrightnessSaturationContrast"
 
 			struct appdata
 			{
-				float4 vertex : POSITION;
 				float2 uv : TEXCOORD0;
+				float4 vertex : POSITION;
 			};
 
 			struct v2f
@@ -46,21 +46,31 @@ Shader "Custom/PostProcess/BrightnessSaturationContrast"
 			float _SaturationAmount;
 			float _ContrastAmount;
 
+			v2f vert (appdata v)
+			{
+				v2f o;
+
+				o.vertex = UnityObjectToClipPos(v.vertex);
+                o.uv = v.uv;
+
+				return o;
+			}
+
 			fixed4 frag (v2f i) : COLOR
 			{
-				fixed4 renderTex = tex2D(_MainTex, i.uv);
+				fixed4 col = tex2D(_MainTex, i.uv);
 					
 				float3 luminanceCoefficient = float3(0.2125, 0.7154, 0.0721);
 					
-				float3 brightnessColor = renderTex.rgb * _BrightnessAmount;
+				float3 brightnessColor = col.rgb * _BrightnessAmount;
 				float brightnessIntensity = dot(brightnessColor, luminanceCoefficient);
 					
 				float3 saturationColor = lerp(float3(brightnessIntensity, brightnessIntensity, brightnessIntensity), brightnessColor, _SaturationAmount);
 					
 				float3 contrastColor = lerp(_RGBAAffect.rgb, saturationColor, _ContrastAmount);
 
-				renderTex.rgb = lerp(contrastColor, renderTex.rgb, _RGBAAffect.a);
-				return renderTex;
+				col.rgb = lerp(contrastColor, col.rgb, _RGBAAffect.a);
+				return col;
 			}
 			ENDCG
 		}
