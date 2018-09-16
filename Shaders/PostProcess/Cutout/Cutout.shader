@@ -5,6 +5,7 @@ Shader "Custom/PostProcess/Cutout"
 	Properties
 	{
 		[HideInInspector]_MainTex ("Texture", 2D) = "white" {}
+		_Mask ("Cutout", 2D) = "white" {}
 		_Color ("Color", Color) = (1, 1, 1, 1)
 		_Alpha ("Alpha", Range(0.0, 1.0)) = 1.0
 	}

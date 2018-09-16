@@ -1,6 +1,6 @@
 ﻿// Taken from ellioman's Shader Project. https://github.com/ellioman/ShaderProject
 // Make sure to use the TransitionPostProcessShader script instead of the regular PostProcessShader script.
-Shader "Custom/PostProcess/Transition/Circle"
+Shader "Custom/PostProcess/Transition/Push"
 {
 	Properties
 	{
@@ -8,9 +8,8 @@ Shader "Custom/PostProcess/Transition/Circle"
 		_TransitionTex ("Transition Texture", 2D) = "white" {}
 		_Color ("Transition Color", Color) = (1.0, 1.0, 1.0, 1.0)
 		_TextureColor ("Texture-Color Amount", Range(0.0, 1.0)) = 0.0
-		_CenterX ("Center Point X", Range(0.0, 1.0)) = 0.5
-		_CenterY ("Center Point Y", Range(0.0, 1.0)) = 0.5
-		[Toggle] _Reverse ("Reverse Effect", int) = 0
+		_Angle ("Angle", Range(0.0, 180.0)) = 0.0
+		[Toggle]_SplitImage ("Split Image", int) = 1
 	}
 	SubShader
 	{
@@ -23,6 +22,8 @@ Shader "Custom/PostProcess/Transition/Circle"
 			#pragma fragment frag
 
 			#include "UnityCG.cginc"
+			#include "../../../CGIncludes/AngleMath.cginc"
+			#include "../../../CGIncludes/SquareMath.cginc"
 
 			struct appdata
 			{
@@ -41,16 +42,16 @@ Shader "Custom/PostProcess/Transition/Circle"
 			sampler2D _MainTex;
 			sampler2D _TransitionTex;
 
+			float4 _ScreenResolution;
 			float4 _Color;
 
-			float2 _ScreenResolution;
-
-			float _CenterX;
-			float _CenterY;
 			float _TransitionValue;
+			float _PositionX;
+			float _PositionY;
 			float _TextureColor;
+			float _Angle;
 
-			int _Reverse;
+			int _SplitImage;
 
 			v2f vert (appdata v)
 			{
@@ -65,24 +66,21 @@ Shader "Custom/PostProcess/Transition/Circle"
 
 			fixed4 frag (v2f i) : SV_Target
 			{
-				float4 tex = tex2D(_MainTex, i.uv);
+				float2 center = float2(_PositionX * _ScreenResolution.x, _PositionY * _ScreenResolution.y);
+
+				float2 newUV = CenterUV(i.uv);
+				float angle = 1.0f - abs((_Angle - 90.0f) / 90.0f);
+				
+				float cutoff = _Angle <= 90.0f ? lerp(newUV.x, newUV.y, angle) : lerp(-newUV.x, newUV.y, angle);
+				float value = cutoff < _TransitionValue && cutoff > -_TransitionValue ? 0.0f : 1.0f;
+
+				float2 unitVector = UnitVector(_Angle);
+				float2 direction = unitVector / 2.0f;
+				float2 pushUV = i.uv + (_TransitionValue * SquareLength(_Angle)) * (AngleBetween(unitVector, newUV) < 0.0f ? direction : -direction);
+
+				float4 tex = tex2D(_MainTex, _SplitImage ? pushUV : i.uv);
 				float4 transitionTex = tex2D(_TransitionTex, i.uv);
 				float4 final = lerp(transitionTex, _Color, _TextureColor);
-
-				float2 center = float2(_CenterX, _CenterY) * _ScreenResolution;
-				
-				float width = _ScreenResolution.x + (abs(_CenterX * 2.0f - 1.0f) * _ScreenResolution.x);
-				float height = _ScreenResolution.y + (abs(_CenterY * 2.0f - 1.0f) * _ScreenResolution.y);
-				float radius = 0.5f * sqrt(width * width + height * height);
-
-				float newTransitionValue = _Reverse ? _TransitionValue : 1.0f - _TransitionValue;
-
-				float value = clamp(distance(center.xy, (i.uv.xy * _ScreenResolution.xy)) - (radius * newTransitionValue) + 1, 0.0, 1.0);
-
-				if (_Reverse == 0)
-				{
-					value = 1.0f - value;
-				}
 
 				return lerp(final, tex, value);
 			}

@@ -6,8 +6,8 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: BasicCustomTransitionMat
-  m_Shader: {fileID: 4800000, guid: b0281fcb298193e4981404bbe8ebfc37, type: 3}
+  m_Name: BasicPushTransitionMat
+  m_Shader: {fileID: 4800000, guid: 83364dfc486b8394eb056d7e63bff359, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -54,16 +54,12 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _TransitionPattern:
-        m_Texture: {fileID: 2800000, guid: b21707f6c47e44743b731004baf6f66b, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
     - _TransitionTex:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
-    - _Blur: 0.2
+    - _Angle: 59.5
     - _BumpScale: 1
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
@@ -71,7 +67,6 @@ Material:
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
-    - _Invert: 0
     - _Metallic: 0
     - _Mode: 0
     - _OcclusionStrength: 1
@@ -79,6 +74,7 @@ Material:
     - _Reverse: 0
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
+    - _SplitImage: 0
     - _SrcBlend: 1
     - _TextureColor: 1
     - _UVSec: 0

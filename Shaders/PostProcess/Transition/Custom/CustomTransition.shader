@@ -1,4 +1,4 @@
-﻿// Make sure to use the CustomTransitionPostProcessShader script instead of the regular PostProcessShader script.
+﻿// Make sure to use the TransitionPostProcessShader script instead of the regular PostProcessShader script.
 // Packaged transition graphics are made by Makin' Stuff Look Good on Youtube : https://www.youtube.com/channel/UCEklP9iLcpExB8vp_fWQseg
 // Minus the Diamonds texture made by stellarNull on Twitter :  https://twitter.com/stellarNull 
 Shader "Custom/PostProcess/Transition/Custom"
@@ -6,10 +6,12 @@ Shader "Custom/PostProcess/Transition/Custom"
 	Properties
 	{
 		[HideInInspector]_MainTex ("Main Texture", 2D) = "white" {}
+		_TransitionPattern ("Transition Pattern", 2D) = "white" {}
 		_TransitionTex ("Transition Texture", 2D) = "white" {}
 		_Color ("Transition Color", Color) = (1.0, 1.0, 1.0, 1.0)
 		_TextureColor ("Texture-Color Amount", Range(0.0, 1.0)) = 0.0
 		_Blur ("Texture Blur", Range(0.0, 1.0)) = 0.05
+		[Toggle] _Reverse ("Reverse Effect", int) = 0
 	}
 	SubShader
 	{
@@ -35,17 +37,15 @@ Shader "Custom/PostProcess/Transition/Custom"
 				float4 color : COLOR;
 				float4 vertex : SV_POSITION;
 				float2 uv : TEXCOORD0;
-				float2 uv1 : TEXCOORD1;
 			};
 
 			sampler2D _MainTex;
 			sampler2D _TransitionTex;
 			sampler2D _TransitionPattern;
 
-			float4 _MainTex_TexelSize;
 			float4 _Color;
 
-			float _Transition;
+			float _TransitionValue;
 			float _TextureColor;
 			float _Blur;
 
@@ -57,15 +57,7 @@ Shader "Custom/PostProcess/Transition/Custom"
 
 				o.vertex = UnityObjectToClipPos(v.vertex);
                 o.uv = v.uv;
-				o.uv1 = v.uv;
                 o.color = v.color;
-
-				#if UNITY_UV_STARTS_AT_TOP
-				if (_MainTex_TexelSize.y < 0)
-				{
-					o.uv1.y = 1 - o.uv1.y;
-				}
-				#endif
 
 				return o;
 			}
@@ -80,17 +72,17 @@ Shader "Custom/PostProcess/Transition/Custom"
 				float value = 0.0f;
 				float alpha = 1.0f;
 
-				if (transitionPattern >= _Transition + _Blur)
+				if (transitionPattern >= _TransitionValue + _Blur)
 				{
 					value = 1.0f;
 				}
-				else if (transitionPattern >= _Transition)
+				else if (transitionPattern >= _TransitionValue)
 				{
-					float blurLevel = min(_Blur, _Transition);
+					float blurLevel = min(_Blur, _TransitionValue);
 
 					if (blurLevel > 0.0f)
 					{
-						float percent = (transitionPattern - _Transition) / blurLevel;
+						float percent = (transitionPattern - _TransitionValue) / blurLevel;
 
 						value = smoothstep(0.0f, 1.0f, percent);
 					}
