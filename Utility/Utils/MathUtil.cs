@@ -12,7 +12,7 @@ public static class MathUtil
     /// <param name="min">Minimum value.</param>
     /// <param name="max">Maximum value.</param>
     /// <returns>Returns decremented index.</returns>
-    public static int DecrementWrap(int value, int minus, int min, int max)
+    public static void DecrementWrap(ref int value, int minus, int min, int max)
     {
         value -= minus;
 
@@ -20,8 +20,6 @@ public static class MathUtil
         {
             value = max;
         }
-
-        return value;
     }
 
     /// <summary>
@@ -32,7 +30,7 @@ public static class MathUtil
     /// <param name="min">Minimum value.</param>
     /// <param name="max">Maximum value.</param>
     /// <returns>Returns incremented index.</returns>
-    public static int IncrementWrap(int value, int add, int min, int max)
+    public static void IncrementWrap(ref int value, int add, int min, int max)
     {
         value += add;
 
@@ -40,8 +38,6 @@ public static class MathUtil
         {
             value = min;
         }
-
-        return value;
     }
 
     /// <summary>

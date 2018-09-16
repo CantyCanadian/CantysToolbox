@@ -4,7 +4,7 @@ using UnityEngine;
 // Simple script to run the dissolve shader, made by CantyCanadian.
 public class DissolveShader : MonoBehaviour
 {
-    public CurvedTimer DissolveTimer;
+    public CurveTimer DissolveTimer;
 
     private Renderer m_Renderer;
 

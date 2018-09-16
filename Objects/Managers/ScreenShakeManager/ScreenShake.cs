@@ -8,17 +8,17 @@ public class ScreenShake : Singleton<ScreenShake>
     public Vector3 PositionInfluence = new Vector3(0.5f, 0.5f, 0.5f);
     public Vector3 RotationInfluence = new Vector3(1.0f, 1.0f, 1.0f);
 
-    private ShakeInformation m_MainShake;
-    private ShakeInformation m_UnderlyingShake;
+    private ShakeInformation? m_MainShake = null;
+    private ShakeInformation? m_UnderlyingShake = null;
 
     private struct ShakeInformation
     {
-        public float Strength = 0.0f;
-        public float Smoothness = 0.0f;
-        public float EaseInTime = 0.0f;
-        public float UpTime = 0.0f;
-        public float EaseOutTime = 0.0f;
-        public float Delta = 0.0f;
+        public float Strength;
+        public float Smoothness;
+        public float EaseInTime;
+        public float UpTime;
+        public float EaseOutTime;
+        public float Delta;
 
         public float TotalTime()
         {
@@ -27,46 +27,46 @@ public class ScreenShake : Singleton<ScreenShake>
 
         public bool UpdateInformation(ref float strength, ref float smoothness)
         {
-            if (m_UnderlyingShake.EaseInTime > 0.0f)
+            if (EaseInTime > 0.0f)
             {
-                m_UnderlyingShake.Delta += Time.deltaTime;
+                Delta += Time.deltaTime;
 
-                if (m_UnderlyingShake.Delta >= m_UnderlyingShake.EaseInTime)
+                if (Delta >= EaseInTime)
                 {
-                    m_UnderlyingShake.EaseInTime = 0.0f;
-                    m_UnderlyingShake.Delta = 0.0f;
-                    strength = m_UnderlyingShake.Strength;
-                    smoothness = m_UnderlyingShake.Smoothness;
+                    EaseInTime = 0.0f;
+                    Delta = 0.0f;
+                    strength = Strength;
+                    smoothness = Smoothness;
                 }
                 else
                 {
-                    strength = Mathf.Lerp(0.0f, m_UnderlyingShake.Strength, m_UnderlyingShake.Delta / m_UnderlyingShake.EaseInTime);
-                    smoothness = Mathf.Lerp(0.0f, m_UnderlyingShake.Smoothness, m_UnderlyingShake.Delta / m_UnderlyingShake.EaseInTime);
+                    strength = Mathf.Lerp(0.0f, Strength, Delta / EaseInTime);
+                    smoothness = Mathf.Lerp(0.0f, Smoothness, Delta / EaseInTime);
                 }
             }
-            else if (m_UnderlyingShake.UpTime == -1.0f)
+            else if (UpTime == -1.0f)
             {
-                strength = m_UnderlyingShake.Strength;
-                smoothness = m_UnderlyingShake.Smoothness;
+                strength = Strength;
+                smoothness = Smoothness;
             }
-            else if (m_UnderlyingShake.UpTime > 0.0f)
+            else if (UpTime > 0.0f)
             {
-                m_UnderlyingShake.Delta += Time.deltaTime;
+                Delta += Time.deltaTime;
 
-                if (m_UnderlyingShake.Delta >= m_UnderlyingShake.UpTime)
+                if (Delta >= UpTime)
                 {
-                    m_UnderlyingShake.UpTime = 0.0f;
-                    m_UnderlyingShake.Delta = 0.0f;
+                    UpTime = 0.0f;
+                    Delta = 0.0f;
                 }
 
-                strength = m_UnderlyingShake.Strength;
-                smoothness = m_UnderlyingShake.Smoothness;
+                strength = Strength;
+                smoothness = Smoothness;
             }
-            else if (m_UnderlyingShake.EaseOutTime > 0.0f)
+            else if (EaseOutTime > 0.0f)
             {
-                m_UnderlyingShake.Delta += Time.deltaTime;
+                Delta += Time.deltaTime;
 
-                if (m_UnderlyingShake.Delta >= m_UnderlyingShake.EaseOutTime)
+                if (Delta >= EaseOutTime)
                 {
                     strength = 0.0f;
                     smoothness = 0.0f;
@@ -74,8 +74,8 @@ public class ScreenShake : Singleton<ScreenShake>
                 }
                 else
                 {
-                    strength = Mathf.Lerp(m_UnderlyingShake.Strength, 0.0f, m_UnderlyingShake.Delta / m_UnderlyingShake.EaseInTime);
-                    smoothness = Mathf.Lerp(m_UnderlyingShake.Smoothness, 0.0f, m_UnderlyingShake.Delta / m_UnderlyingShake.EaseInTime);
+                    strength = Mathf.Lerp(Strength, 0.0f, Delta / EaseInTime);
+                    smoothness = Mathf.Lerp(Smoothness, 0.0f, Delta / EaseInTime);
                 }
             }
 
@@ -90,7 +90,7 @@ public class ScreenShake : Singleton<ScreenShake>
 
     public void Shake(float strength, float smoothness, float easeInTime, float upTime, float easeOutTime)
     {
-        ShakeInformation mainShake;
+        ShakeInformation mainShake = new ShakeInformation();
 
         mainShake.Strength = strength;
         mainShake.Smoothness = smoothness;
@@ -98,7 +98,7 @@ public class ScreenShake : Singleton<ScreenShake>
         mainShake.UpTime = upTime;
         mainShake.EaseOutTime = easeOutTime;
 
-        if (m_MainShake != null && m_MainShake.TotalTime() > mainShake.TotalTime())
+        if (m_MainShake != null && m_MainShake.Value.TotalTime() > mainShake.TotalTime())
         {
             return;
         }
@@ -113,7 +113,7 @@ public class ScreenShake : Singleton<ScreenShake>
 
     public void StartShake(float strength, float smoothness, float easeInTime)
     {
-        ShakeInformation underlyingShake;
+        ShakeInformation underlyingShake = new ShakeInformation();
 
         underlyingShake.Strength = strength;
         underlyingShake.Smoothness = smoothness;
@@ -131,22 +131,26 @@ public class ScreenShake : Singleton<ScreenShake>
 
     public void EndShake(float easeOutTime)
     {
-        m_UnderlyingShake.UpTime = 0.0f;
-        m_UnderlyingShake.EaseOutTime = easeOutTime;
+        ShakeInformation currentShake = m_UnderlyingShake.Value;
+
+        currentShake.UpTime = 0.0f;
+        currentShake.EaseOutTime = easeOutTime;
+
+        m_UnderlyingShake = currentShake;
     }
 
     private void Start()
     {
         if (transform.localPosition != new Vector3(0.0f, 0.0f, 0.0f))
         {
-            Debug.Warning("ScreenShake : Object local position not set to 0. Must be at 0 to use screen shake. Will force it to 0.");
+            Debug.LogWarning("ScreenShake : Object local position not set to 0. Must be at 0 to use screen shake. Will force it to 0.");
             transform.localPosition = new Vector3(0.0f, 0.0f, 0.0f);
         }
 
-        if (transform.localRotation != new Vector3(0.0f, 0.0f, 0.0f))
+        if (transform.localEulerAngles != new Vector3(0.0f, 0.0f, 0.0f))
         {
-            Debug.Warning("ScreenShake : Object local rotation not set to 0. Must be at 0 to use screen shake. Will force it to 0.");
-            transform.localRotation = new Vector3(0.0f, 0.0f, 0.0f);
+            Debug.LogWarning("ScreenShake : Object local rotation not set to 0. Must be at 0 to use screen shake. Will force it to 0.");
+            transform.localEulerAngles = new Vector3(0.0f, 0.0f, 0.0f);
         }
     }
 
@@ -159,7 +163,7 @@ public class ScreenShake : Singleton<ScreenShake>
 
             if (m_UnderlyingShake != null)
             {
-                if (m_UnderlyingShake.UpdateInformation(ref underlyingStrength, ref underlyingSmoothness))
+                if (m_UnderlyingShake.Value.UpdateInformation(ref underlyingStrength, ref underlyingSmoothness))
                 {
                     m_UnderlyingShake = null;
                 }
@@ -170,7 +174,7 @@ public class ScreenShake : Singleton<ScreenShake>
 
             if (m_MainShake != null)
             {
-                if (m_MainShake.UpdateInformation(ref mainStrength, ref mainSmoothness))
+                if (m_MainShake.Value.UpdateInformation(ref mainStrength, ref mainSmoothness))
                 {
                     m_MainShake = null;
                 }

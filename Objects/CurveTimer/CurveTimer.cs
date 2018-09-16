@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public class CurvedTimer : UpdateableBase
+public class CurveTimer : UpdateableBase
 {
-    public Curve TimerCurve;
+    public CurveSelector TimerCurve;
     public float CurveTime = 1.0f;
 
     public float Value { get { return m_Value; } }

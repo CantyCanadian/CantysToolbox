@@ -21,7 +21,7 @@ public class ExternalDataManager : Singleton<ExternalDataManager>
 
     public T[] GetData<T>(string key) where T : IConvertible
     {
-        return m_Data[key].ConvertUsing<string, T, List<T>>((obj) => { return obj.ConvertTo<T>(); }).toArray();
+        return m_Data[key].ConvertUsing<string, T, List<T>>((obj) => { return obj.ConvertTo<T>(); }).ToArray();
     }
 
     public void PrepareFile(string fileName)
@@ -52,9 +52,9 @@ public class ExternalDataManager : Singleton<ExternalDataManager>
 
     public void LoadPreparedFiles()
     {
-        m_Data = new Dictionary<string, string>();
+        m_Data = new Dictionary<string, string[]>();
 
-        foreach (KeyValuePair<string, int[]> file in files)
+        foreach (KeyValuePair<string, int[]> file in m_PreparedFiles)
         {
             if (file.Value.Length == 0)
             {
@@ -65,18 +65,18 @@ public class ExternalDataManager : Singleton<ExternalDataManager>
                 if (file.Value[0] == -1)
                 {
                     Dictionary<string, List<string>> loadedData = CSVUtil.LoadAllColumns(ExternalDataPath, file.Key);
-                    m_Data.Add(loadedData.ExtractKeys(), loadedData.ExtractValues().toArray());
+                    m_Data.Append(loadedData.ConvertUsing((obj) => { return obj.ToArray(); }));
                 }
                 else
                 {
                     Dictionary<string, string> loadedData = CSVUtil.LoadSingleColumn(ExternalDataPath, file.Key, file.Value[0]);
-                    m_Data.Add(loadedData.ExtractKeys(), new string[] { loadedData.ExtractValues() });
+                    m_Data.Append(loadedData.ConvertUsing((obj) => { return new string[] { obj }; }));
                 }
             }
             else
             {
                 Dictionary<string, List<string>> loadedData = CSVUtil.LoadMultipleColumns(ExternalDataPath, file.Key, file.Value);
-                m_Data.Add(loadedData.ExtractKeys(), loadedData.ExtractValues().toArray());
+                m_Data.Append(loadedData.ConvertUsing((obj) => { return obj.ToArray(); }));
             }
         }
     }

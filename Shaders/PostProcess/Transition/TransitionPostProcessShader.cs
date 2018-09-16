@@ -7,7 +7,7 @@ public class TransitionPostProcessShader : MonoBehaviour
 {
     public Material ShaderMaterial;
 
-    public CurvedTimer TransitionTimer;
+    public CurveTimer TransitionTimer;
 
     [Range(0.0f, 1.0f)]
     public float TransitionValue;

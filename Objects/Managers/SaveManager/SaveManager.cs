@@ -5,27 +5,61 @@ using UnityEngine;
 
 public class SaveManager : Singleton<SaveManager>
 {
-    public static string SaveLocation { get { return Application.persistantDataPath + "\\Saves\\"; } }
+    public static string SaveLocation { get { return Application.persistentDataPath + "\\Saves\\"; } }
+    public static string FileExtension { get { return ".sav"; } }
 
-    private Dictionary<Type, ISaveable> m_RegisteredSaveables;
+    private Dictionary<Type, ISaveable> m_RegisteredSaveables = null;
     private Dictionary<string, string[]> m_SavedData;
     private string m_LoadedSaveLocation = "";
 
-    public bool LoadOrCreateSave(string saveName, string extention = ".sav", bool encrypt = true)
+    private bool m_DefaultEncrypted = true;
+
+    public void SetDefaultIsEncrypted(bool encrypt)
     {
-        if (File.Exists(SaveLocation + saveName + extention))
+        m_DefaultEncrypted = encrypt;
+    }
+
+    public void RegisterSaveable(ISaveable saveable, Type originalType)
+    {
+        if (m_RegisteredSaveables == null)
         {
-            return LoadSaveFile(saveName, extention, encrypt);
+            m_RegisteredSaveables = new Dictionary<Type, ISaveable>();
+        }
+
+        if (m_RegisteredSaveables.ContainsKey(originalType))
+        {
+            Debug.LogError("SaveManager : Trying to add two objects of the same type, [" + originalType.ToString() + "], as saveables. Recommended to create a manager if multiples of the same item needs saving.");
+            return;
+        }
+
+        m_RegisteredSaveables.Add(originalType, saveable);
+    }
+
+    public bool LoadOrCreateSave(string saveName)
+    {
+        return LoadOrCreateSave(saveName, m_DefaultEncrypted);
+    }
+
+    public bool LoadOrCreateSave(string saveName, bool encrypt)
+    {
+        if (File.Exists(SaveLocation + saveName + FileExtension))
+        {
+            return LoadSaveFile(saveName, encrypt);
         }
         else
         {
-            return CreateNewSaveFile(saveName, extention, encrypt);
+            return CreateNewSaveFile(saveName, encrypt);
         }
     }
 
-    public bool CreateNewSaveFile(string saveName, string extention = ".sav", bool encrypt = true)
+    public bool CreateNewSaveFile(string saveName)
     {
-        string fileLocation = SaveLocation + saveName + extention;
+        return CreateNewSaveFile(saveName, m_DefaultEncrypted);
+    }
+
+    public bool CreateNewSaveFile(string saveName, bool encrypt)
+    {
+        string fileLocation = SaveLocation + saveName + FileExtension;
 
         Directory.CreateDirectory(SaveLocation);
 
@@ -38,14 +72,19 @@ public class SaveManager : Singleton<SaveManager>
 
         DataDefaultToSaveables();
         DataSaveablesToCache();
-        DataCacheToFile();
+        DataCacheToFile(encrypt);
 
         return true;
     }
 
-    public bool CreateOrOverwriteNewSaveFile(string saveName, string extention = ".sav", bool encrypt = true)
+    public bool CreateOrOverwriteNewSaveFile(string saveName)
     {
-        string fileLocation = SaveLocation + saveName + extention;
+        return CreateOrOverwriteNewSaveFile(saveName, m_DefaultEncrypted);
+    }
+
+    public bool CreateOrOverwriteNewSaveFile(string saveName, bool encrypt)
+    {
+        string fileLocation = SaveLocation + saveName + FileExtension;
 
         Directory.CreateDirectory(SaveLocation);
 
@@ -58,14 +97,19 @@ public class SaveManager : Singleton<SaveManager>
 
         DataDefaultToSaveables();
         DataSaveablesToCache();
-        DataCacheToFile();
+        DataCacheToFile(encrypt);
 
         return true;
     }
 
-    public bool LoadSaveFile(string saveName, string extention = ".sav", bool encrypt = true)
+    public bool LoadSaveFile(string saveName)
     {
-        string fileLocation = SaveLocation + saveName + extention;
+        return LoadSaveFile(saveName, m_DefaultEncrypted);
+    }
+
+    public bool LoadSaveFile(string saveName, bool encrypt)
+    {
+        string fileLocation = SaveLocation + saveName + FileExtension;
 
         if (!File.Exists(fileLocation))
         {
@@ -74,16 +118,16 @@ public class SaveManager : Singleton<SaveManager>
 
         m_LoadedSaveLocation = fileLocation;
 
-        DataFileToCache();
+        DataFileToCache(encrypt);
         DataCacheToSaveables();
 
         return true;
     }
 
-    public void SaveData()
+    public void SaveData(bool encrypt)
     {
         DataSaveablesToCache();
-        DataCacheToFile();
+        DataCacheToFile(encrypt);
     }
 
     private void DataFileToCache(bool isEncrypted)
@@ -102,14 +146,19 @@ public class SaveManager : Singleton<SaveManager>
 
         if (isEncrypted)
         {
-            readyData = DecryptData(ref readyData);
+            DecryptData(ref readyData);
+        }
+
+        if (m_SavedData == null)
+        {
+            m_SavedData = new Dictionary<string, string[]>();
         }
 
         foreach(string readyLine in readyData)
         {
             string[] readyItems = readyLine.Split('|');
 
-            m_SavedData[readyItems[0]] = readyItems.Subdivide(1, readyItems.Length - 1);
+            m_SavedData[readyItems[0]] = readyItems.Subdivide(1, readyItems.Length - 1).ToArray();
         }
     }
 
@@ -117,7 +166,13 @@ public class SaveManager : Singleton<SaveManager>
     {
         List<string> dataSet = new List<string>();
 
-        foreach(KeyValuePair<string, string[]> dataPair in m_SavedData)
+        if (m_SavedData == null)
+        {
+            Debug.LogError("SaveManager : Trying to write data to file while there is no data in the save cache. Write to cache first.");
+            return;
+        }
+
+        foreach (KeyValuePair<string, string[]> dataPair in m_SavedData)
         {
             string line = dataPair.Key + "|";
 
@@ -133,7 +188,7 @@ public class SaveManager : Singleton<SaveManager>
 
         if (encrypt)
         {
-            readyData = EncryptData(ref readyData);
+            EncryptData(ref readyData);
         }
 
         StreamWriter writer = new StreamWriter(m_LoadedSaveLocation, false);
@@ -148,7 +203,14 @@ public class SaveManager : Singleton<SaveManager>
 
     private void DataSaveablesToCache()
     {
-        m_SavedData.Clear();
+        if (m_SavedData == null)
+        {
+            m_SavedData = new Dictionary<string, string[]>();
+        }
+        else
+        {
+            m_SavedData.Clear();
+        }
 
         foreach(KeyValuePair<Type, ISaveable> saveablePair in m_RegisteredSaveables)
         {
@@ -158,6 +220,12 @@ public class SaveManager : Singleton<SaveManager>
 
     private void DataCacheToSaveables()
     {
+        if (m_SavedData == null)
+        {
+            Debug.LogError("SaveManager : Trying to move data to saveables while there is no data in the save cache. Write to cache first.");
+            return;
+        }
+
         foreach (KeyValuePair<Type, ISaveable> saveablePair in m_RegisteredSaveables)
         {
             if (m_SavedData.ContainsKey(saveablePair.Key.ToString()))

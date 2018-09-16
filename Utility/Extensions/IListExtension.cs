@@ -62,6 +62,18 @@ public static class IListExtension
     }
 
     /// <summary>
+    /// Adds a generic collection of items to IList.
+    /// </summary>
+    /// <param name="items">Item set being added.</param>
+    public static void AddRange<I>(this IList<I> target, IEnumerable<I> items)
+    {
+        foreach (I i in items)
+        {
+            target.Add(i);
+        }
+    }
+
+    /// <summary>
     /// Adds an item to the IList, but only if that item doesn't already exists.
     /// </summary>
     /// <param name="item">Item being added.</param>
@@ -76,7 +88,6 @@ public static class IListExtension
 
         return false;
     }
-
 
     /// <summary>
     /// Adds a generic collection of items to IList, but only if those items don't already exist.
@@ -175,6 +186,25 @@ public static class IListExtension
         }
 
         target.AddRange(toAdd);
+    }
+
+    /// <summary>
+    /// Removes multiple items at once..
+    /// </summary>
+    /// <param name="firstIndex">First item being removed.</param>
+    /// <param name="removeCount">How many items are being removed.</param>
+    public static void RemoveRange<I>(this IList<I> target, int firstIndex, int removeCount)
+    {
+        if (firstIndex + removeCount > target.Count)
+        {
+            Debug.LogError("IListExtension : Trying to remove too many items from IList using RemoveRange.");
+            return;
+        }
+
+        for (int i = 0; i < removeCount; i++)
+        {
+            target.RemoveAt(firstIndex);
+        }
     }
 
     /// <summary>
