@@ -18,7 +18,7 @@ public static class MathUtil
 
         if (value < min)
         {
-            value = max;
+            value = max - 1;
         }
     }
 
@@ -34,7 +34,7 @@ public static class MathUtil
     {
         value += add;
 
-        if (value > max)
+        if (value > max - 1)
         {
             value = min;
         }

@@ -7,7 +7,7 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: BasicBlendModeScreenMat
-  m_Shader: {fileID: 4800000, guid: e456a48a025b0e0408af438d1a85c6ad, type: 3}
+  m_Shader: {fileID: 4800000, guid: 4ae43ae9331f30249bb6cb832052441c, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0

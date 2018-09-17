@@ -7,7 +7,7 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: BasicBlendModeMultiplyMat
-  m_Shader: {fileID: 4800000, guid: 9b44b9636c0cc97489725fff951ae848, type: 3}
+  m_Shader: {fileID: 4800000, guid: 0efdf9705fe58694b8f1be747ee6a921, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0

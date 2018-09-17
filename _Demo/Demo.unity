@@ -248,7 +248,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 134305122}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9064dcd3c58c391438381db11c549dcc, type: 3}
+  m_Script: {fileID: 11500000, guid: c9923651e9ca7ab4c8d6906e8a9a7173, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   ShaderMaterial: {fileID: 2100000, guid: 057efbd53e635c647a4bfff43e4d06ee, type: 2}
@@ -257,7 +257,7 @@ MonoBehaviour:
       CurveType: 0
       CurveProgression: 0
     CurveTime: 3
-  TransitionValue: 0.5
+  TransitionValue: 0
 --- !u!81 &134305125
 AudioListener:
   m_ObjectHideFlags: 0
@@ -542,7 +542,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 440479497}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9064dcd3c58c391438381db11c549dcc, type: 3}
+  m_Script: {fileID: 11500000, guid: c9923651e9ca7ab4c8d6906e8a9a7173, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   ShaderMaterial: {fileID: 2100000, guid: c855bcc4d3542944bb995ea378d3f71e, type: 2}
@@ -551,7 +551,7 @@ MonoBehaviour:
       CurveType: 0
       CurveProgression: 0
     CurveTime: 3
-  TransitionValue: 0.5
+  TransitionValue: 0
 --- !u!81 &440479500
 AudioListener:
   m_ObjectHideFlags: 0
@@ -999,7 +999,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 938942548}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9064dcd3c58c391438381db11c549dcc, type: 3}
+  m_Script: {fileID: 11500000, guid: c9923651e9ca7ab4c8d6906e8a9a7173, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   ShaderMaterial: {fileID: 2100000, guid: 8fd3e99fa02f939459e34cb7414170cf, type: 2}
@@ -1008,7 +1008,7 @@ MonoBehaviour:
       CurveType: 0
       CurveProgression: 0
     CurveTime: 3
-  TransitionValue: 0.5
+  TransitionValue: 0
 --- !u!114 &938942554
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1752,7 +1752,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1387398104}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9064dcd3c58c391438381db11c549dcc, type: 3}
+  m_Script: {fileID: 11500000, guid: c9923651e9ca7ab4c8d6906e8a9a7173, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   ShaderMaterial: {fileID: 2100000, guid: af874605288556b4d808c9b03b28417a, type: 2}
@@ -1761,7 +1761,7 @@ MonoBehaviour:
       CurveType: 0
       CurveProgression: 0
     CurveTime: 3
-  TransitionValue: 0.5
+  TransitionValue: 0
 --- !u!81 &1387398107
 AudioListener:
   m_ObjectHideFlags: 0
@@ -2166,7 +2166,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1789429510}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9064dcd3c58c391438381db11c549dcc, type: 3}
+  m_Script: {fileID: 11500000, guid: c9923651e9ca7ab4c8d6906e8a9a7173, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   ShaderMaterial: {fileID: 2100000, guid: 4b8acf6f8e44c0748818f3e736631954, type: 2}
@@ -2175,7 +2175,7 @@ MonoBehaviour:
       CurveType: 0
       CurveProgression: 0
     CurveTime: 3
-  TransitionValue: 0.5
+  TransitionValue: 0
 --- !u!81 &1789429513
 AudioListener:
   m_ObjectHideFlags: 0
@@ -2443,7 +2443,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 2099026756}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9064dcd3c58c391438381db11c549dcc, type: 3}
+  m_Script: {fileID: 11500000, guid: c9923651e9ca7ab4c8d6906e8a9a7173, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   ShaderMaterial: {fileID: 2100000, guid: eb104d2f98cf85542946fc26e77e806f, type: 2}
@@ -2452,7 +2452,7 @@ MonoBehaviour:
       CurveType: 0
       CurveProgression: 0
     CurveTime: 3
-  TransitionValue: 0.25
+  TransitionValue: 0
 --- !u!81 &2099026759
 AudioListener:
   m_ObjectHideFlags: 0
@@ -2524,7 +2524,6 @@ GameObject:
   - component: {fileID: 2141645094}
   - component: {fileID: 2141645097}
   - component: {fileID: 2141645096}
-  - component: {fileID: 2141645095}
   m_Layer: 5
   m_Name: CameraName
   m_TagString: Untagged
@@ -2550,20 +2549,6 @@ RectTransform:
   m_AnchoredPosition: {x: 120, y: 20}
   m_SizeDelta: {x: 275, y: 30}
   m_Pivot: {x: 0, y: 0.5}
---- !u!114 &2141645095
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 2141645093}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2611a1f0e93733f41a0bfb58383d3b5d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  UIText: {fileID: 2141645096}
-  TrueText: 
-  FalseText: 
 --- !u!114 &2141645096
 MonoBehaviour:
   m_ObjectHideFlags: 0

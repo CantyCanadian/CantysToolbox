@@ -9,8 +9,8 @@ public class CurveTimer : UpdateableBase
     public CurveSelector TimerCurve;
     public float CurveTime = 1.0f;
 
-    public float Value { get { return m_Value; } }
-    public bool isPlaying { get { return m_Play; } }
+    public float Value { get { m_LastRead = false; return m_Value; } }
+    public bool isPlaying { get { return m_Play || m_LastRead; } }
 
     private float m_Value = 0.0f;
     private float m_Delta = 0.0f;
@@ -18,6 +18,7 @@ public class CurveTimer : UpdateableBase
     private bool m_Initialized = false;
 
     private bool m_Play = false;
+    private bool m_LastRead = false;
     private bool m_Backwards = false;
 
     public void Play(bool backwards = false)
@@ -29,13 +30,14 @@ public class CurveTimer : UpdateableBase
         }
 
         m_Play = true;
+        m_LastRead = false;
         m_Backwards = backwards;
         m_Delta = 0.0f;
     }
 
     public override void Update()
     {
-        if (m_Play)
+        if (m_Play && !m_LastRead)
         {
             float initial = m_Backwards ? 1.0f : 0.0f;
             float target = m_Backwards ? 0.0f : 1.0f;
@@ -45,6 +47,7 @@ public class CurveTimer : UpdateableBase
             if (m_Delta > CurveTime)
             {
                 m_Delta = CurveTime;
+                m_LastRead = true;
                 m_Play = false;
             }
 
