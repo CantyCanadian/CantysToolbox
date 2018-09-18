@@ -51,7 +51,7 @@ public class CurveTimer : UpdateableBase
                 m_Play = false;
             }
 
-            m_Value = Mathf.Lerp(initial, target, m_Delta / CurveTime);
+            m_Value = TimerCurve.Invoke(initial, target, m_Delta / CurveTime);
         }
     }
 }
