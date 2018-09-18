@@ -96,8 +96,7 @@ public class SaveManager : Singleton<SaveManager>
         File.Create(fileLocation);
 
         DataDefaultToSaveables();
-        DataSaveablesToCache();
-        DataCacheToFile(encrypt);
+        SaveData(encrypt);
 
         return true;
     }
@@ -122,6 +121,11 @@ public class SaveManager : Singleton<SaveManager>
         DataCacheToSaveables();
 
         return true;
+    }
+
+    public void SaveData()
+    {
+        SaveData(m_DefaultEncrypted);
     }
 
     public void SaveData(bool encrypt)
