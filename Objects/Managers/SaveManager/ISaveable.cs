@@ -1,6 +1,13 @@
-public interface ISaveable
+using UnityEngine;
+
+public abstract class SaveableBase<I> : MonoBehaviour
 {
-    string[] SaveData();
-    void LoadDefaultData();
-    void LoadData(string[] data);
+    protected void Start()
+    {
+        SaveManager.Instance.RegisterSaveable(this, typeof(I));
+    }
+
+    public abstract string[] SaveData();
+    public abstract void LoadDefaultData();
+    public abstract void LoadData(string[] data);
 }
