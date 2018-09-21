@@ -58,4 +58,20 @@ public static class ICollectionExtension
 
         return result;
     }
+
+    /// <summary>
+    /// Removes the last item in the ICollection and returns it.
+    /// </summary>
+    /// <returns>Last item in the ICollection.</returns>
+    public static I Pop<I>(this ICollection<I> target)
+    {
+        if (target.Count == 0)
+        {
+            return null;
+        }
+
+        I obj = target[target.Count - 1];
+        target.Remove(obj);
+        return obj;
+    }
 }
