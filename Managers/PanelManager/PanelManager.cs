@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class PanelManager : Singleton<PanelManager>
 {
     public delegate void PopupResult<I>(I returnValue);
 
-    private PopupBase m_ActivePopup;
-    private List<IPanel> m_PanelStack;
+    private GameObject m_ActivePopup;
+    private List<GameObject> m_PanelStack;
 
     private Dictionary<Type, GameObject> m_RegisteredPanels = null;
     private Dictionary<Type, KeyValuePair<GameObject, Type>> m_RegisteredPopups = null;
@@ -42,12 +43,12 @@ public class PanelManager : Singleton<PanelManager>
     {
         if (m_RegisteredPanels.ContainsKey(typeof(I)))
         {
-            m_PanelStack.DoOnAll((obj) => { obj.gameObject.SetActive(false); });
+            m_PanelStack.DoOnAll((obj) => { obj.SetActive(false); });
             m_PanelStack.Add(Instantiate(m_RegisteredPanels[typeof(I)], transform));
         }
     }
 
-    public void LoadPopup<I, R>(PopupResult<R> resultReceiver)
+    public void LoadPopup<I, R>(UnityAction<R> resultReceiver)
     {
         if (m_RegisteredPopups.ContainsKey(typeof(I)))
         {
@@ -59,9 +60,9 @@ public class PanelManager : Singleton<PanelManager>
                 }
 
                 m_ActivePopup = Instantiate(m_RegisteredPopups[typeof(I)].Key, transform);
-                PopupBase pb = m_ActivePopup.GetComponent<PopupBase>();
-                pb.OnSubmit += PopPopup();
-                pb.OnSubmit += resultReceiver;
+                PopupBase<R> pb = m_ActivePopup.GetComponent<PopupBase<R>>();
+                pb.OnSubmit.AddListener(PopPopup);
+                pb.OnSubmitWithData.AddListener(resultReceiver);
             }
         }
     }

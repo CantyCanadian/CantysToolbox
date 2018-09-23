@@ -2,29 +2,32 @@
 // Special thanks to @bgolus for the grabpass hack I used to make the highly specific blending I wanted.
 
 // Known bug : You can't see another liquid through a transparent liquid. Won't fix since I have no clue how to actually fix that. I already had issues getting the transparency right...
+
+// Must use the LiquidShader script to get both liquid movement and proper container height.
 Shader "Custom/Unlit/Liquid"
 {
 	Properties
 	{
-		_Tint("Tint", Color) = (1,1,1,1)
+		_Tint("Tint", Color) = (1, 1, 1, 1)
 		_MainTex("Texture", 2D) = "white" {}
-		_FillAmount("Fill Amount", Range(-10,10)) = 0.0
 		_Alpha("General Alpha", Range(0, 1)) = 1.0
 
-		_TopColor("Top Color", Color) = (1,1,1,1)
-		_FoamColor("Foam Line Color", Color) = (1,1,1,1)
-		_FoamRim("Foam Line Width", Range(0,0.1)) = 0.0
+		_FillAmount("Fill Amount", Range(0, 1)) = 0.0
+
+		_TopColor("Top Color", Color) = (1, 1, 1, 1)
+		_FoamColor("Foam Line Color", Color) = (1, 1, 1, 1)
+		_FoamRim("Foam Line Width", Range(0, 1.0)) = 0.0
 
 		_RimColor("Rim Color", Color) = (1,1,1,1)
-		_RimPower("Rim Power", Range(0,10)) = 0.0
+		_RimPower("Rim Power", Range(0, 10)) = 0.0
 
-		[HideInInspector] _WobbleX("WobbleX", Range(-1,1)) = 0.0
-		[HideInInspector] _WobbleZ("WobbleZ", Range(-1,1)) = 0.0
+		[HideInInspector] _WobbleX("WobbleX", Range(-1, 1)) = 0.0
+		[HideInInspector] _WobbleZ("WobbleZ", Range(-1, 1)) = 0.0
 	}
 
 		SubShader
 	{
-		Tags{ "Queue" = "Geometry+500" "RenderType" = "TransparentCutout" "IgnoreProjector" = "True" "DisableBatching" = "True" }
+		Tags{ "Queue" = "Transparent" "RenderType" = "TransparentCutout" "IgnoreProjector" = "True" "DisableBatching" = "True" }
 
 		GrabPass{ "_BackgroundTex" }
 		Pass
@@ -54,11 +57,22 @@ Shader "Custom/Unlit/Liquid"
 				UNITY_FOG_COORDS(1)
 			};
 
-			sampler2D _MainTex, _BackgroundTex;
+			sampler2D _MainTex;
+			sampler2D _BackgroundTex;
+
 			float4 _MainTex_ST;
-			float _FillAmount, _WobbleX, _WobbleZ, _Alpha;
-			float4 _TopColor, _RimColor, _FoamColor, _Tint;
-			float _FoamRim, _RimPower;
+			float4 _TopColor;
+			float4 _RimColor;
+			float4 _FoamColor;
+			float4 _Tint;
+
+			float _ContainerHeight;
+			float _FillAmount;
+			float _WobbleX;
+			float _WobbleZ;
+			float _Alpha;
+			float _FoamRim;
+			float _RimPower;
 
 			float4 RotateAroundYInDegrees(float4 vertex, float degrees)
 			{
@@ -88,30 +102,34 @@ Shader "Custom/Unlit/Liquid"
 				float3 worldPosZ = float3 (worldPosX.y, worldPosX.z, worldPosX.x);
 
 				// combine rotations with worldPos, based on sine wave from script
-				float3 worldPosAdjusted = worldPos + (worldPosX  * _WobbleX) + (worldPosZ* _WobbleZ);
+				float3 worldPosAdjusted = worldPos + (worldPosX  * _WobbleX) + (worldPosZ * _WobbleZ);
 
 				// y pos of the liquid
-				o.fillEdge = worldPosAdjusted.y + _FillAmount;
+				o.fillEdge = worldPosAdjusted.y + (_ContainerHeight / 2.0f);
 				return o;
 			}
 
 			fixed4 frag(v2f i, fixed facing : VFACE) : SV_Target
 			{
+				float heightFoamRim = _FoamRim * _ContainerHeight;
+				float heightFillAmount = _FillAmount * _ContainerHeight;
+
 				// sample the texture
 				fixed4 col = tex2D(_MainTex, i.uv) * _Tint;
+
 				// apply fog
 				UNITY_APPLY_FOG(i.fogCoord, col);
 
-				if (i.fillEdge > 0.5f)
+				if (i.fillEdge > heightFillAmount)
 				{
 					discard;
 				}
 
 				// foam edge
-				float4 foam = (step(i.fillEdge, 0.5) - step(i.fillEdge, (0.5 - _FoamRim)));
+				float4 foam = i.fillEdge > _FillAmount - heightFoamRim;
 
 				// rest of the liquid
-				float4 result = step(i.fillEdge, 0.5) - foam;
+				float4 result = (i.fillEdge < heightFillAmount) - foam;
 
 				// color of backfaces/ top
 				float4 topColor = _TopColor * (foam + result);
@@ -121,7 +139,7 @@ Shader "Custom/Unlit/Liquid"
 				fixed4 back = tex2D(_BackgroundTex, screenuv);
 
 				// blend main color and background together
-				return  fixed4(lerp(back.rgb, topColor.rgb, _Alpha) * topColor.a, topColor.a);
+				return  fixed4(lerp(back.rgb, topColor.rgb, _Alpha), topColor.a);
 			}
 			ENDCG
 		}
@@ -156,11 +174,22 @@ Shader "Custom/Unlit/Liquid"
 				UNITY_FOG_COORDS(1)
 			};
 
-			sampler2D _MainTex, _BackgroundTex;
+			sampler2D _MainTex;
+			sampler2D _BackgroundTex;
+
 			float4 _MainTex_ST;
-			float _FillAmount, _WobbleX, _WobbleZ, _Alpha;
-			float4 _TopColor, _RimColor, _FoamColor, _Tint;
-			float _FoamRim, _RimPower;
+			float4 _TopColor;
+			float4 _RimColor;
+			float4 _FoamColor;
+			float4 _Tint;
+
+			float _ContainerHeight;
+			float _FillAmount;
+			float _WobbleX;
+			float _WobbleZ;
+			float _Alpha;
+			float _FoamRim;
+			float _RimPower;
 
 			float4 RotateAroundYInDegrees(float4 vertex, float degrees)
 			{
@@ -190,10 +219,10 @@ Shader "Custom/Unlit/Liquid"
 				float3 worldPosZ = float3 (worldPosX.y, worldPosX.z, worldPosX.x);
 
 				// combine rotations with worldPos, based on sine wave from script
-				float3 worldPosAdjusted = worldPos + (worldPosX  * _WobbleX) + (worldPosZ* _WobbleZ);
+				float3 worldPosAdjusted = worldPos + (worldPosX  * _WobbleX) + (worldPosZ * _WobbleZ);
 
 				// y pos of the liquid
-				o.fillEdge = worldPosAdjusted.y + _FillAmount;
+				o.fillEdge = worldPosAdjusted.y + (_ContainerHeight / 2.0f);
 
 				o.viewDir = normalize(ObjSpaceViewDir(v.vertex));
 				o.normal = v.normal;
@@ -202,13 +231,16 @@ Shader "Custom/Unlit/Liquid"
 
 			fixed4 frag(v2f i, fixed facing : VFACE) : SV_Target
 			{
+				float heightFoamRim = _FoamRim * _ContainerHeight;
+				float heightFillAmount = _FillAmount * _ContainerHeight;
+
 				// sample the texture
 				fixed4 col = tex2D(_MainTex, i.uv) * _Tint;
 			
 				// apply fog
 				UNITY_APPLY_FOG(i.fogCoord, col);
 
-				if (i.fillEdge > 0.5f)
+				if (i.fillEdge > heightFillAmount)
 				{
 					discard;
 				}
@@ -219,21 +251,21 @@ Shader "Custom/Unlit/Liquid"
 				RimResult *= _RimColor;
 
 				// foam edge
-				float4 foam = (step(i.fillEdge, 0.5) - step(i.fillEdge, (0.5 - _FoamRim)));
+				float4 foam = i.fillEdge > heightFillAmount - heightFoamRim;
 
 				// rest of the liquid
-				float4 result = step(i.fillEdge, 0.5) - foam;
-				float4 resultColored = result * col;
+				float4 result = (i.fillEdge < heightFillAmount) - foam;
+				float4 resultColored = lerp(col, _FoamColor, foam);
 
 				// both together, with the texture
 				float4 finalResult = resultColored;
 				finalResult.rgb = lerp(finalResult.rgb, RimResult.rgb, RimResult.a);
 
 				// color of backfaces/ top
-				float4 topColor = _TopColor * (foam + result);
+				float4 topColor = _FoamColor * (foam + result);
 
 				// decide if vertex is part of foam
-				float4 final = step(i.fillEdge, 0.5 - _FoamRim) ? finalResult : topColor;
+				float4 final = step(i.fillEdge, _ContainerHeight - heightFoamRim) ? finalResult : topColor;
 
 				// sample the background
 				float2 screenuv = i.uv_back.xy / i.uv_back.w;

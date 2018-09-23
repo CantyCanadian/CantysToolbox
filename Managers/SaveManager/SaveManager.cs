@@ -8,7 +8,7 @@ public class SaveManager : Singleton<SaveManager>
     public static string SaveLocation { get { return Application.persistentDataPath + "\\Saves\\"; } }
     public static string FileExtension { get { return ".sav"; } }
 
-    private Dictionary<Type, ISaveable> m_RegisteredSaveables = null;
+    private Dictionary<Type, SaveableBase> m_RegisteredSaveables = null;
     private Dictionary<string, string[]> m_SavedData;
     private string m_LoadedSaveLocation = "";
 
@@ -19,11 +19,11 @@ public class SaveManager : Singleton<SaveManager>
         m_DefaultEncrypted = encrypt;
     }
 
-    public void RegisterSaveable(ISaveable saveable, Type originalType)
+    public void RegisterSaveable(SaveableBase saveable, Type originalType)
     {
         if (m_RegisteredSaveables == null)
         {
-            m_RegisteredSaveables = new Dictionary<Type, ISaveable>();
+            m_RegisteredSaveables = new Dictionary<Type, SaveableBase>();
         }
 
         if (m_RegisteredSaveables.ContainsKey(originalType))
@@ -216,7 +216,7 @@ public class SaveManager : Singleton<SaveManager>
             m_SavedData.Clear();
         }
 
-        foreach(KeyValuePair<Type, ISaveable> saveablePair in m_RegisteredSaveables)
+        foreach(KeyValuePair<Type, SaveableBase> saveablePair in m_RegisteredSaveables)
         {
             m_SavedData[saveablePair.Key.ToString()] = saveablePair.Value.SaveData();
         }
@@ -230,7 +230,7 @@ public class SaveManager : Singleton<SaveManager>
             return;
         }
 
-        foreach (KeyValuePair<Type, ISaveable> saveablePair in m_RegisteredSaveables)
+        foreach (KeyValuePair<Type, SaveableBase> saveablePair in m_RegisteredSaveables)
         {
             if (m_SavedData.ContainsKey(saveablePair.Key.ToString()))
             {
@@ -246,7 +246,7 @@ public class SaveManager : Singleton<SaveManager>
 
     private void DataDefaultToSaveables()
     {
-        foreach (KeyValuePair<Type, ISaveable> saveablePair in m_RegisteredSaveables)
+        foreach (KeyValuePair<Type, SaveableBase> saveablePair in m_RegisteredSaveables)
         {
             saveablePair.Value.LoadDefaultData();
         }

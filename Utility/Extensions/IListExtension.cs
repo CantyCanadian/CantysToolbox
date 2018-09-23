@@ -244,4 +244,20 @@ public static class IListExtension
 
         return result;
     }
+
+    /// <summary>
+    /// Removes the last item in the IList and returns it.
+    /// </summary>
+    /// <returns>Last item in the IList.</returns>
+    public static I Pop<I>(this IList<I> target)
+    {
+        if (target.Count == 0)
+        {
+            return default(I);
+        }
+
+        I obj = target[target.Count - 1];
+        target.Remove(obj);
+        return obj;
+    }
 }

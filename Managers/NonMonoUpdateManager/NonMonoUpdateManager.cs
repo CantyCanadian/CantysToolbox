@@ -12,7 +12,8 @@ public class NonMonoUpdateManager : Singleton<NonMonoUpdateManager>
         {
             m_Updateables = new List<UpdateableBase>();
         }
-        else if (!m_Updateables.AddOnce(updateable))
+
+        if (!m_Updateables.AddOnce(updateable))
         {
             Debug.LogWarning("NonMonoUpdateManager : Trying to add the same object to the manager multiple time.");
         }

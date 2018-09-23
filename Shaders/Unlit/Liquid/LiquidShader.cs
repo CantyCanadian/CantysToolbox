@@ -7,6 +7,8 @@ using UnityEngine;
 /// </summary>
 public class LiquidShader : MonoBehaviour
 {
+    public bool ShowGizmos = false;
+
     public float MaxWobble = 0.03f;
     public float WobbleSpeed = 1f;
     public float Drag = 0f;
@@ -18,12 +20,12 @@ public class LiquidShader : MonoBehaviour
     private Vector3 m_CurrentVelocity = Vector3.zero;
 
     // Use this for initialization
-    void Start()
+    private void Start()
     {
         m_Renderer = GetComponent<Renderer>();
     }
 
-    void Update()
+    private void Update()
     {
         float deltaTime = Time.deltaTime;
         float drag = (1.0f - Drag * deltaTime);
@@ -39,8 +41,21 @@ public class LiquidShader : MonoBehaviour
 
         m_LastWorldPosition = transform.position;
 
+        float objectHeight = GetComponent<MeshRenderer>().bounds.size.y;
+
         // Send it to the shader.
-        m_Renderer.material.SetFloat("_WobbleX", m_CurrentPosition.x);
-        m_Renderer.material.SetFloat("_WobbleZ", m_CurrentPosition.z);
+        m_Renderer.sharedMaterial.SetFloat("_ContainerHeight", objectHeight);
+        m_Renderer.sharedMaterial.SetFloat("_WobbleX", m_CurrentPosition.x);
+        m_Renderer.sharedMaterial.SetFloat("_WobbleZ", m_CurrentPosition.z);
+    }
+
+    private void OnDrawGizmos()
+    {
+        if (ShowGizmos)
+        {
+            Bounds b = GetComponent<MeshRenderer>().bounds;
+            Gizmos.color = new Color(1.0f, 0.0f, 0.0f, 0.3f);
+            Gizmos.DrawCube(b.center, b.size);
+        }
     }
 }
