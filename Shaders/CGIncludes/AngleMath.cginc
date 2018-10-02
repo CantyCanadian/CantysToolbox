@@ -16,6 +16,7 @@ float2 UnitVector(float angle)
 	return float2(cos(radians(angle)), sin(radians(angle)));
 }
 
+// Rotates point around 0,0 by given angle.
 float2 RotateAroundCenter(float2 value, float angle)
 {
 	return float2(value.x * cos(radians(angle)) - value.y * sin(radians(angle)), value.x * sin(radians(angle)) + value.y * cos(radians(angle)));

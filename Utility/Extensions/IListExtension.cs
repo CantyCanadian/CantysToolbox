@@ -62,18 +62,6 @@ public static class IListExtension
     }
 
     /// <summary>
-    /// Adds a generic collection of items to IList.
-    /// </summary>
-    /// <param name="items">Item set being added.</param>
-    public static void AddRange<I>(this IList<I> target, IEnumerable<I> items)
-    {
-        foreach (I i in items)
-        {
-            target.Add(i);
-        }
-    }
-
-    /// <summary>
     /// Adds an item to the IList, but only if that item doesn't already exists.
     /// </summary>
     /// <param name="item">Item being added.</param>
