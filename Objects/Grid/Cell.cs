@@ -33,9 +33,35 @@ public class Cell<T> where T : struct
         m_References.Add(grid.GetCell(m_Position.x, m_Position.y + 1, m_Position.x, m_Position.y - 1, m_Position.x + 1, m_Position.y, m_Position.x - 1, m_Position.y));
     }
 
+    public void PopulateCustomCardinalReferences(Grid grid, Func<Cell<T>, Cell<T>, bool> addCondition)
+    {
+        Cell<T>[] cells = grid.GetCell(m_Position.x, m_Position.y + 1, m_Position.x, m_Position.y - 1, m_Position.x + 1, m_Position.y, m_Position.x - 1, m_Position.y);
+
+        foreach(Cell<T> cell in cells)
+        {
+            if (addCondition.Invoke(this, cell))
+            {
+                m_References.Add(cell);
+            }
+        }
+    }
+
     public void PopulateDiagonalReferences(Grid grid)
     {
         m_References.Add(grid.GetCell(m_Position.x - 1, m_Position.y + 1, m_Position.x - 1, m_Position.y - 1, m_Position.x + 1, m_Position.y + 1, m_Position.x + 1, m_Position.y - 1).GetCells());
+    }
+
+    public void PopulateCustomDiagonalReferences(Grid grid, Func<Cell<T>, Cell<T>, bool> addCondition)
+    {
+        Cell<T>[] cells = grid.GetCell(m_Position.x - 1, m_Position.y + 1, m_Position.x - 1, m_Position.y - 1, m_Position.x + 1, m_Position.y + 1, m_Position.x + 1, m_Position.y - 1).GetCells());
+
+        foreach (Cell<T> cell in cells)
+        {
+            if (addCondition.Invoke(this, cell))
+            {
+                m_References.Add(cell);
+            }
+        }
     }
 
     public void ResetCellRecursivity()

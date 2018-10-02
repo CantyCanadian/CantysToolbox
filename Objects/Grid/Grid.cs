@@ -86,6 +86,31 @@ public class Grid<T> where T : struct
         return new CellGroup<T>(cells.ToArray());
     }
 
+    public CellGroup<T> GetCellRectangleHollow(int x, int y, int w, int h)
+    {
+        List<Cell<T>> cells = new List<Cell<T>>();
+
+        for (int u = 0; u < x + w; u++)
+        {
+            for (int v = 0; v < y + h; v++)
+            {
+                if (v > 0 && v < y + h - 1)
+                {
+                    if (x == 0 || x == x + w - 1)
+                    {
+                        cells.Add(TryGetCell(u, v));
+                    }
+                }
+                else
+                {
+                    cells.Add(TryGetCell(u, v));
+                }
+            }
+        }
+
+        return new CellGroup<T>(cells.ToArray());
+    }
+
     public CellGroup<T> GetCellCircle(int x, int y, int radius)
     {
         List<Cell<T>> cells = new List<Cell<T>>();
@@ -102,6 +127,21 @@ public class Grid<T> where T : struct
         }
 
         return new CellGroup<T>(cells.ToArray());
+    }
+
+    public CellGroup<T> GetCellCircleHollow(int x, int y, int radius)
+    {
+
+    }
+
+    public CellGroup<T> GetCellDiamond(int x, int y, int diameter)
+    {
+
+    }
+
+    public CellGroup<T> GetCellDiamondHollow(int x, int y, int diameter)
+    {
+
     }
 
     public CellGroup<T> GetCellsRecursive(int x, int y)
