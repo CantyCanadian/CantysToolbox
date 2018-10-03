@@ -17,20 +17,9 @@ namespace Canty
         /// <param name="x2">Value at 1.</param>
         /// <param name="delta">Interpolation percentage. [0, 1]</param>
         /// <returns>Interpolated value.</returns>
-        public static I Linear<I>(I x1, I x2, float delta)
+        public static float Linear(float x1, float x2, float delta)
         {
-            try
-            {
-                dynamic xd1 = x1;
-                dynamic xd2 = x2;
-
-                return xd1 + ((xd2 - xd1) * delta);
-            }
-            catch (Exception ex)
-            {
-                Debug.LogError("Curves : Invalid data type used for curve operations. " + ex.TargetSite);
-                return x1;
-            }
+            return x1 + ((x2 - x1) * delta);
         }
 
         #endregion
@@ -44,20 +33,9 @@ namespace Canty
         /// <param name="x2">Value at 1.</param>
         /// <param name="delta">Interpolation percentage. [0, 1]</param>
         /// <returns>Interpolated value.</returns>
-        public static I ExponentialEaseOut<I>(I x1, I x2, float delta)
+        public static float ExponentialEaseOut(float x1, float x2, float delta)
         {
-            try
-            {
-                dynamic xd1 = x1;
-                dynamic xd2 = x2;
-
-                return xd1 + ((xd2 - xd1) * (-1 * Mathf.Pow(2, -10 * delta) + 1));
-            }
-            catch (Exception ex)
-            {
-                Debug.LogError("Curves : Invalid data type used for curve operations. " + ex.TargetSite);
-                return x1;
-            }
+            return x1 + ((x2 - x1) * (-1 * Mathf.Pow(2, -10 * delta) + 1));
         }
 
         /// <summary>
@@ -67,20 +45,9 @@ namespace Canty
         /// <param name="x2">Value at 1.</param>
         /// <param name="delta">Interpolation percentage. [0, 1]</param>
         /// <returns>Interpolated value.</returns>
-        public static I ExponentialEaseIn<I>(I x1, I x2, float delta)
+        public static float ExponentialEaseIn(float x1, float x2, float delta)
         {
-            try
-            {
-                dynamic xd1 = x1;
-                dynamic xd2 = x2;
-
-                return xd1 + ((xd2 - xd1) * (Mathf.Pow(2, 10 * (delta - 1))));
-            }
-            catch (Exception ex)
-            {
-                Debug.LogError("Curves : Invalid data type used for curve operations. " + ex.TargetSite);
-                return x1;
-            }
+            return x1 + ((x2 - x1) * (Mathf.Pow(2, 10 * (delta - 1))));
         }
 
         /// <summary>
@@ -90,29 +57,18 @@ namespace Canty
         /// <param name="x2">Value at 1.</param>
         /// <param name="delta">Interpolation percentage. [0, 1]</param>
         /// <returns>Interpolated value.</returns>
-        public static I ExponentialEaseInOut<I>(I x1, I x2, float delta)
+        public static float ExponentialEaseInOut(float x1, float x2, float delta)
         {
-            try
+            float trueX = delta * 2;
+            trueX = trueX >= 1.0f ? trueX - 1 : trueX;
+
+            if (delta < 0.5f)
             {
-                float trueX = delta * 2;
-                trueX = trueX >= 1.0f ? trueX - 1 : trueX;
-
-                dynamic xd1 = x1;
-                dynamic xd2 = x2;
-
-                if (delta < 0.5f)
-                {
-                    return xd1 + (((xd2 - xd1) / 2.0f) * (Mathf.Pow(2, 10 * (trueX - 1))));
-                }
-                else
-                {
-                    return xd1 + (((xd2 - xd1) / 2.0f) + ((xd2 - xd1) / 2.0f) * (-1 * Mathf.Pow(2, -10 * trueX) + 1));
-                }
+                return x1 + (((x2 - x1) / 2.0f) * (Mathf.Pow(2, 10 * (trueX - 1))));
             }
-            catch (Exception ex)
+            else
             {
-                Debug.LogError("Curves : Invalid data type used for curve operations. " + ex.TargetSite);
-                return x1;
+                return x1 + (((x2 - x1) / 2.0f) + ((x2 - x1) / 2.0f) * (-1 * Mathf.Pow(2, -10 * trueX) + 1));
             }
         }
 
@@ -123,29 +79,18 @@ namespace Canty
         /// <param name="x2">Value at 1.</param>
         /// <param name="delta">Interpolation percentage. [0, 1]</param>
         /// <returns>Interpolated value.</returns>
-        public static I ExponentialEaseOutIn<I>(I x1, I x2, float delta)
+        public static float ExponentialEaseOutIn(float x1, float x2, float delta)
         {
-            try
+            float trueX = delta * 2;
+            trueX = trueX >= 1.0f ? trueX - 1 : trueX;
+
+            if (delta < 0.5f)
             {
-                float trueX = delta * 2;
-                trueX = trueX >= 1.0f ? trueX - 1 : trueX;
-
-                dynamic xd1 = x1;
-                dynamic xd2 = x2;
-
-                if (delta < 0.5f)
-                {
-                    return xd1 + (((xd2 - xd1) / 2.0f) * (-1 * Mathf.Pow(2, -10 * trueX) + 1));
-                }
-                else
-                {
-                    return xd1 + (((xd2 - xd1) / 2.0f) + ((xd2 - xd1) / 2.0f) * (Mathf.Pow(2, 10 * (trueX - 1))));
-                }
+                return x1 + (((x2 - x1) / 2.0f) * (-1 * Mathf.Pow(2, -10 * trueX) + 1));
             }
-            catch (Exception ex)
+            else
             {
-                Debug.LogError("Curves : Invalid data type used for curve operations. " + ex.TargetSite);
-                return x1;
+                return x1 + (((x2 - x1) / 2.0f) + ((x2 - x1) / 2.0f) * (Mathf.Pow(2, 10 * (trueX - 1))));
             }
         }
 
@@ -160,20 +105,9 @@ namespace Canty
         /// <param name="x2">Value at 1.</param>
         /// <param name="delta">Interpolation percentage. [0, 1]</param>
         /// <returns>Interpolated value.</returns>
-        public static I CircularEaseOut<I>(I x1, I x2, float delta)
+        public static float CircularEaseOut(float x1, float x2, float delta)
         {
-            try
-            {
-                dynamic xd1 = x1;
-                dynamic xd2 = x2;
-
-                return xd1 + ((xd2 - xd1) * (Mathf.Sqrt(1 - Mathf.Pow(delta - 1, 2))));
-            }
-            catch (Exception ex)
-            {
-                Debug.LogError("Curves : Invalid data type used for curve operations. " + ex.TargetSite);
-                return x1;
-            }
+            return x1 + ((x2 - x1) * (Mathf.Sqrt(1 - Mathf.Pow(delta - 1, 2))));
         }
 
         /// <summary>
@@ -183,20 +117,9 @@ namespace Canty
         /// <param name="x2">Value at 1.</param>
         /// <param name="delta">Interpolation percentage. [0, 1]</param>
         /// <returns>Interpolated value.</returns>
-        public static I CircularEaseIn<I>(I x1, I x2, float delta)
+        public static float CircularEaseIn(float x1, float x2, float delta)
         {
-            try
-            {
-                dynamic xd1 = x1;
-                dynamic xd2 = x2;
-
-                return xd1 + ((xd2 - xd1) * (-1 * Mathf.Sqrt(1 - Mathf.Pow(delta, 2)) + 1));
-            }
-            catch (Exception ex)
-            {
-                Debug.LogError("Curves : Invalid data type used for curve operations. " + ex.TargetSite);
-                return x1;
-            }
+            return x1 + ((x2 - x1) * (-1 * Mathf.Sqrt(1 - Mathf.Pow(delta, 2)) + 1));
         }
 
         /// <summary>
@@ -206,30 +129,19 @@ namespace Canty
         /// <param name="x2">Value at 1.</param>
         /// <param name="delta">Interpolation percentage. [0, 1]</param>
         /// <returns>Interpolated value.</returns>
-        public static I CircularEaseInOut<I>(I x1, I x2, float delta)
+        public static float CircularEaseInOut(float x1, float x2, float delta)
         {
-            try
+            float trueX = delta * 2;
+            trueX = trueX >= 1.0f ? trueX - 1 : trueX;
+
+            if (delta < 0.5f)
             {
-                float trueX = delta * 2;
-                trueX = trueX >= 1.0f ? trueX - 1 : trueX;
-
-                dynamic xd1 = x1;
-                dynamic xd2 = x2;
-
-                if (delta < 0.5f)
-                {
-                    return xd1 + (((xd2 - xd1) / 2.0f) * (-1 * Mathf.Sqrt(1 - Mathf.Pow(trueX, 2)) + 1));
-                }
-                else
-                {
-                    return xd1 + (((xd2 - xd1) / 2.0f) +
-                                  ((xd2 - xd1) / 2.0f) * (Mathf.Sqrt(1 - Mathf.Pow(trueX - 1, 2))));
-                }
+                return x1 + (((x2 - x1) / 2.0f) * (-1 * Mathf.Sqrt(1 - Mathf.Pow(trueX, 2)) + 1));
             }
-            catch (Exception ex)
+            else
             {
-                Debug.LogError("Curves : Invalid data type used for curve operations. " + ex.TargetSite);
-                return x1;
+                return x1 + (((x2 - x1) / 2.0f) +
+                              ((x2 - x1) / 2.0f) * (Mathf.Sqrt(1 - Mathf.Pow(trueX - 1, 2))));
             }
         }
 
@@ -240,30 +152,19 @@ namespace Canty
         /// <param name="x2">Value at 1.</param>
         /// <param name="delta">Interpolation percentage. [0, 1]</param>
         /// <returns>Interpolated value.</returns>
-        public static I CircularEaseOutIn<I>(I x1, I x2, float delta)
+        public static float CircularEaseOutIn(float x1, float x2, float delta)
         {
-            try
+            float trueX = delta * 2;
+            trueX = trueX >= 1.0f ? trueX - 1 : trueX;
+
+            if (delta < 0.5f)
             {
-                float trueX = delta * 2;
-                trueX = trueX >= 1.0f ? trueX - 1 : trueX;
-
-                dynamic xd1 = x1;
-                dynamic xd2 = x2;
-
-                if (delta < 0.5f)
-                {
-                    return xd1 + (((xd2 - xd1) / 2.0f) * (Mathf.Sqrt(1 - Mathf.Pow(trueX - 1, 2))));
-                }
-                else
-                {
-                    return xd1 + (((xd2 - xd1) / 2.0f) +
-                                  ((xd2 - xd1) / 2.0f) * (-1 * Mathf.Sqrt(1 - Mathf.Pow(trueX, 2)) + 1));
-                }
+                return x1 + (((x2 - x1) / 2.0f) * (Mathf.Sqrt(1 - Mathf.Pow(trueX - 1, 2))));
             }
-            catch (Exception ex)
+            else
             {
-                Debug.LogError("Curves : Invalid data type used for curve operations. " + ex.TargetSite);
-                return x1;
+                return x1 + (((x2 - x1) / 2.0f) +
+                              ((x2 - x1) / 2.0f) * (-1 * Mathf.Sqrt(1 - Mathf.Pow(trueX, 2)) + 1));
             }
         }
 
@@ -278,20 +179,9 @@ namespace Canty
         /// <param name="x2">Value at 1.</param>
         /// <param name="delta">Interpolation percentage. [0, 1]</param>
         /// <returns>Interpolated value.</returns>
-        public static I QuadraticEaseOut<I>(I x1, I x2, float delta)
+        public static float QuadraticEaseOut(float x1, float x2, float delta)
         {
-            try
-            {
-                dynamic xd1 = x1;
-                dynamic xd2 = x2;
-
-                return xd1 + ((xd2 - xd1) * (-1 * delta * (delta - 2)));
-            }
-            catch (Exception ex)
-            {
-                Debug.LogError("Curves : Invalid data type used for curve operations. " + ex.TargetSite);
-                return x1;
-            }
+            return x1 + ((x2 - x1) * (-1 * delta * (delta - 2)));
         }
 
         /// <summary>
@@ -301,20 +191,9 @@ namespace Canty
         /// <param name="x2">Value at 1.</param>
         /// <param name="delta">Interpolation percentage. [0, 1]</param>
         /// <returns>Interpolated value.</returns>
-        public static I QuadraticEaseIn<I>(I x1, I x2, float delta)
+        public static float QuadraticEaseIn(float x1, float x2, float delta)
         {
-            try
-            {
-                dynamic xd1 = x1;
-                dynamic xd2 = x2;
-
-                return xd1 + ((xd2 - xd1) * (Mathf.Pow(delta, 2.0f)));
-            }
-            catch (Exception ex)
-            {
-                Debug.LogError("Curves : Invalid data type used for curve operations. " + ex.TargetSite);
-                return x1;
-            }
+            return x1 + ((x2 - x1) * (Mathf.Pow(delta, 2.0f)));
         }
 
         /// <summary>
@@ -324,29 +203,18 @@ namespace Canty
         /// <param name="x2">Value at 1.</param>
         /// <param name="delta">Interpolation percentage. [0, 1]</param>
         /// <returns>Interpolated value.</returns>
-        public static I QuadraticEaseInOut<I>(I x1, I x2, float delta)
+        public static float QuadraticEaseInOut(float x1, float x2, float delta)
         {
-            try
+            float trueX = delta * 2.0f;
+            trueX = trueX >= 1.0f ? trueX - 1.0f : trueX;
+
+            if (delta < 0.5f)
             {
-                float trueX = delta * 2.0f;
-                trueX = trueX >= 1.0f ? trueX - 1.0f : trueX;
-
-                dynamic xd1 = x1;
-                dynamic xd2 = x2;
-
-                if (delta < 0.5f)
-                {
-                    return xd1 + (((xd2 - xd1) / 2.0f) * (Mathf.Pow(trueX, 2.0f)));
-                }
-                else
-                {
-                    return xd1 + (((xd2 - xd1) / 2.0f) + ((xd2 - xd1) / 2.0f) * (-1 * trueX * (trueX - 2)));
-                }
+                return x1 + (((x2 - x1) / 2.0f) * (Mathf.Pow(trueX, 2.0f)));
             }
-            catch (Exception ex)
+            else
             {
-                Debug.LogError("Curves : Invalid data type used for curve operations. " + ex.TargetSite);
-                return x1;
+                return x1 + (((x2 - x1) / 2.0f) + ((x2 - x1) / 2.0f) * (-1 * trueX * (trueX - 2)));
             }
         }
 
@@ -357,29 +225,18 @@ namespace Canty
         /// <param name="x2">Value at 1.</param>
         /// <param name="delta">Interpolation percentage. [0, 1]</param>
         /// <returns>Interpolated value.</returns>
-        public static I QuadraticEaseOutIn<I>(I x1, I x2, float delta)
+        public static float QuadraticEaseOutIn(float x1, float x2, float delta)
         {
-            try
+            float trueX = delta * 2.0f;
+            trueX = trueX >= 1.0f ? trueX - 1 : trueX;
+
+            if (delta < 0.5f)
             {
-                float trueX = delta * 2.0f;
-                trueX = trueX >= 1.0f ? trueX - 1 : trueX;
-
-                dynamic xd1 = x1;
-                dynamic xd2 = x2;
-
-                if (delta < 0.5f)
-                {
-                    return xd1 + (((xd2 - xd1) / 2.0f) * (-1 * trueX * (trueX - 2)));
-                }
-                else
-                {
-                    return xd1 + (((xd2 - xd1) / 2.0f) + ((xd2 - xd1) / 2.0f) * (Mathf.Pow(trueX, 2.0f)));
-                }
+                return x1 + (((x2 - x1) / 2.0f) * (-1 * trueX * (trueX - 2)));
             }
-            catch (Exception ex)
+            else
             {
-                Debug.LogError("Curves : Invalid data type used for curve operations. " + ex.TargetSite);
-                return x1;
+                return x1 + (((x2 - x1) / 2.0f) + ((x2 - x1) / 2.0f) * (Mathf.Pow(trueX, 2.0f)));
             }
         }
 
@@ -394,20 +251,9 @@ namespace Canty
         /// <param name="x2">Value at 1.</param>
         /// <param name="delta">Interpolation percentage. [0, 1]</param>
         /// <returns>Interpolated value.</returns>
-        public static I SineEaseOut<I>(I x1, I x2, float delta)
+        public static float SineEaseOut(float x1, float x2, float delta)
         {
-            try
-            {
-                dynamic xd1 = x1;
-                dynamic xd2 = x2;
-
-                return xd1 + ((xd2 - xd1) * (Mathf.Sin(delta * (Mathf.PI / 2.0f))));
-            }
-            catch (Exception ex)
-            {
-                Debug.LogError("Curves : Invalid data type used for curve operations. " + ex.TargetSite);
-                return x1;
-            }
+            return x1 + ((x2 - x1) * (Mathf.Sin(delta * (Mathf.PI / 2.0f))));
         }
 
         /// <summary>
@@ -417,20 +263,9 @@ namespace Canty
         /// <param name="x2">Value at 1.</param>
         /// <param name="delta">Interpolation percentage. [0, 1]</param>
         /// <returns>Interpolated value.</returns>
-        public static I SineEaseIn<I>(I x1, I x2, float delta)
+        public static float SineEaseIn(float x1, float x2, float delta)
         {
-            try
-            {
-                dynamic xd1 = x1;
-                dynamic xd2 = x2;
-
-                return xd1 + ((xd2 - xd1) * (Mathf.Sin(delta * (Mathf.PI / 2.0f) + (1.5f * Mathf.PI)) + 1.0f));
-            }
-            catch (Exception ex)
-            {
-                Debug.LogError("Curves : Invalid data type used for curve operations. " + ex.TargetSite);
-                return x1;
-            }
+            return x1 + ((x2 - x1) * (Mathf.Sin(delta * (Mathf.PI / 2.0f) + (1.5f * Mathf.PI)) + 1.0f));
         }
 
         /// <summary>
@@ -440,30 +275,19 @@ namespace Canty
         /// <param name="x2">Value at 1.</param>
         /// <param name="delta">Interpolation percentage. [0, 1]</param>
         /// <returns>Interpolated value.</returns>
-        public static I SineEaseInOut<I>(I x1, I x2, float delta)
+        public static float SineEaseInOut(float x1, float x2, float delta)
         {
-            try
+            float trueX = delta * 2.0f;
+            trueX = trueX >= 1.0f ? trueX - 1.0f : trueX;
+
+            if (delta < 0.5f)
             {
-                float trueX = delta * 2.0f;
-                trueX = trueX >= 1.0f ? trueX - 1.0f : trueX;
-
-                dynamic xd1 = x1;
-                dynamic xd2 = x2;
-
-                if (delta < 0.5f)
-                {
-                    return xd1 + (((xd2 - xd1) / 2.0f) *
-                                  (Mathf.Sin(trueX * (Mathf.PI / 2.0f) + (1.5f * Mathf.PI)) + 1.0f));
-                }
-                else
-                {
-                    return xd1 + (((xd2 - xd1) / 2.0f) + ((xd2 - xd1) / 2.0f) * (Mathf.Sin(trueX * (Mathf.PI / 2.0f))));
-                }
+                return x1 + (((x2 - x1) / 2.0f) *
+                              (Mathf.Sin(trueX * (Mathf.PI / 2.0f) + (1.5f * Mathf.PI)) + 1.0f));
             }
-            catch (Exception ex)
+            else
             {
-                Debug.LogError("Curves : Invalid data type used for curve operations. " + ex.TargetSite);
-                return x1;
+                return x1 + (((x2 - x1) / 2.0f) + ((x2 - x1) / 2.0f) * (Mathf.Sin(trueX * (Mathf.PI / 2.0f))));
             }
         }
 
@@ -474,30 +298,19 @@ namespace Canty
         /// <param name="x2">Value at 1.</param>
         /// <param name="delta">Interpolation percentage. [0, 1]</param>
         /// <returns>Interpolated value.</returns>
-        public static I SineEaseOutIn<I>(I x1, I x2, float delta)
+        public static float SineEaseOutIn(float x1, float x2, float delta)
         {
-            try
+            float trueX = delta * 2.0f;
+            trueX = trueX >= 1.0f ? trueX - 1.0f : trueX;
+
+            if (delta < 0.5f)
             {
-                float trueX = delta * 2.0f;
-                trueX = trueX >= 1.0f ? trueX - 1.0f : trueX;
-
-                dynamic xd1 = x1;
-                dynamic xd2 = x2;
-
-                if (delta < 0.5f)
-                {
-                    return xd1 + (((xd2 - xd1) / 2.0f) * (Mathf.Sin(trueX * (Mathf.PI / 2.0f))));
-                }
-                else
-                {
-                    return xd1 + (((xd2 - xd1) / 2.0f) + ((xd2 - xd1) / 2.0f) *
-                                  (Mathf.Sin(trueX * (Mathf.PI / 2.0f) + (1.5f * Mathf.PI)) + 1.0f));
-                }
+                return x1 + (((x2 - x1) / 2.0f) * (Mathf.Sin(trueX * (Mathf.PI / 2.0f))));
             }
-            catch (Exception ex)
+            else
             {
-                Debug.LogError("Curves : Invalid data type used for curve operations. " + ex.TargetSite);
-                return x1;
+                return x1 + (((x2 - x1) / 2.0f) + ((x2 - x1) / 2.0f) *
+                              (Mathf.Sin(trueX * (Mathf.PI / 2.0f) + (1.5f * Mathf.PI)) + 1.0f));
             }
         }
 
@@ -512,20 +325,9 @@ namespace Canty
         /// <param name="x2">Value at 1.</param>
         /// <param name="delta">Interpolation percentage. [0, 1]</param>
         /// <returns>Interpolated value.</returns>
-        public static I CubicEaseOut<I>(I x1, I x2, float delta)
+        public static float CubicEaseOut(float x1, float x2, float delta)
         {
-            try
-            {
-                dynamic xd1 = x1;
-                dynamic xd2 = x2;
-
-                return xd1 + ((xd2 - xd1) * (Mathf.Pow(delta - 1.0f, 3.0f) + 1.0f));
-            }
-            catch (Exception ex)
-            {
-                Debug.LogError("Curves : Invalid data type used for curve operations. " + ex.TargetSite);
-                return x1;
-            }
+            return x1 + ((x2 - x1) * (Mathf.Pow(delta - 1.0f, 3.0f) + 1.0f));
         }
 
         /// <summary>
@@ -535,20 +337,9 @@ namespace Canty
         /// <param name="x2">Value at 1.</param>
         /// <param name="delta">Interpolation percentage. [0, 1]</param>
         /// <returns>Interpolated value.</returns>
-        public static I CubicEaseIn<I>(I x1, I x2, float delta)
+        public static float CubicEaseIn(float x1, float x2, float delta)
         {
-            try
-            {
-                dynamic xd1 = x1;
-                dynamic xd2 = x2;
-
-                return xd1 + ((xd2 - xd1) * Mathf.Pow(delta, 3.0f));
-            }
-            catch (Exception ex)
-            {
-                Debug.LogError("Curves : Invalid data type used for curve operations. " + ex.TargetSite);
-                return x1;
-            }
+            return x1 + ((x2 - x1) * Mathf.Pow(delta, 3.0f));
         }
 
         /// <summary>
@@ -558,29 +349,18 @@ namespace Canty
         /// <param name="x2">Value at 1.</param>
         /// <param name="delta">Interpolation percentage. [0, 1]</param>
         /// <returns>Interpolated value.</returns>
-        public static I CubicEaseInOut<I>(I x1, I x2, float delta)
+        public static float CubicEaseInOut(float x1, float x2, float delta)
         {
-            try
+            float trueX = delta * 2.0f;
+            trueX = trueX >= 1.0f ? trueX - 1.0f : trueX;
+
+            if (delta < 0.5f)
             {
-                float trueX = delta * 2.0f;
-                trueX = trueX >= 1.0f ? trueX - 1.0f : trueX;
-
-                dynamic xd1 = x1;
-                dynamic xd2 = x2;
-
-                if (delta < 0.5f)
-                {
-                    return xd1 + (((xd2 - xd1) / 2.0f) * Mathf.Pow(trueX, 3.0f));
-                }
-                else
-                {
-                    return xd1 + (((xd2 - xd1) / 2.0f) + ((xd2 - xd1) / 2.0f) * (Mathf.Pow(trueX - 1.0f, 3.0f) + 1.0f));
-                }
+                return x1 + (((x2 - x1) / 2.0f) * Mathf.Pow(trueX, 3.0f));
             }
-            catch (Exception ex)
+            else
             {
-                Debug.LogError("Curves : Invalid data type used for curve operations. " + ex.TargetSite);
-                return x1;
+                return x1 + (((x2 - x1) / 2.0f) + ((x2 - x1) / 2.0f) * (Mathf.Pow(trueX - 1.0f, 3.0f) + 1.0f));
             }
         }
 
@@ -591,29 +371,18 @@ namespace Canty
         /// <param name="x2">Value at 1.</param>
         /// <param name="delta">Interpolation percentage. [0, 1]</param>
         /// <returns>Interpolated value.</returns>
-        public static I CubicEaseOutIn<I>(I x1, I x2, float delta)
+        public static float CubicEaseOutIn(float x1, float x2, float delta)
         {
-            try
+            float trueX = delta * 2.0f;
+            trueX = trueX >= 1.0f ? trueX - 1.0f : trueX;
+
+            if (delta < 0.5f)
             {
-                float trueX = delta * 2.0f;
-                trueX = trueX >= 1.0f ? trueX - 1.0f : trueX;
-
-                dynamic xd1 = x1;
-                dynamic xd2 = x2;
-
-                if (delta < 0.5f)
-                {
-                    return xd1 + (((xd2 - xd1) / 2.0f) * (Mathf.Pow(trueX - 1.0f, 3.0f) + 1.0f));
-                }
-                else
-                {
-                    return xd1 + (((xd2 - xd1) / 2.0f) + ((xd2 - xd1) / 2.0f) * Mathf.Pow(trueX, 3.0f));
-                }
+                return x1 + (((x2 - x1) / 2.0f) * (Mathf.Pow(trueX - 1.0f, 3.0f) + 1.0f));
             }
-            catch (Exception ex)
+            else
             {
-                Debug.LogError("Curves : Invalid data type used for curve operations. " + ex.TargetSite);
-                return x1;
+                return x1 + (((x2 - x1) / 2.0f) + ((x2 - x1) / 2.0f) * Mathf.Pow(trueX, 3.0f));
             }
         }
 
@@ -628,20 +397,9 @@ namespace Canty
         /// <param name="x2">Value at 1.</param>
         /// <param name="delta">Interpolation percentage. [0, 1]</param>
         /// <returns>Interpolated value.</returns>
-        public static I QuarticEaseOut<I>(I x1, I x2, float delta)
+        public static float QuarticEaseOut(float x1, float x2, float delta)
         {
-            try
-            {
-                dynamic xd1 = x1;
-                dynamic xd2 = x2;
-
-                return xd1 + ((xd2 - xd1) * (-1.0f * Mathf.Pow(delta - 1.0f, 4.0f) + 1.0f));
-            }
-            catch (Exception ex)
-            {
-                Debug.LogError("Curves : Invalid data type used for curve operations. " + ex.TargetSite);
-                return x1;
-            }
+            return x1 + ((x2 - x1) * (-1.0f * Mathf.Pow(delta - 1.0f, 4.0f) + 1.0f));
         }
 
         /// <summary>
@@ -651,20 +409,9 @@ namespace Canty
         /// <param name="x2">Value at 1.</param>
         /// <param name="delta">Interpolation percentage. [0, 1]</param>
         /// <returns>Interpolated value.</returns>
-        public static I QuarticEaseIn<I>(I x1, I x2, float delta)
+        public static float QuarticEaseIn(float x1, float x2, float delta)
         {
-            try
-            {
-                dynamic xd1 = x1;
-                dynamic xd2 = x2;
-
-                return xd1 + ((xd2 - xd1) * Mathf.Pow(delta, 4.0f));
-            }
-            catch (Exception ex)
-            {
-                Debug.LogError("Curves : Invalid data type used for curve operations. " + ex.TargetSite);
-                return x1;
-            }
+            return x1 + ((x2 - x1) * Mathf.Pow(delta, 4.0f));
         }
 
         /// <summary>
@@ -674,30 +421,19 @@ namespace Canty
         /// <param name="x2">Value at 1.</param>
         /// <param name="delta">Interpolation percentage. [0, 1]</param>
         /// <returns>Interpolated value.</returns>
-        public static I QuarticEaseInOut<I>(I x1, I x2, float delta)
+        public static float QuarticEaseInOut(float x1, float x2, float delta)
         {
-            try
+            float trueX = delta * 2.0f;
+            trueX = trueX >= 1.0f ? trueX - 1.0f : trueX;
+
+            if (delta < 0.5f)
             {
-                float trueX = delta * 2.0f;
-                trueX = trueX >= 1.0f ? trueX - 1.0f : trueX;
-
-                dynamic xd1 = x1;
-                dynamic xd2 = x2;
-
-                if (delta < 0.5f)
-                {
-                    return xd1 + (((xd2 - xd1) / 2.0f) * Mathf.Pow(trueX, 4.0f));
-                }
-                else
-                {
-                    return xd1 + (((xd2 - xd1) / 2.0f) +
-                                  ((xd2 - xd1) / 2.0f) * (-1.0f * Mathf.Pow(trueX - 1.0f, 4.0f) + 1.0f));
-                }
+                return x1 + (((x2 - x1) / 2.0f) * Mathf.Pow(trueX, 4.0f));
             }
-            catch (Exception ex)
+            else
             {
-                Debug.LogError("Curves : Invalid data type used for curve operations. " + ex.TargetSite);
-                return x1;
+                return x1 + (((x2 - x1) / 2.0f) +
+                              ((x2 - x1) / 2.0f) * (-1.0f * Mathf.Pow(trueX - 1.0f, 4.0f) + 1.0f));
             }
         }
 
@@ -708,29 +444,18 @@ namespace Canty
         /// <param name="x2">Value at 1.</param>
         /// <param name="delta">Interpolation percentage. [0, 1]</param>
         /// <returns>Interpolated value.</returns>
-        public static I QuarticEaseOutIn<I>(I x1, I x2, float delta)
+        public static float QuarticEaseOutIn(float x1, float x2, float delta)
         {
-            try
+            float trueX = delta * 2.0f;
+            trueX = trueX >= 1.0f ? trueX - 1.0f : trueX;
+
+            if (delta < 0.5f)
             {
-                float trueX = delta * 2.0f;
-                trueX = trueX >= 1.0f ? trueX - 1.0f : trueX;
-
-                dynamic xd1 = x1;
-                dynamic xd2 = x2;
-
-                if (delta < 0.5f)
-                {
-                    return xd1 + (((xd2 - xd1) / 2.0f) * (-1.0f * Mathf.Pow(trueX - 1.0f, 4.0f) + 1.0f));
-                }
-                else
-                {
-                    return xd1 + (((xd2 - xd1) / 2.0f) + ((xd2 - xd1) / 2.0f) * Mathf.Pow(trueX, 4.0f));
-                }
+                return x1 + (((x2 - x1) / 2.0f) * (-1.0f * Mathf.Pow(trueX - 1.0f, 4.0f) + 1.0f));
             }
-            catch (Exception ex)
+            else
             {
-                Debug.LogError("Curves : Invalid data type used for curve operations. " + ex.TargetSite);
-                return x1;
+                return x1 + (((x2 - x1) / 2.0f) + ((x2 - x1) / 2.0f) * Mathf.Pow(trueX, 4.0f));
             }
         }
 
@@ -745,20 +470,9 @@ namespace Canty
         /// <param name="x2">Value at 1.</param>
         /// <param name="delta">Interpolation percentage. [0, 1]</param>
         /// <returns>Interpolated value.</returns>
-        public static I QuinticEaseOut<I>(I x1, I x2, float delta)
+        public static float QuinticEaseOut(float x1, float x2, float delta)
         {
-            try
-            {
-                dynamic xd1 = x1;
-                dynamic xd2 = x2;
-
-                return xd1 + ((xd2 - xd1) * (Mathf.Pow(delta - 1.0f, 5.0f) + 1.0f));
-            }
-            catch (Exception ex)
-            {
-                Debug.LogError("Curves : Invalid data type used for curve operations. " + ex.TargetSite);
-                return x1;
-            }
+            return x1 + ((x2 - x1) * (Mathf.Pow(delta - 1.0f, 5.0f) + 1.0f));
         }
 
         /// <summary>
@@ -768,20 +482,9 @@ namespace Canty
         /// <param name="x2">Value at 1.</param>
         /// <param name="delta">Interpolation percentage. [0, 1]</param>
         /// <returns>Interpolated value.</returns>
-        public static I QuinticEaseIn<I>(I x1, I x2, float delta)
+        public static float QuinticEaseIn(float x1, float x2, float delta)
         {
-            try
-            {
-                dynamic xd1 = x1;
-                dynamic xd2 = x2;
-
-                return xd1 + ((xd2 - xd1) * Mathf.Pow(delta, 5.0f));
-            }
-            catch (Exception ex)
-            {
-                Debug.LogError("Curves : Invalid data type used for curve operations. " + ex.TargetSite);
-                return x1;
-            }
+            return x1 + ((x2 - x1) * Mathf.Pow(delta, 5.0f));
         }
 
         /// <summary>
@@ -791,29 +494,18 @@ namespace Canty
         /// <param name="x2">Value at 1.</param>
         /// <param name="delta">Interpolation percentage. [0, 1]</param>
         /// <returns>Interpolated value.</returns>
-        public static I QuinticEaseInOut<I>(I x1, I x2, float delta)
+        public static float QuinticEaseInOut(float x1, float x2, float delta)
         {
-            try
+            float trueX = delta * 2.0f;
+            trueX = trueX >= 1.0f ? trueX - 1.0f : trueX;
+
+            if (delta < 0.5f)
             {
-                float trueX = delta * 2.0f;
-                trueX = trueX >= 1.0f ? trueX - 1.0f : trueX;
-
-                dynamic xd1 = x1;
-                dynamic xd2 = x2;
-
-                if (delta < 0.5f)
-                {
-                    return xd1 + (((xd2 - xd1) / 2.0f) * Mathf.Pow(trueX, 5.0f));
-                }
-                else
-                {
-                    return xd1 + (((xd2 - xd1) / 2.0f) + ((xd2 - xd1) / 2.0f) * (Mathf.Pow(trueX - 1.0f, 5.0f) + 1.0f));
-                }
+                return x1 + (((x2 - x1) / 2.0f) * Mathf.Pow(trueX, 5.0f));
             }
-            catch (Exception ex)
+            else
             {
-                Debug.LogError("Curves : Invalid data type used for curve operations. " + ex.TargetSite);
-                return x1;
+                return x1 + (((x2 - x1) / 2.0f) + ((x2 - x1) / 2.0f) * (Mathf.Pow(trueX - 1.0f, 5.0f) + 1.0f));
             }
         }
 
@@ -824,29 +516,18 @@ namespace Canty
         /// <param name="x2">Value at 1.</param>
         /// <param name="delta">Interpolation percentage. [0, 1]</param>
         /// <returns>Interpolated value.</returns>
-        public static I QuinticEaseOutIn<I>(I x1, I x2, float delta)
+        public static float QuinticEaseOutIn(float x1, float x2, float delta)
         {
-            try
+            float trueX = delta * 2.0f;
+            trueX = trueX >= 1.0f ? trueX - 1.0f : trueX;
+
+            if (delta < 0.5f)
             {
-                float trueX = delta * 2.0f;
-                trueX = trueX >= 1.0f ? trueX - 1.0f : trueX;
-
-                dynamic xd1 = x1;
-                dynamic xd2 = x2;
-
-                if (delta < 0.5f)
-                {
-                    return xd1 + (((xd2 - xd1) / 2.0f) * (Mathf.Pow(trueX - 1.0f, 5.0f) + 1.0f));
-                }
-                else
-                {
-                    return xd1 + (((xd2 - xd1) / 2.0f) + ((xd2 - xd1) / 2.0f) * Mathf.Pow(trueX, 5.0f));
-                }
+                return x1 + (((x2 - x1) / 2.0f) * (Mathf.Pow(trueX - 1.0f, 5.0f) + 1.0f));
             }
-            catch (Exception ex)
+            else
             {
-                Debug.LogError("Curves : Invalid data type used for curve operations. " + ex.TargetSite);
-                return x1;
+                return x1 + (((x2 - x1) / 2.0f) + ((x2 - x1) / 2.0f) * Mathf.Pow(trueX, 5.0f));
             }
         }
 
@@ -861,22 +542,11 @@ namespace Canty
         /// <param name="x2">Value at 1.</param>
         /// <param name="delta">Interpolation percentage. [0, 1]</param>
         /// <returns>Interpolated value.</returns>
-        public static I ElasticEaseOut<I>(I x1, I x2, float delta)
+        public static float ElasticEaseOut(float x1, float x2, float delta)
         {
-            try
-            {
-                dynamic xd1 = x1;
-                dynamic xd2 = x2;
-
-                return xd1 + ((xd2 - xd1) *
-                              (Mathf.Pow(2.0f, -10.0f * delta) *
-                               Mathf.Sin(((delta - 0.07f) * (2.0f * Mathf.PI)) / 0.3f) + 1.0f));
-            }
-            catch (Exception ex)
-            {
-                Debug.LogError("Curves : Invalid data type used for curve operations. " + ex.TargetSite);
-                return x1;
-            }
+            return x1 + ((x2 - x1) *
+                          (Mathf.Pow(2.0f, -10.0f * delta) *
+                           Mathf.Sin(((delta - 0.07f) * (2.0f * Mathf.PI)) / 0.3f) + 1.0f));
         }
 
         /// <summary>
@@ -886,21 +556,10 @@ namespace Canty
         /// <param name="x2">Value at 1.</param>
         /// <param name="delta">Interpolation percentage. [0, 1]</param>
         /// <returns>Interpolated value.</returns>
-        public static I ElasticEaseIn<I>(I x1, I x2, float delta)
+        public static float ElasticEaseIn(float x1, float x2, float delta)
         {
-            try
-            {
-                dynamic xd1 = x1;
-                dynamic xd2 = x2;
-
-                return xd1 + ((xd2 - xd1) * (-Mathf.Pow(2.0f, 10.0f * (delta - 1.0f)) *
-                                             Mathf.Sin(((delta - 1.07f) * (2.0f * Mathf.PI)) / 0.3f)));
-            }
-            catch (Exception ex)
-            {
-                Debug.LogError("Curves : Invalid data type used for curve operations. " + ex.TargetSite);
-                return x1;
-            }
+            return x1 + ((x2 - x1) * (-Mathf.Pow(2.0f, 10.0f * (delta - 1.0f)) *
+                                         Mathf.Sin(((delta - 1.07f) * (2.0f * Mathf.PI)) / 0.3f)));
         }
 
         /// <summary>
@@ -910,33 +569,22 @@ namespace Canty
         /// <param name="x2">Value at 1.</param>
         /// <param name="delta">Interpolation percentage. [0, 1]</param>
         /// <returns>Interpolated value.</returns>
-        public static I ElasticEaseInOut<I>(I x1, I x2, float delta)
+        public static float ElasticEaseInOut(float x1, float x2, float delta)
         {
-            try
+            float trueX = delta * 2.0f;
+            trueX = trueX >= 1.0f ? trueX - 1.0f : trueX;
+
+            if (delta < 0.5f)
             {
-                float trueX = delta * 2.0f;
-                trueX = trueX >= 1.0f ? trueX - 1.0f : trueX;
-
-                dynamic xd1 = x1;
-                dynamic xd2 = x2;
-
-                if (delta < 0.5f)
-                {
-                    return xd1 + (((xd2 - xd1) / 2.0f) *
-                                  (-Mathf.Pow(2.0f, 10.0f * (trueX - 1.0f)) *
-                                   Mathf.Sin(((trueX - 1.07f) * (2.0f * Mathf.PI)) / 0.3f)));
-                }
-                else
-                {
-                    return xd1 + (((xd2 - xd1) / 2.0f) + ((xd2 - xd1) / 2.0f) *
-                                  (Mathf.Pow(2.0f, -10.0f * trueX) *
-                                   Mathf.Sin(((trueX - 0.07f) * (2.0f * Mathf.PI)) / 0.3f) + 1.0f));
-                }
+                return x1 + (((x2 - x1) / 2.0f) *
+                              (-Mathf.Pow(2.0f, 10.0f * (trueX - 1.0f)) *
+                               Mathf.Sin(((trueX - 1.07f) * (2.0f * Mathf.PI)) / 0.3f)));
             }
-            catch (Exception ex)
+            else
             {
-                Debug.LogError("Curves : Invalid data type used for curve operations. " + ex.TargetSite);
-                return x1;
+                return x1 + (((x2 - x1) / 2.0f) + ((x2 - x1) / 2.0f) *
+                              (Mathf.Pow(2.0f, -10.0f * trueX) *
+                               Mathf.Sin(((trueX - 0.07f) * (2.0f * Mathf.PI)) / 0.3f) + 1.0f));
             }
         }
 
@@ -947,33 +595,22 @@ namespace Canty
         /// <param name="x2">Value at 1.</param>
         /// <param name="delta">Interpolation percentage. [0, 1]</param>
         /// <returns>Interpolated value.</returns>
-        public static I ElasticEaseOutIn<I>(I x1, I x2, float delta)
+        public static float ElasticEaseOutIn(float x1, float x2, float delta)
         {
-            try
+            float trueX = delta * 2.0f;
+            trueX = trueX >= 1.0f ? trueX - 1.0f : trueX;
+
+            if (delta < 0.5f)
             {
-                float trueX = delta * 2.0f;
-                trueX = trueX >= 1.0f ? trueX - 1.0f : trueX;
-
-                dynamic xd1 = x1;
-                dynamic xd2 = x2;
-
-                if (delta < 0.5f)
-                {
-                    return xd1 + (((xd2 - xd1) / 2.0f) *
-                                  (Mathf.Pow(2.0f, -10.0f * trueX) *
-                                   Mathf.Sin(((trueX - 0.07f) * (2.0f * Mathf.PI)) / 0.3f) + 1.0f));
-                }
-                else
-                {
-                    return xd1 + (((xd2 - xd1) / 2.0f) + ((xd2 - xd1) / 2.0f) *
-                                  (-Mathf.Pow(2.0f, 10.0f * (trueX - 1.0f)) *
-                                   Mathf.Sin(((trueX - 1.07f) * (2.0f * Mathf.PI)) / 0.3f)));
-                }
+                return x1 + (((x2 - x1) / 2.0f) *
+                              (Mathf.Pow(2.0f, -10.0f * trueX) *
+                               Mathf.Sin(((trueX - 0.07f) * (2.0f * Mathf.PI)) / 0.3f) + 1.0f));
             }
-            catch (Exception ex)
+            else
             {
-                Debug.LogError("Curves : Invalid data type used for curve operations. " + ex.TargetSite);
-                return x1;
+                return x1 + (((x2 - x1) / 2.0f) + ((x2 - x1) / 2.0f) *
+                              (-Mathf.Pow(2.0f, 10.0f * (trueX - 1.0f)) *
+                               Mathf.Sin(((trueX - 1.07f) * (2.0f * Mathf.PI)) / 0.3f)));
             }
         }
 
@@ -988,36 +625,25 @@ namespace Canty
         /// <param name="x2">Value at 1.</param>
         /// <param name="delta">Interpolation percentage. [0, 1]</param>
         /// <returns>Interpolated value.</returns>
-        public static I BounceEaseOut<I>(I x1, I x2, float delta)
+        public static float BounceEaseOut(float x1, float x2, float delta)
         {
-            try
+            float a = 7.5625f;
+
+            if (delta < (1.0f / 2.75f))
             {
-                float a = 7.5625f;
-
-                dynamic xd1 = x1;
-                dynamic xd2 = x2;
-
-                if (delta < (1.0f / 2.75f))
-                {
-                    return xd1 + ((xd2 - xd1) * (a * Mathf.Pow(delta, 2.0f)));
-                }
-                else if (delta < (2.0f / 2.75f))
-                {
-                    return xd1 + ((xd2 - xd1) * (a * Mathf.Pow(delta - (1.5f / 2.75f), 2.0f) + (3.0f / 4.0f)));
-                }
-                else if (delta < (2.5f / 2.75f))
-                {
-                    return xd1 + ((xd2 - xd1) * (a * Mathf.Pow(delta - (2.25f / 2.75f), 2.0f) + (15.0f / 16.0f)));
-                }
-                else
-                {
-                    return xd1 + ((xd2 - xd1) * (a * Mathf.Pow(delta - (2.625f / 2.75f), 2.0f) + (63.0f / 64.0f)));
-                }
+                return x1 + ((x2 - x1) * (a * Mathf.Pow(delta, 2.0f)));
             }
-            catch (Exception ex)
+            else if (delta < (2.0f / 2.75f))
             {
-                Debug.LogError("Curves : Invalid data type used for curve operations. " + ex.TargetSite);
-                return x1;
+                return x1 + ((x2 - x1) * (a * Mathf.Pow(delta - (1.5f / 2.75f), 2.0f) + (3.0f / 4.0f)));
+            }
+            else if (delta < (2.5f / 2.75f))
+            {
+                return x1 + ((x2 - x1) * (a * Mathf.Pow(delta - (2.25f / 2.75f), 2.0f) + (15.0f / 16.0f)));
+            }
+            else
+            {
+                return x1 + ((x2 - x1) * (a * Mathf.Pow(delta - (2.625f / 2.75f), 2.0f) + (63.0f / 64.0f)));
             }
         }
 
@@ -1028,36 +654,25 @@ namespace Canty
         /// <param name="x2">Value at 1.</param>
         /// <param name="delta">Interpolation percentage. [0, 1]</param>
         /// <returns>Interpolated value.</returns>
-        public static I BounceEaseIn<I>(I x1, I x2, float delta)
+        public static float BounceEaseIn(float x1, float x2, float delta)
         {
-            try
+            float a = 7.5625f;
+
+            if (delta < (0.25f / 2.75f))
             {
-                float a = 7.5625f;
-
-                dynamic xd1 = x1;
-                dynamic xd2 = x2;
-
-                if (delta < (0.25f / 2.75f))
-                {
-                    return xd1 + ((xd2 - xd1) * (a * -Mathf.Pow(delta - (0.125f / 2.75f), 2.0f) + (1.0f / 64.0f)));
-                }
-                else if (delta < (0.75f / 2.75f))
-                {
-                    return xd1 + ((xd2 - xd1) * (a * -Mathf.Pow(delta - (0.5f / 2.75f), 2.0f) + (1.0f / 16.0f)));
-                }
-                else if (delta < (1.75f / 2.75f))
-                {
-                    return xd1 + ((xd2 - xd1) * (a * -Mathf.Pow(delta - (1.25f / 2.75f), 2.0f) + (1.0f / 4.0f)));
-                }
-                else
-                {
-                    return xd1 + ((xd2 - xd1) * (a * -Mathf.Pow(delta - 1.0f, 2.0f) + 1.0f));
-                }
+                return x1 + ((x2 - x1) * (a * -Mathf.Pow(delta - (0.125f / 2.75f), 2.0f) + (1.0f / 64.0f)));
             }
-            catch (Exception ex)
+            else if (delta < (0.75f / 2.75f))
             {
-                Debug.LogError("Curves : Invalid data type used for curve operations. " + ex.TargetSite);
-                return x1;
+                return x1 + ((x2 - x1) * (a * -Mathf.Pow(delta - (0.5f / 2.75f), 2.0f) + (1.0f / 16.0f)));
+            }
+            else if (delta < (1.75f / 2.75f))
+            {
+                return x1 + ((x2 - x1) * (a * -Mathf.Pow(delta - (1.25f / 2.75f), 2.0f) + (1.0f / 4.0f)));
+            }
+            else
+            {
+                return x1 + ((x2 - x1) * (a * -Mathf.Pow(delta - 1.0f, 2.0f) + 1.0f));
             }
         }
 
@@ -1068,67 +683,56 @@ namespace Canty
         /// <param name="x2">Value at 1.</param>
         /// <param name="delta">Interpolation percentage. [0, 1]</param>
         /// <returns>Interpolated value.</returns>
-        public static I BounceEaseInOut<I>(I x1, I x2, float delta)
+        public static float BounceEaseInOut(float x1, float x2, float delta)
         {
-            try
+            float trueX = delta * 2.0f;
+            trueX = trueX >= 1.0f ? trueX - 1.0f : trueX;
+
+            float a = 7.5625f;
+
+            if (delta < 0.5f)
             {
-                float trueX = delta * 2.0f;
-                trueX = trueX >= 1.0f ? trueX - 1.0f : trueX;
-
-                float a = 7.5625f;
-
-                dynamic xd1 = x1;
-                dynamic xd2 = x2;
-
-                if (delta < 0.5f)
+                if (trueX < (0.25f / 2.75f))
                 {
-                    if (trueX < (0.25f / 2.75f))
-                    {
-                        return xd1 + (((xd2 - xd1) / 2.0f) *
-                                      (a * -Mathf.Pow(trueX - (0.125f / 2.75f), 2.0f) + (1.0f / 64.0f)));
-                    }
-                    else if (trueX < (0.75f / 2.75f))
-                    {
-                        return xd1 + (((xd2 - xd1) / 2.0f) *
-                                      (a * -Mathf.Pow(trueX - (0.5f / 2.75f), 2.0f) + (1.0f / 16.0f)));
-                    }
-                    else if (trueX < (1.75f / 2.75f))
-                    {
-                        return xd1 + (((xd2 - xd1) / 2.0f) *
-                                      (a * -Mathf.Pow(trueX - (1.25f / 2.75f), 2.0f) + (1.0f / 4.0f)));
-                    }
-                    else
-                    {
-                        return xd1 + (((xd2 - xd1) / 2.0f) * (a * -Mathf.Pow(trueX - 1.0f, 2.0f) + 1.0f));
-                    }
+                    return x1 + (((x2 - x1) / 2.0f) *
+                                  (a * -Mathf.Pow(trueX - (0.125f / 2.75f), 2.0f) + (1.0f / 64.0f)));
+                }
+                else if (trueX < (0.75f / 2.75f))
+                {
+                    return x1 + (((x2 - x1) / 2.0f) *
+                                  (a * -Mathf.Pow(trueX - (0.5f / 2.75f), 2.0f) + (1.0f / 16.0f)));
+                }
+                else if (trueX < (1.75f / 2.75f))
+                {
+                    return x1 + (((x2 - x1) / 2.0f) *
+                                  (a * -Mathf.Pow(trueX - (1.25f / 2.75f), 2.0f) + (1.0f / 4.0f)));
                 }
                 else
                 {
-                    if (trueX < (1.0f / 2.75f))
-                    {
-                        return xd1 + (((xd2 - xd1) / 2.0f) + ((xd2 - xd1) / 2.0f) * (a * Mathf.Pow(trueX, 2.0f)));
-                    }
-                    else if (trueX < (2.0f / 2.75f))
-                    {
-                        return xd1 + (((xd2 - xd1) / 2.0f) + ((xd2 - xd1) / 2.0f) *
-                                      (a * Mathf.Pow(trueX - (1.5f / 2.75f), 2.0f) + (3.0f / 4.0f)));
-                    }
-                    else if (trueX < (2.5f / 2.75f))
-                    {
-                        return xd1 + (((xd2 - xd1) / 2.0f) + ((xd2 - xd1) / 2.0f) *
-                                      (a * Mathf.Pow(trueX - (2.25f / 2.75f), 2.0f) + (15.0f / 16.0f)));
-                    }
-                    else
-                    {
-                        return xd1 + (((xd2 - xd1) / 2.0f) + ((xd2 - xd1) / 2.0f) *
-                                      (a * Mathf.Pow(trueX - (2.625f / 2.75f), 2.0f) + (63.0f / 64.0f)));
-                    }
+                    return x1 + (((x2 - x1) / 2.0f) * (a * -Mathf.Pow(trueX - 1.0f, 2.0f) + 1.0f));
                 }
             }
-            catch (Exception ex)
+            else
             {
-                Debug.LogError("Curves : Invalid data type used for curve operations. " + ex.TargetSite);
-                return x1;
+                if (trueX < (1.0f / 2.75f))
+                {
+                    return x1 + (((x2 - x1) / 2.0f) + ((x2 - x1) / 2.0f) * (a * Mathf.Pow(trueX, 2.0f)));
+                }
+                else if (trueX < (2.0f / 2.75f))
+                {
+                    return x1 + (((x2 - x1) / 2.0f) + ((x2 - x1) / 2.0f) *
+                                  (a * Mathf.Pow(trueX - (1.5f / 2.75f), 2.0f) + (3.0f / 4.0f)));
+                }
+                else if (trueX < (2.5f / 2.75f))
+                {
+                    return x1 + (((x2 - x1) / 2.0f) + ((x2 - x1) / 2.0f) *
+                                  (a * Mathf.Pow(trueX - (2.25f / 2.75f), 2.0f) + (15.0f / 16.0f)));
+                }
+                else
+                {
+                    return x1 + (((x2 - x1) / 2.0f) + ((x2 - x1) / 2.0f) *
+                                  (a * Mathf.Pow(trueX - (2.625f / 2.75f), 2.0f) + (63.0f / 64.0f)));
+                }
             }
         }
 
@@ -1139,68 +743,57 @@ namespace Canty
         /// <param name="x2">Value at 1.</param>
         /// <param name="delta">Interpolation percentage. [0, 1]</param>
         /// <returns>Interpolated value.</returns>
-        public static I BounceEaseOutIn<I>(I x1, I x2, float delta)
+        public static float BounceEaseOutIn(float x1, float x2, float delta)
         {
-            try
+            float trueX = delta * 2.0f;
+            trueX = trueX >= 1.0f ? trueX - 1.0f : trueX;
+
+            float a = 7.5625f;
+
+            if (delta < 0.5f)
             {
-                float trueX = delta * 2.0f;
-                trueX = trueX >= 1.0f ? trueX - 1.0f : trueX;
-
-                float a = 7.5625f;
-
-                dynamic xd1 = x1;
-                dynamic xd2 = x2;
-
-                if (delta < 0.5f)
+                if (trueX < (1.0f / 2.75f))
                 {
-                    if (trueX < (1.0f / 2.75f))
-                    {
-                        return xd1 + (((xd2 - xd1) / 2.0f) * (a * Mathf.Pow(trueX, 2.0f)));
-                    }
-                    else if (trueX < (2.0f / 2.75f))
-                    {
-                        return xd1 + (((xd2 - xd1) / 2.0f) *
-                                      (a * Mathf.Pow(trueX - (1.5f / 2.75f), 2.0f) + (3.0f / 4.0f)));
-                    }
-                    else if (trueX < (2.5f / 2.75f))
-                    {
-                        return xd1 + (((xd2 - xd1) / 2.0f) *
-                                      (a * Mathf.Pow(trueX - (2.25f / 2.75f), 2.0f) + (15.0f / 16.0f)));
-                    }
-                    else
-                    {
-                        return xd1 + (((xd2 - xd1) / 2.0f) *
-                                      (a * Mathf.Pow(trueX - (2.625f / 2.75f), 2.0f) + (63.0f / 64.0f)));
-                    }
+                    return x1 + (((x2 - x1) / 2.0f) * (a * Mathf.Pow(trueX, 2.0f)));
+                }
+                else if (trueX < (2.0f / 2.75f))
+                {
+                    return x1 + (((x2 - x1) / 2.0f) *
+                                  (a * Mathf.Pow(trueX - (1.5f / 2.75f), 2.0f) + (3.0f / 4.0f)));
+                }
+                else if (trueX < (2.5f / 2.75f))
+                {
+                    return x1 + (((x2 - x1) / 2.0f) *
+                                  (a * Mathf.Pow(trueX - (2.25f / 2.75f), 2.0f) + (15.0f / 16.0f)));
                 }
                 else
                 {
-                    if (trueX < (0.25f / 2.75f))
-                    {
-                        return xd1 + (((xd2 - xd1) / 2.0f) + ((xd2 - xd1) / 2.0f) *
-                                      (a * -Mathf.Pow(trueX - (0.125f / 2.75f), 2.0f) + (1.0f / 64.0f)));
-                    }
-                    else if (trueX < (0.75f / 2.75f))
-                    {
-                        return xd1 + (((xd2 - xd1) / 2.0f) + ((xd2 - xd1) / 2.0f) *
-                                      (a * -Mathf.Pow(trueX - (0.5f / 2.75f), 2.0f) + (1.0f / 16.0f)));
-                    }
-                    else if (trueX < (1.75f / 2.75f))
-                    {
-                        return xd1 + (((xd2 - xd1) / 2.0f) + ((xd2 - xd1) / 2.0f) *
-                                      (a * -Mathf.Pow(trueX - (1.25f / 2.75f), 2.0f) + (1.0f / 4.0f)));
-                    }
-                    else
-                    {
-                        return xd1 + (((xd2 - xd1) / 2.0f) +
-                                      ((xd2 - xd1) / 2.0f) * (a * -Mathf.Pow(trueX - 1.0f, 2.0f) + 1.0f));
-                    }
+                    return x1 + (((x2 - x1) / 2.0f) *
+                                  (a * Mathf.Pow(trueX - (2.625f / 2.75f), 2.0f) + (63.0f / 64.0f)));
                 }
             }
-            catch (Exception ex)
+            else
             {
-                Debug.LogError("Curves : Invalid data type used for curve operations. " + ex.TargetSite);
-                return x1;
+                if (trueX < (0.25f / 2.75f))
+                {
+                    return x1 + (((x2 - x1) / 2.0f) + ((x2 - x1) / 2.0f) *
+                                  (a * -Mathf.Pow(trueX - (0.125f / 2.75f), 2.0f) + (1.0f / 64.0f)));
+                }
+                else if (trueX < (0.75f / 2.75f))
+                {
+                    return x1 + (((x2 - x1) / 2.0f) + ((x2 - x1) / 2.0f) *
+                                  (a * -Mathf.Pow(trueX - (0.5f / 2.75f), 2.0f) + (1.0f / 16.0f)));
+                }
+                else if (trueX < (1.75f / 2.75f))
+                {
+                    return x1 + (((x2 - x1) / 2.0f) + ((x2 - x1) / 2.0f) *
+                                  (a * -Mathf.Pow(trueX - (1.25f / 2.75f), 2.0f) + (1.0f / 4.0f)));
+                }
+                else
+                {
+                    return x1 + (((x2 - x1) / 2.0f) +
+                                  ((x2 - x1) / 2.0f) * (a * -Mathf.Pow(trueX - 1.0f, 2.0f) + 1.0f));
+                }
             }
         }
 
@@ -1215,22 +808,11 @@ namespace Canty
         /// <param name="x2">Value at 1.</param>
         /// <param name="delta">Interpolation percentage. [0, 1]</param>
         /// <returns>Interpolated value.</returns>
-        public static I BackEaseOut<I>(I x1, I x2, float delta)
+        public static float BackEaseOut(float x1, float x2, float delta)
         {
-            try
-            {
-                float a = 1.70158f;
+            float a = 1.70158f;
 
-                dynamic xd1 = x1;
-                dynamic xd2 = x2;
-
-                return xd1 + ((xd2 - xd1) * (Mathf.Pow(delta - 1.0f, 2.0f) * ((a + 1.0f) * (delta - 1.0f) + a) + 1.0f));
-            }
-            catch (Exception ex)
-            {
-                Debug.LogError("Curves : Invalid data type used for curve operations. " + ex.TargetSite);
-                return x1;
-            }
+            return x1 + ((x2 - x1) * (Mathf.Pow(delta - 1.0f, 2.0f) * ((a + 1.0f) * (delta - 1.0f) + a) + 1.0f));
         }
 
         /// <summary>
@@ -1240,22 +822,11 @@ namespace Canty
         /// <param name="x2">Value at 1.</param>
         /// <param name="delta">Interpolation percentage. [0, 1]</param>
         /// <returns>Interpolated value.</returns>
-        public static I BackEaseIn<I>(I x1, I x2, float delta)
+        public static float BackEaseIn(float x1, float x2, float delta)
         {
-            try
-            {
-                float a = 1.70158f;
+            float a = 1.70158f;
 
-                dynamic xd1 = x1;
-                dynamic xd2 = x2;
-
-                return xd1 + ((xd2 - xd1) * (Mathf.Pow(delta, 2.0f) * ((a + 1.0f) * delta - a)));
-            }
-            catch (Exception ex)
-            {
-                Debug.LogError("Curves : Invalid data type used for curve operations. " + ex.TargetSite);
-                return x1;
-            }
+            return x1 + ((x2 - x1) * (Mathf.Pow(delta, 2.0f) * ((a + 1.0f) * delta - a)));
         }
 
         /// <summary>
@@ -1265,32 +836,21 @@ namespace Canty
         /// <param name="x2">Value at 1.</param>
         /// <param name="delta">Interpolation percentage. [0, 1]</param>
         /// <returns>Interpolated value.</returns>
-        public static I BackEaseInOut<I>(I x1, I x2, float delta)
+        public static float BackEaseInOut(float x1, float x2, float delta)
         {
-            try
+            float trueX = delta * 2.0f;
+            trueX = trueX >= 1.0f ? trueX - 1.0f : trueX;
+
+            float a = 1.70158f;
+
+            if (delta < 0.5f)
             {
-                float trueX = delta * 2.0f;
-                trueX = trueX >= 1.0f ? trueX - 1.0f : trueX;
-
-                float a = 1.70158f;
-
-                dynamic xd1 = x1;
-                dynamic xd2 = x2;
-
-                if (delta < 0.5f)
-                {
-                    return xd1 + (((xd2 - xd1) / 2.0f) * (Mathf.Pow(trueX, 2.0f) * ((a + 1.0f) * trueX - a)));
-                }
-                else
-                {
-                    return xd1 + (((xd2 - xd1) / 2.0f) + ((xd2 - xd1) / 2.0f) *
-                                  (Mathf.Pow(trueX - 1.0f, 2.0f) * ((a + 1.0f) * (trueX - 1.0f) + a) + 1.0f));
-                }
+                return x1 + (((x2 - x1) / 2.0f) * (Mathf.Pow(trueX, 2.0f) * ((a + 1.0f) * trueX - a)));
             }
-            catch (Exception ex)
+            else
             {
-                Debug.LogError("Curves : Invalid data type used for curve operations. " + ex.TargetSite);
-                return x1;
+                return x1 + (((x2 - x1) / 2.0f) + ((x2 - x1) / 2.0f) *
+                              (Mathf.Pow(trueX - 1.0f, 2.0f) * ((a + 1.0f) * (trueX - 1.0f) + a) + 1.0f));
             }
         }
 
@@ -1301,33 +861,22 @@ namespace Canty
         /// <param name="x2">Value at 1.</param>
         /// <param name="delta">Interpolation percentage. [0, 1]</param>
         /// <returns>Interpolated value.</returns>
-        public static I BackEaseOutIn<I>(I x1, I x2, float delta)
+        public static float BackEaseOutIn(float x1, float x2, float delta)
         {
-            try
+            float trueX = delta * 2.0f;
+            trueX = trueX >= 1.0f ? trueX - 1.0f : trueX;
+
+            float a = 1.70158f;
+
+            if (delta < 0.5f)
             {
-                float trueX = delta * 2.0f;
-                trueX = trueX >= 1.0f ? trueX - 1.0f : trueX;
-
-                float a = 1.70158f;
-
-                dynamic xd1 = x1;
-                dynamic xd2 = x2;
-
-                if (delta < 0.5f)
-                {
-                    return xd1 + (((xd2 - xd1) / 2.0f) *
-                                  (Mathf.Pow(trueX - 1.0f, 2.0f) * ((a + 1.0f) * (trueX - 1.0f) + a) + 1.0f));
-                }
-                else
-                {
-                    return xd1 + (((xd2 - xd1) / 2.0f) +
-                                  ((xd2 - xd1) / 2.0f) * (Mathf.Pow(trueX, 2.0f) * ((a + 1.0f) * trueX - a)));
-                }
+                return x1 + (((x2 - x1) / 2.0f) *
+                              (Mathf.Pow(trueX - 1.0f, 2.0f) * ((a + 1.0f) * (trueX - 1.0f) + a) + 1.0f));
             }
-            catch (Exception ex)
+            else
             {
-                Debug.LogError("Curves : Invalid data type used for curve operations. " + ex.TargetSite);
-                return x1;
+                return x1 + (((x2 - x1) / 2.0f) +
+                              ((x2 - x1) / 2.0f) * (Mathf.Pow(trueX, 2.0f) * ((a + 1.0f) * trueX - a)));
             }
         }
 
