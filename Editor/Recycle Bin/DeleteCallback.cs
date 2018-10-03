@@ -5,8 +5,7 @@ using UnityEditor;
 using System.IO;
 
 // Part of Recycle Bin by JPBotelho on Github : https://github.com/JPBotelho/Recycle-Bin
-
-namespace JPBotelho
+namespace Canty.Editor.RecycleBin
 {
 	[ExecuteInEditMode]
 	public class DeleteCallback : UnityEditor.AssetModificationProcessor

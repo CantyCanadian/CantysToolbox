@@ -1,18 +1,24 @@
 ﻿using UnityEngine;
 
-public class TimedDestroy : MonoBehaviour
+namespace Canty
 {
-    public float SecondsToWait = 5.0f;
-
-    private void Update()
+    /// <summary>
+    /// Basic class to set a destroy timer onto an object.
+    /// </summary>
+    public class TimedDestroy : MonoBehaviour
     {
-        float timer = SecondsToWait;
+        public float SecondsToWait = 5.0f;
 
-        while(timer > 0.0f)
+        private void Update()
         {
-            timer -= Time.deltaTime;
-        }
+            float timer = SecondsToWait;
 
-        Destroy(gameObject);
+            while (timer > 0.0f)
+            {
+                timer -= Time.deltaTime;
+            }
+
+            Destroy(gameObject);
+        }
     }
 }

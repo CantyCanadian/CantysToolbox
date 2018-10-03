@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class UpdateableBase
+namespace Canty.Managers
 {
-    public void Initialize()
+    public abstract class UpdateableBase
     {
-        NonMonoUpdateManager.Instance.RegisterUpdateable(this);
-    }
+        public void Initialize()
+        {
+            NonMonoUpdateManager.Instance.RegisterUpdateable(this);
+        }
 
-    public abstract void Update();
+        public abstract void Update();
+    }
 }

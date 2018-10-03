@@ -1,6 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using Canty.Shaders;
 
 public class ShittyPlayer : MonoBehaviour
 {
@@ -16,6 +15,12 @@ public class ShittyPlayer : MonoBehaviour
         if (ds != null)
         {
             ds.Play();
+        }
+
+        NormalExtrudeShader nes = GetComponent<NormalExtrudeShader>();
+        if (nes != null)
+        {
+            nes.Play();
         }
     }
 }

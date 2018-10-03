@@ -1,32 +1,36 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class UIValueChange : MonoBehaviour
+namespace Canty.UI
 {
-    public Text UIText;
-
-    public string TrueText;
-    public string FalseText;
-
-    public void OnValueChanged(bool flag)
+    /// <summary>
+    /// Basic class that supports all default UI callbacks for quick editing.
+    /// </summary>
+    public class UIValueChange : MonoBehaviour
     {
-        UIText.text = flag ? TrueText : FalseText;
-    }
+        public Text UIText;
 
-    public void OnValueChanged(float value)
-    {
-        UIText.text = value.ToString();
-    }
+        public string TrueText;
+        public string FalseText;
 
-    public void OnValueChanged(string value)
-    {
-        UIText.text = value;
-    }
+        public void OnValueChanged(bool flag)
+        {
+            UIText.text = flag ? TrueText : FalseText;
+        }
 
-    public void OnValueChanged(Dropdown origin)
-    {
-        UIText.text = origin.options[origin.value].text;
+        public void OnValueChanged(float value)
+        {
+            UIText.text = value.ToString();
+        }
+
+        public void OnValueChanged(string value)
+        {
+            UIText.text = value;
+        }
+
+        public void OnValueChanged(Dropdown origin)
+        {
+            UIText.text = origin.options[origin.value].text;
+        }
     }
 }

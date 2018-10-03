@@ -2,20 +2,29 @@
 using UnityEngine;
 using UnityEngine.Events;
 
-public class BasicInput : MonoBehaviour
+namespace Canty
 {
-    public KeyCodeUnityEventDictionary KeyEvent;
-    
-    private void Update()
+    /// <summary>
+    /// Basic class to tie function callback to key events.
+    /// </summary>
+    public class BasicInput : MonoBehaviour
     {
-        foreach(KeyValuePair<KeyCode, UnityEvent> kvp in KeyEvent)
+        public KeyCodeUnityEventDictionary KeyEvent;
+
+        private void Update()
         {
-            if (Input.GetKey(kvp.Key))
+            foreach (KeyValuePair<KeyCode, UnityEvent> kvp in KeyEvent)
             {
-                kvp.Value.Invoke();
+                if (Input.GetKey(kvp.Key))
+                {
+                    kvp.Value.Invoke();
+                }
             }
         }
-    }
 
-    [System.Serializable] public class KeyCodeUnityEventDictionary : SerializableDictionary<KeyCode, UnityEvent> { }
+        [System.Serializable]
+        public class KeyCodeUnityEventDictionary : SerializableDictionary<KeyCode, UnityEvent>
+        {
+        }
+    }
 }

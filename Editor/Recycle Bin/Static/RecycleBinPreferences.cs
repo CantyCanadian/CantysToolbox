@@ -5,58 +5,60 @@ using System.Collections.Generic;
 using System.IO;
 
 // Part of Recycle Bin by JPBotelho on Github : https://github.com/JPBotelho/Recycle-Bin
-
-public class RecycleBinPreferences : ScriptableObject 
+namespace Canty.Editor.RecycleBin
 {
-    public List<string> IncludeExtensions = new List<string>()
+    public class RecycleBinPreferences : ScriptableObject
     {
-        ".cs",
-        ".js",
-        ".shader",
-        ".mat",
-        ".anim",
-        ".unity",
-        ".obj",
-        ".fbx",
-        ".dae",
-        ".asset",
-        ".prefab"
-    };
-
-    public List<string> ExcludeExtensions = new List<string>()
-    {
-        ".meta"
-    };
-
-    public List<TrashFile> Trash = new List<TrashFile>();
-
-
-    [HideInInspector]
-    public bool SaveAll =  true;
-    [HideInInspector]
-    public bool SaveNone = false;
-    [HideInInspector]
-    public string FolderName = "Trash";
-    [HideInInspector]
-    public string Search = "";
-
-
-    public bool IsEligibleToSave(FileInfo file)
-    {
-		if (SaveAll && !ExcludeExtensions.Contains(file.Extension) || IncludeExtensions.Contains(file.Extension) && !SaveNone)
+        public List<string> IncludeExtensions = new List<string>()
         {
-			return true;
-		}
-        else
+            ".cs",
+            ".js",
+            ".shader",
+            ".mat",
+            ".anim",
+            ".unity",
+            ".obj",
+            ".fbx",
+            ".dae",
+            ".asset",
+            ".prefab"
+        };
+
+        public List<string> ExcludeExtensions = new List<string>()
         {
-			return false;
-		}
+            ".meta"
+        };
+
+        public List<TrashFile> Trash = new List<TrashFile>();
+
+
+        [HideInInspector]
+        public bool SaveAll = true;
+        [HideInInspector]
+        public bool SaveNone = false;
+        [HideInInspector]
+        public string FolderName = "Trash";
+        [HideInInspector]
+        public string Search = "";
+
+
+        public bool IsEligibleToSave(FileInfo file)
+        {
+            if (SaveAll && !ExcludeExtensions.Contains(file.Extension) || IncludeExtensions.Contains(file.Extension) && !SaveNone)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public static RecycleBinPreferences Create(out string path)
+        {
+            return ScriptableObjectUtility.CreateAsset<RecycleBinPreferences>(out path);
+        }
     }
-
-    public static RecycleBinPreferences Create(out string path)
-	{
-		return ScriptableObjectUtility.CreateAsset<RecycleBinPreferences>(out path);
-	}
 }
 
 #endif

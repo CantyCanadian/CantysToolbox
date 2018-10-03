@@ -84,7 +84,7 @@ Shader "Custom/PostProcess/Transition/CrissCross"
 
 				float sideAngle = side ? _Angle : _Angle + 180.0f;
 				float2 direction = float2(-cos(radians(sideAngle)), sin(radians(sideAngle)));
-				float2 pushUV = i.uv + (_TransitionValue * direction);
+				float2 pushUV = i.uv + (lerp(0.0f, 1.0f + endDistance / 2.0f, _TransitionValue) * direction);
 
 				float4 tex = tex2D(_MainTex, _PushImage ? pushUV : i.uv);
 				float4 transitionTex = tex2D(_TransitionTex, i.uv);

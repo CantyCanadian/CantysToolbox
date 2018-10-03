@@ -1,33 +1,37 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class PoolLifetime : MonoBehaviour, IPoolComponent
+namespace Canty.Managers
 {
-    public float Lifetime;
-
-    public void Initialize() { }
-
-    public void OnTrigger()
+    public class PoolLifetime : MonoBehaviour, IPoolComponent
     {
-        StartCoroutine(LifetimeLoop());
-    }
+        public float Lifetime;
 
-    public void OnDiscard()
-    {
-        StopAllCoroutines();
-        PoolManager.Instance.DiscardObject(gameObject);
-    }
-
-    public IEnumerator LifetimeLoop()
-    {
-        float timer = 0.0f;
-        while(timer < Lifetime)
+        public void Initialize()
         {
-            yield return null;
-            timer += Time.deltaTime;
         }
 
-        OnDiscard();
+        public void OnTrigger()
+        {
+            StartCoroutine(LifetimeLoop());
+        }
+
+        public void OnDiscard()
+        {
+            StopAllCoroutines();
+            PoolManager.Instance.DiscardObject(gameObject);
+        }
+
+        public IEnumerator LifetimeLoop()
+        {
+            float timer = 0.0f;
+            while (timer < Lifetime)
+            {
+                yield return null;
+                timer += Time.deltaTime;
+            }
+
+            OnDiscard();
+        }
     }
 }

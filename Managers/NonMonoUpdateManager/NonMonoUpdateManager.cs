@@ -2,37 +2,40 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class NonMonoUpdateManager : Singleton<NonMonoUpdateManager>
+namespace Canty.Managers
 {
-    private List<UpdateableBase> m_Updateables;
-
-    public void RegisterUpdateable(UpdateableBase updateable)
+    public class NonMonoUpdateManager : Singleton<NonMonoUpdateManager>
     {
-        if (m_Updateables == null)
-        {
-            m_Updateables = new List<UpdateableBase>();
-        }
+        private List<UpdateableBase> m_Updateables;
 
-        if (!m_Updateables.AddOnce(updateable))
+        public void RegisterUpdateable(UpdateableBase updateable)
         {
-            Debug.LogWarning("NonMonoUpdateManager : Trying to add the same object to the manager multiple time.");
-        }
-    }
-
-    private void Update()
-    {
-        if (m_Updateables.Count > 0)
-        {
-            for (int i = 0; i < m_Updateables.Count; i++)
+            if (m_Updateables == null)
             {
-                if (m_Updateables[i] == null)
-                {
-                    m_Updateables.RemoveAt(i);
-                    i--;
-                    continue;
-                }
+                m_Updateables = new List<UpdateableBase>();
+            }
 
-                m_Updateables[i].Update();
+            if (!m_Updateables.AddOnce(updateable))
+            {
+                Debug.LogWarning("NonMonoUpdateManager : Trying to add the same object to the manager multiple time.");
+            }
+        }
+
+        private void Update()
+        {
+            if (m_Updateables.Count > 0)
+            {
+                for (int i = 0; i < m_Updateables.Count; i++)
+                {
+                    if (m_Updateables[i] == null)
+                    {
+                        m_Updateables.RemoveAt(i);
+                        i--;
+                        continue;
+                    }
+
+                    m_Updateables[i].Update();
+                }
             }
         }
     }

@@ -1,63 +1,71 @@
 ﻿using UnityEngine;
+using Canty.Spline;
 
-// Code found on https://catlikecoding.com/unity/tutorials/curves-and-splines/
-public class SplineWalker : MonoBehaviour
+// Original code found on https://catlikecoding.com/unity/tutorials/curves-and-splines/, heavily modified by CantyCanadian.
+
+namespace Canty
 {
-    public SplineBezier Spline;
-    public float Duration;
-    public SplineWalkerModes Mode;
-    public bool LookForward;
-
-    private bool goingForward = true;
-
-    private float Progress;
-
-    public enum SplineWalkerModes
+    /// <summary>
+    /// Basic component that moves an object following a SplineBezier.
+    /// </summary>
+    public class SplineWalker : MonoBehaviour
     {
-        Once,
-        Loop,
-        PingPong
-    }
+        public SplineBezier Spline;
+        public float Duration;
+        public SplineWalkerModes Mode;
+        public bool LookForward;
 
-    private void Update()
-    {
-        if (goingForward)
+        private bool goingForward = true;
+
+        private float Progress;
+
+        public enum SplineWalkerModes
         {
-            Progress += Time.deltaTime / Duration;
-            if (Progress > 1.0f)
+            Once,
+            Loop,
+            PingPong
+        }
+
+        private void Update()
+        {
+            if (goingForward)
             {
-                switch(Mode)
+                Progress += Time.deltaTime / Duration;
+                if (Progress > 1.0f)
                 {
-                    case SplineWalkerModes.Once:
-                        Progress = 1.0f;
-                        break;
+                    switch (Mode)
+                    {
+                        case SplineWalkerModes.Once:
+                            Progress = 1.0f;
+                            break;
 
-                    case SplineWalkerModes.Loop:
-                        Progress -= 1.0f;
-                        break;
+                        case SplineWalkerModes.Loop:
+                            Progress -= 1.0f;
+                            break;
 
-                    case SplineWalkerModes.PingPong:
-                        Progress = 2.0f - Progress;
-                        goingForward = false;
-                        break;
+                        case SplineWalkerModes.PingPong:
+                            Progress = 2.0f - Progress;
+                            goingForward = false;
+                            break;
+                    }
                 }
             }
-        }
-        else
-        {
-            Progress -= Time.deltaTime / Duration;
-            if (Progress < 0f)
+            else
             {
-                Progress = -Progress;
-                goingForward = true;
+                Progress -= Time.deltaTime / Duration;
+                if (Progress < 0f)
+                {
+                    Progress = -Progress;
+                    goingForward = true;
+                }
             }
-        }
 
-        Vector3 position = Spline.GetPoint(Progress);
-        transform.localPosition = position;
-        if (LookForward)
-        {
-            transform.LookAt(position + Spline.GetDirection(Progress));
+            Vector3 position = Spline.GetPoint(Progress);
+            transform.localPosition = position;
+            if (LookForward)
+            {
+                transform.LookAt(position + Spline.GetDirection(Progress));
+            }
         }
     }
 }

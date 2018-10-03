@@ -1,203 +1,206 @@
 ﻿
 // Part of SerializableCallback by Siccity on Github : https://github.com/Siccity/SerializableCallback
 
-[System.Serializable]
-public class SerializableEvent : SerializableEventBase
+namespace Canty.Serializable
 {
-	public void Invoke()
+    [System.Serializable]
+    public class SerializableEvent : SerializableEventBase
     {
-        if (Invokable == null)
+        public void Invoke()
         {
-            Cache();
-        }
-
-		if (m_Dynamic)
-        {
-			InvokableEvent call = Invokable as InvokableEvent;
-			call.Invoke();
-		}
-        else
-        {
-			Invokable.Invoke(Arguments);
-		}
-	}
-
-	protected override void Cache()
-    {
-		if (m_Target == null || string.IsNullOrEmpty(m_MethodName))
-        {
-			Invokable = new InvokableEvent(null, null);
-		}
-        else
-        {
-			if (m_Dynamic)
+            if (Invokable == null)
             {
-				Invokable = new InvokableEvent(Target, MethodName);
-			}
+                Cache();
+            }
+
+            if (m_Dynamic)
+            {
+                InvokableEvent call = Invokable as InvokableEvent;
+                call.Invoke();
+            }
             else
             {
-				Invokable = GetPersistentMethod();
-			}
-		}
-	}
-}
-
-public abstract class SerializableEvent<T0> : SerializableEventBase
-{
-	public void Invoke(T0 arg0)
-    {
-        if (Invokable == null)
-        {
-            Cache();
+                Invokable.Invoke(Arguments);
+            }
         }
 
-		if (m_Dynamic)
+        protected override void Cache()
         {
-			InvokableEvent<T0> call = Invokable as InvokableEvent<T0>;
-			call.Invoke(arg0);
-		}
-        else
-        {
-			Invokable.Invoke(Arguments);
-		}
-	}
-
-	protected override void Cache()
-    {
-		if (m_Target == null || string.IsNullOrEmpty(m_MethodName))
-        {
-			Invokable = new InvokableEvent<T0>(null, null);
-		}
-        else
-        {
-			if (m_Dynamic)
+            if (m_Target == null || string.IsNullOrEmpty(m_MethodName))
             {
-				Invokable = new InvokableEvent<T0>(Target, MethodName);
-			}
+                Invokable = new InvokableEvent(null, null);
+            }
             else
             {
-				Invokable = GetPersistentMethod();
-			}
-		}
-	}
-}
+                if (m_Dynamic)
+                {
+                    Invokable = new InvokableEvent(Target, MethodName);
+                }
+                else
+                {
+                    Invokable = GetPersistentMethod();
+                }
+            }
+        }
+    }
 
-public abstract class SerializableEvent<T0, T1> : SerializableEventBase
-{
-	public void Invoke(T0 arg0, T1 arg1)
+    public abstract class SerializableEvent<T0> : SerializableEventBase
     {
-        if (Invokable == null)
+        public void Invoke(T0 arg0)
         {
-            Cache();
+            if (Invokable == null)
+            {
+                Cache();
+            }
+
+            if (m_Dynamic)
+            {
+                InvokableEvent<T0> call = Invokable as InvokableEvent<T0>;
+                call.Invoke(arg0);
+            }
+            else
+            {
+                Invokable.Invoke(Arguments);
+            }
         }
 
-		if (m_Dynamic)
+        protected override void Cache()
         {
-			InvokableEvent<T0, T1> call = Invokable as InvokableEvent<T0, T1>;
-			call.Invoke(arg0, arg1);
-		}
-        else
-        {
-			Invokable.Invoke(Arguments);
-		}
-	}
-
-	protected override void Cache()
-    {
-		if (m_Target == null || string.IsNullOrEmpty(m_MethodName))
-        {
-			Invokable = new InvokableEvent<T0, T1>(null, null);
-		}
-        else
-        {
-			if (m_Dynamic)
+            if (m_Target == null || string.IsNullOrEmpty(m_MethodName))
             {
-				Invokable = new InvokableEvent<T0, T1>(Target, MethodName);
-			}
+                Invokable = new InvokableEvent<T0>(null, null);
+            }
             else
             {
-				Invokable = GetPersistentMethod();
-			}
-		}
-	}
-}
+                if (m_Dynamic)
+                {
+                    Invokable = new InvokableEvent<T0>(Target, MethodName);
+                }
+                else
+                {
+                    Invokable = GetPersistentMethod();
+                }
+            }
+        }
+    }
 
-public abstract class SerializableEvent<T0, T1, T2> : SerializableEventBase
-{
-	public void Invoke(T0 arg0, T1 arg1, T2 arg2)
+    public abstract class SerializableEvent<T0, T1> : SerializableEventBase
     {
-        if (Invokable == null)
+        public void Invoke(T0 arg0, T1 arg1)
         {
-            Cache();
+            if (Invokable == null)
+            {
+                Cache();
+            }
+
+            if (m_Dynamic)
+            {
+                InvokableEvent<T0, T1> call = Invokable as InvokableEvent<T0, T1>;
+                call.Invoke(arg0, arg1);
+            }
+            else
+            {
+                Invokable.Invoke(Arguments);
+            }
         }
 
-		if (m_Dynamic)
+        protected override void Cache()
         {
-			InvokableEvent<T0, T1, T2> call = Invokable as InvokableEvent<T0, T1, T2>;
-			call.Invoke(arg0, arg1, arg2);
-		}
-        else
-        {
-			Invokable.Invoke(Arguments);
-		}
-	}
-
-	protected override void Cache()
-    {
-		if (m_Target == null || string.IsNullOrEmpty(m_MethodName))
-        {
-			Invokable = new InvokableEvent<T0, T1, T2>(null, null);
-		}
-        else
-        {
-			if (m_Dynamic)
+            if (m_Target == null || string.IsNullOrEmpty(m_MethodName))
             {
-				Invokable = new InvokableEvent<T0, T1, T2>(Target, MethodName);
-			}
+                Invokable = new InvokableEvent<T0, T1>(null, null);
+            }
             else
             {
-				Invokable = GetPersistentMethod();
-			}
-		}
-	}
-}
+                if (m_Dynamic)
+                {
+                    Invokable = new InvokableEvent<T0, T1>(Target, MethodName);
+                }
+                else
+                {
+                    Invokable = GetPersistentMethod();
+                }
+            }
+        }
+    }
 
-public abstract class SerializableEvent<T0, T1, T2, T3> : SerializableEventBase
-{
-	public void Invoke(T0 arg0, T1 arg1, T2 arg2, T3 arg3)
+    public abstract class SerializableEvent<T0, T1, T2> : SerializableEventBase
     {
-        if (Invokable == null)
+        public void Invoke(T0 arg0, T1 arg1, T2 arg2)
         {
-            Cache();
+            if (Invokable == null)
+            {
+                Cache();
+            }
+
+            if (m_Dynamic)
+            {
+                InvokableEvent<T0, T1, T2> call = Invokable as InvokableEvent<T0, T1, T2>;
+                call.Invoke(arg0, arg1, arg2);
+            }
+            else
+            {
+                Invokable.Invoke(Arguments);
+            }
         }
 
-		if (m_Dynamic)
+        protected override void Cache()
         {
-			InvokableEvent<T0, T1, T2, T3> call = Invokable as InvokableEvent<T0, T1, T2, T3>;
-			call.Invoke(arg0, arg1, arg2, arg3);
-		}
-        else
-        {
-			Invokable.Invoke(Arguments);
-		}
-	}
-
-	protected override void Cache()
-    {
-		if (m_Target == null || string.IsNullOrEmpty(m_MethodName))
-        {
-			Invokable = new InvokableEvent<T0, T1, T2, T3>(null, null);
-		}
-        else
-        {
-			if (m_Dynamic)
+            if (m_Target == null || string.IsNullOrEmpty(m_MethodName))
             {
-				Invokable = new InvokableEvent<T0, T1, T2, T3>(Target, MethodName);
-			}
+                Invokable = new InvokableEvent<T0, T1, T2>(null, null);
+            }
             else
             {
-				Invokable = GetPersistentMethod();
-			}
-		}
-	}
+                if (m_Dynamic)
+                {
+                    Invokable = new InvokableEvent<T0, T1, T2>(Target, MethodName);
+                }
+                else
+                {
+                    Invokable = GetPersistentMethod();
+                }
+            }
+        }
+    }
+
+    public abstract class SerializableEvent<T0, T1, T2, T3> : SerializableEventBase
+    {
+        public void Invoke(T0 arg0, T1 arg1, T2 arg2, T3 arg3)
+        {
+            if (Invokable == null)
+            {
+                Cache();
+            }
+
+            if (m_Dynamic)
+            {
+                InvokableEvent<T0, T1, T2, T3> call = Invokable as InvokableEvent<T0, T1, T2, T3>;
+                call.Invoke(arg0, arg1, arg2, arg3);
+            }
+            else
+            {
+                Invokable.Invoke(Arguments);
+            }
+        }
+
+        protected override void Cache()
+        {
+            if (m_Target == null || string.IsNullOrEmpty(m_MethodName))
+            {
+                Invokable = new InvokableEvent<T0, T1, T2, T3>(null, null);
+            }
+            else
+            {
+                if (m_Dynamic)
+                {
+                    Invokable = new InvokableEvent<T0, T1, T2, T3>(Target, MethodName);
+                }
+                else
+                {
+                    Invokable = GetPersistentMethod();
+                }
+            }
+        }
+    }
 }

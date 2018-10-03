@@ -7,10 +7,11 @@
 		_FresnelWidth ("Fresnel Width", Range(0, 1)) = 1
 		_FresnelColor ("Fresnel Color", Color) = (1, 1, 1, 1)
 
-		_RefractionStrength ("Refraction Strength", Float) = 10.0
-
-		_BumpMap ("Bump Map", 2D) = "white" {}
+		[Normal] _BumpMap ("Bump Map", 2D) = "white" {}
 		_BumpMapIntensity ("Bump Map Intensity", Range(0, 10)) = 1
+
+		_BlurLayers ("Blur Layers", Int) = 3
+		_Blur ("Blur Offset", Float) = 0.0
 
 		_Smoothness ("Smoothness", Range(0, 1)) = 0.5
 		_Metallic ("Metallic", Range(0, 1)) = 0.0
@@ -27,12 +28,12 @@
 		#pragma surface surf Standard fullforwardshadows alpha
 		#pragma target 3.0
 
+		#include "../../CGIncludes/EffectMath.cginc"
+
 		struct Input 
 		{
-			float2 uv_MainTex;
 			float2 uv_BumpMap;
 			float3 viewDir;
-			float3 worldPos;
 			float4 screenPos;
 			float3 worldNormal;
 			INTERNAL_DATA
@@ -46,10 +47,12 @@
 		fixed4 _FresnelColor;
 
 		float _BumpMapIntensity;
+		fixed _Blur;
 		half _FresnelWidth;
-		half _RefractionStrength;
 		half _Smoothness;
 		half _Metallic;
+
+		int _BlurLayers;
 
 		void surf (Input IN, inout SurfaceOutputStandard o)
 		{
@@ -65,14 +68,14 @@
 
 			half3 normal = UnpackScaleNormal(tex2D(_BumpMap, IN.uv_BumpMap), _BumpMapIntensity);
 
-			half3 refraction = refract(normalizedViewDir, normalizedNormal, 1.0f);
-			half4 grabPos = ComputeGrabScreenPos(IN.screenPos);
-			grabPos.xy = refraction.xy * _RefractionStrength + grabPos.xy;
-			fixed4 refractedColor = tex2Dproj(_GrabTexture, grabPos + float4(normal, 0.0f));
+			float2 refractionUV = IN.screenPos.xy;
+			refractionUV = (refractionUV / IN.screenPos.w) + normal.xy;
 
-			o.Albedo = lerp(lerp(_MainColor.rgb, _MainColor.rgb * refractedColor, _Smoothness), _FresnelColor, fresnel);
+			fixed4 refractedColor = Blur(_GrabTexture, refractionUV, _BlurLayers, _Blur);			
+
+			o.Albedo = lerp(_MainColor.rgb * refractedColor.rgb, _FresnelColor, fresnel);
 			o.Smoothness = _Smoothness;
-			o.Alpha = _MainColor.a;
+			o.Alpha = 1.0f;
 			o.Metallic = _Metallic;
 		}
 		ENDCG

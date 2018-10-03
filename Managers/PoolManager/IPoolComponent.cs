@@ -1,9 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-
-public interface IPoolComponent
+﻿namespace Canty.Managers
 {
-    void Initialize();
-    void OnTrigger();
-    void OnDiscard();
+    public interface IPoolComponent
+    {
+        void Initialize();
+        void OnTrigger();
+        void OnDiscard();
+    }
 }

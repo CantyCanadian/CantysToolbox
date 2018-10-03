@@ -1,26 +1,31 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.Events;
 
-[RequireComponent(typeof(Text))]
-public class UIIntTextObservable : MonoBehaviour
+namespace Canty.UI
 {
-    public IntObservable ValueToObserve;
-
-    private Text m_Text = null;
-
-	void Update ()
+    /// <summary>
+    /// Int implementation of the SerializableCallback class. Changes the text dynamically using passed-in int-returning function.
+    /// </summary>
+    [RequireComponent(typeof(Text))]
+    public class UIIntTextObservable : MonoBehaviour
     {
-		if (m_Text == null)
+        public IntObservable ValueToObserve;
+
+        private Text m_Text = null;
+
+        void Update()
         {
-            m_Text = GetComponent<Text>();
+            if (m_Text == null)
+            {
+                m_Text = GetComponent<Text>();
+            }
+
+            m_Text.text = ValueToObserve.Invoke().ToString();
         }
+    }
 
-        m_Text.text = ValueToObserve.Invoke().ToString();
-	}
+    [System.Serializable]
+    public class IntObservable : SerializableCallback<int>
+    {
+    }
 }
-
-[System.Serializable]
-public class IntObservable : SerializableCallback<int> { }

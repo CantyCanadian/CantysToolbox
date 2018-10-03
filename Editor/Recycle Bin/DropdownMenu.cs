@@ -3,8 +3,7 @@
 using UnityEditor;
 
 // Part of Recycle Bin by JPBotelho on Github : https://github.com/JPBotelho/Recycle-Bin
-
-namespace JPBotelho
+namespace Canty.Editor.RecycleBin
 {
 	public class DropdownMenu : EditorWindow
 	{

@@ -1,121 +1,128 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class UIMoveToggle : MonoBehaviour
+namespace Canty.UI
 {
-    public Vector2 PositionDifference;
-    public float TransitionTime;
-
-    private RectTransform m_Transform;
-
-    private Vector2 m_FalseLocalPosition;
-    private Vector2 m_TrueLocalPosition;
-
-    private Coroutine m_CoroutineRef;
-    private bool m_State = false;
-
-    public void Initialize()
+    /// <summary>
+    /// Basic class that toggles a UI element's position between two values.
+    /// </summary>
+    public class UIMoveToggle : MonoBehaviour
     {
-        m_Transform = m_Transform == null ? GetComponent<RectTransform>() : m_Transform;
+        public Vector2 PositionDifference;
+        public float TransitionTime;
 
-        m_FalseLocalPosition = transform.localPosition;
-        m_TrueLocalPosition = m_FalseLocalPosition + PositionDifference;
-    }
+        private RectTransform m_Transform;
 
-    public void Initialize(Vector2 newOrigin)
-    {
-        m_Transform = m_Transform == null ? GetComponent<RectTransform>() : m_Transform;
+        private Vector2 m_FalseLocalPosition;
+        private Vector2 m_TrueLocalPosition;
 
-        m_FalseLocalPosition = newOrigin;
-        m_TrueLocalPosition = m_FalseLocalPosition + PositionDifference;
-    }
+        private Coroutine m_CoroutineRef;
+        private bool m_State = false;
 
-    public void Initialize(Vector2 newOrigin, Vector2 newDifference)
-    {
-        m_Transform = m_Transform == null ? GetComponent<RectTransform>() : m_Transform;
-        PositionDifference = newDifference;
-
-        m_FalseLocalPosition = newOrigin;
-        m_TrueLocalPosition = m_FalseLocalPosition + PositionDifference;
-    }
-
-    public void Play(bool state)
-    {
-        if (m_Transform == null)
+        public void Initialize()
         {
-            Initialize();
+            m_Transform = m_Transform == null ? GetComponent<RectTransform>() : m_Transform;
+
+            m_FalseLocalPosition = transform.localPosition;
+            m_TrueLocalPosition = m_FalseLocalPosition + PositionDifference;
         }
 
-        if (m_CoroutineRef != null)
+        public void Initialize(Vector2 newOrigin)
         {
-            Stop();
+            m_Transform = m_Transform == null ? GetComponent<RectTransform>() : m_Transform;
+
+            m_FalseLocalPosition = newOrigin;
+            m_TrueLocalPosition = m_FalseLocalPosition + PositionDifference;
         }
 
-        m_State = state;
-        m_CoroutineRef = StartCoroutine(PlayLoop());
-    }
-
-    public IEnumerator PlayCoroutine(bool state)
-    {
-        if (m_Transform == null)
+        public void Initialize(Vector2 newOrigin, Vector2 newDifference)
         {
-            Initialize();
+            m_Transform = m_Transform == null ? GetComponent<RectTransform>() : m_Transform;
+            PositionDifference = newDifference;
+
+            m_FalseLocalPosition = newOrigin;
+            m_TrueLocalPosition = m_FalseLocalPosition + PositionDifference;
         }
 
-        if (m_CoroutineRef != null)
+        public void Play(bool state)
         {
-            Stop();
+            if (m_Transform == null)
+            {
+                Initialize();
+            }
+
+            if (m_CoroutineRef != null)
+            {
+                Stop();
+            }
+
+            m_State = state;
+            m_CoroutineRef = StartCoroutine(PlayLoop());
         }
 
-        m_State = state;
-        yield return StartCoroutine(PlayLoop());
-    }
-
-    public void Toggle()
-    {
-        if (m_Transform == null)
+        public IEnumerator PlayCoroutine(bool state)
         {
-            Initialize();
+            if (m_Transform == null)
+            {
+                Initialize();
+            }
+
+            if (m_CoroutineRef != null)
+            {
+                Stop();
+            }
+
+            m_State = state;
+            yield return StartCoroutine(PlayLoop());
         }
 
-        if (m_CoroutineRef != null)
+        public void Toggle()
         {
-            Stop();
+            if (m_Transform == null)
+            {
+                Initialize();
+            }
+
+            if (m_CoroutineRef != null)
+            {
+                Stop();
+            }
+
+            m_State = !m_State;
+            m_CoroutineRef = StartCoroutine(PlayLoop());
         }
 
-        m_State = !m_State;
-        m_CoroutineRef = StartCoroutine(PlayLoop());
-    }
-
-    public void Stop()
-    {
-        if (m_Transform == null)
+        public void Stop()
         {
-            Initialize();
+            if (m_Transform == null)
+            {
+                Initialize();
+            }
+
+            if (m_CoroutineRef == null)
+            {
+                return;
+            }
+
+            StopCoroutine(m_CoroutineRef);
+            m_CoroutineRef = null;
+            m_Transform.localPosition = m_State ? m_TrueLocalPosition : m_FalseLocalPosition;
         }
 
-        if (m_CoroutineRef == null)
+        private IEnumerator PlayLoop()
         {
-            return;
-        }
+            float delta = 0.0f;
 
-        StopCoroutine(m_CoroutineRef);
-        m_CoroutineRef = null;
-        m_Transform.localPosition = m_State ? m_TrueLocalPosition : m_FalseLocalPosition;
-    }
+            while (delta < TransitionTime)
+            {
+                delta += Time.deltaTime;
 
-    private IEnumerator PlayLoop()
-    {
-        float delta = 0.0f;
+                m_Transform.localPosition = m_State
+                    ? Vector3.Lerp(m_FalseLocalPosition, m_TrueLocalPosition, delta / TransitionTime)
+                    : Vector3.Lerp(m_TrueLocalPosition, m_FalseLocalPosition, delta / TransitionTime);
 
-        while (delta < TransitionTime)
-        {
-            delta += Time.deltaTime;
-
-            m_Transform.localPosition = m_State ? Vector3.Lerp(m_FalseLocalPosition, m_TrueLocalPosition, delta / TransitionTime) : Vector3.Lerp(m_TrueLocalPosition, m_FalseLocalPosition, delta / TransitionTime);
-
-            yield return null;
+                yield return null;
+            }
         }
     }
 }

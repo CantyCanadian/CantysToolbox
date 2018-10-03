@@ -59,6 +59,8 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
+    - _Blur: 0
+    - _BlurLayers: 3
     - _BumpMapIntensity: 0
     - _BumpScale: 1
     - _ColorMult: 1.2
@@ -69,7 +71,7 @@ Material:
     - _DotProduct: 1
     - _DstBlend: 0
     - _Fresnel: 1.27
-    - _FresnelWidth: 1
+    - _FresnelWidth: 0.75
     - _GlossMapScale: 1
     - _Glossiness: 0.301
     - _GlossyReflections: 1

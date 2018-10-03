@@ -2,48 +2,51 @@
 
 // Part of SerializableCallback by Siccity on Github : https://github.com/Siccity/SerializableCallback
 
-public abstract class SerializableEventBase : SerializableCallbackBase
+namespace Canty.Serializable
 {
-	public InvokableEventBase Invokable;
-
-	public override void ClearCache()
+    public abstract class SerializableEventBase : SerializableCallbackBase
     {
-		base.ClearCache();
-		Invokable = null;
-	}
+        public InvokableEventBase Invokable;
 
-	protected InvokableEventBase GetPersistentMethod()
-    {
-		Type[] types = new Type[ArgumentTypes.Length];
-		Array.Copy(ArgumentTypes, types, ArgumentTypes.Length);
-
-		Type genericType = null;
-		switch (types.Length)
+        public override void ClearCache()
         {
-			case 0:
-				genericType = typeof(InvokableEvent).MakeGenericType(types);
-				break;
+            base.ClearCache();
+            Invokable = null;
+        }
 
-			case 1:
-				genericType = typeof(InvokableEvent<>).MakeGenericType(types);
-				break;
+        protected InvokableEventBase GetPersistentMethod()
+        {
+            Type[] types = new Type[ArgumentTypes.Length];
+            Array.Copy(ArgumentTypes, types, ArgumentTypes.Length);
 
-			case 2:
-				genericType = typeof(InvokableEvent<,>).MakeGenericType(types);
-				break;
+            Type genericType = null;
+            switch (types.Length)
+            {
+                case 0:
+                    genericType = typeof(InvokableEvent).MakeGenericType(types);
+                    break;
 
-			case 3:
-				genericType = typeof(InvokableEvent<, ,>).MakeGenericType(types);
-				break;
+                case 1:
+                    genericType = typeof(InvokableEvent<>).MakeGenericType(types);
+                    break;
 
-			case 4:
-				genericType = typeof(InvokableEvent<, , ,>).MakeGenericType(types);
-				break;
+                case 2:
+                    genericType = typeof(InvokableEvent<,>).MakeGenericType(types);
+                    break;
 
-			default:
-				throw new ArgumentException(types.Length + "args");
-		}
+                case 3:
+                    genericType = typeof(InvokableEvent<,,>).MakeGenericType(types);
+                    break;
 
-		return Activator.CreateInstance(genericType, new object[] { Target, MethodName }) as InvokableEventBase;
-	}
+                case 4:
+                    genericType = typeof(InvokableEvent<,,,>).MakeGenericType(types);
+                    break;
+
+                default:
+                    throw new ArgumentException(types.Length + "args");
+            }
+
+            return Activator.CreateInstance(genericType, new object[] {Target, MethodName}) as InvokableEventBase;
+        }
+    }
 }

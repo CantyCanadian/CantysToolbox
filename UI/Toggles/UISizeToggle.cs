@@ -1,121 +1,129 @@
 ﻿using System.Collections;
 using UnityEngine;
 
-public class UISizeToggle : MonoBehaviour
+namespace Canty.UI
 {
-    public Vector2 SizeDifference;
-    public float TransitionTime;
-
-    private RectTransform m_Transform;
-
-    private Vector2 m_FalseSize;
-    private Vector2 m_TrueSize;
-
-    private Coroutine m_CoroutineRef;
-    private bool m_State = false;
-
-    public void Initialize()
+    /// <summary>
+    /// Basic class that toggles a UI element's size between two values.
+    /// </summary>
+    public class UISizeToggle : MonoBehaviour
     {
-        m_Transform = GetComponent<RectTransform>();
+        public Vector2 SizeDifference;
+        public float TransitionTime;
 
-        m_FalseSize = m_Transform.sizeDelta;
-        m_TrueSize = m_FalseSize + SizeDifference;
-    }
+        private RectTransform m_Transform;
 
-    public void Initialize(Vector2 newOrigin)
-    {
-        m_Transform = GetComponent<RectTransform>();
+        private Vector2 m_FalseSize;
+        private Vector2 m_TrueSize;
 
-        m_FalseSize = newOrigin;
-        m_TrueSize = m_FalseSize + SizeDifference;
-    }
+        private Coroutine m_CoroutineRef;
+        private bool m_State = false;
 
-    public void Initialize(Vector2 newOrigin, Vector2 newDifference)
-    {
-        m_Transform = GetComponent<RectTransform>();
-        SizeDifference = newDifference;
-
-        m_FalseSize = newOrigin;
-        m_TrueSize = m_FalseSize + SizeDifference;
-    }
-
-    public void Play(bool state)
-    {
-        if (m_Transform == null)
+        public void Initialize()
         {
-            Initialize();
+            m_Transform = GetComponent<RectTransform>();
+
+            m_FalseSize = m_Transform.sizeDelta;
+            m_TrueSize = m_FalseSize + SizeDifference;
         }
 
-        if (m_CoroutineRef != null)
+        public void Initialize(Vector2 newOrigin)
         {
-            Stop();
-        }
-        
-        m_State = state;
-        m_CoroutineRef = StartCoroutine(PlayLoop());
-    }
+            m_Transform = GetComponent<RectTransform>();
 
-    public IEnumerator PlayCoroutine(bool state)
-    {
-        if (m_Transform == null)
-        {
-            Initialize();
+            m_FalseSize = newOrigin;
+            m_TrueSize = m_FalseSize + SizeDifference;
         }
 
-        if (m_CoroutineRef != null)
+        public void Initialize(Vector2 newOrigin, Vector2 newDifference)
         {
-            Stop();
+            m_Transform = GetComponent<RectTransform>();
+            SizeDifference = newDifference;
+
+            m_FalseSize = newOrigin;
+            m_TrueSize = m_FalseSize + SizeDifference;
         }
 
-        m_State = state;
-        
-        yield return StartCoroutine(PlayLoop());
-    }
-
-    public void Toggle()
-    {
-        if (m_Transform == null)
+        public void Play(bool state)
         {
-            Initialize();
+            if (m_Transform == null)
+            {
+                Initialize();
+            }
+
+            if (m_CoroutineRef != null)
+            {
+                Stop();
+            }
+
+            m_State = state;
+            m_CoroutineRef = StartCoroutine(PlayLoop());
         }
 
-        if (m_CoroutineRef != null)
+        public IEnumerator PlayCoroutine(bool state)
         {
-            Stop();
-        }
-        
-        m_State = !m_State;
-        m_CoroutineRef = StartCoroutine(PlayLoop());
-    }
+            if (m_Transform == null)
+            {
+                Initialize();
+            }
 
-    public void Stop()
-    {
-        if (m_Transform == null)
-        {
-            Initialize();
-        }
+            if (m_CoroutineRef != null)
+            {
+                Stop();
+            }
 
-        if (m_CoroutineRef == null)
-        {
-            return;
+            m_State = state;
+
+            yield return StartCoroutine(PlayLoop());
         }
 
-        StopCoroutine(m_CoroutineRef);
-        m_CoroutineRef = null;
-        m_Transform.sizeDelta = m_State ? m_TrueSize : m_FalseSize;
-    }
-
-    private IEnumerator PlayLoop()
-    {
-        float delta = 0.0f;
-
-        while (delta < TransitionTime)
+        public void Toggle()
         {
-            delta += Time.deltaTime;
+            if (m_Transform == null)
+            {
+                Initialize();
+            }
 
-            m_Transform.sizeDelta = m_State ? Vector3.Lerp(m_FalseSize, m_TrueSize, delta / TransitionTime) : Vector3.Lerp(m_TrueSize, m_FalseSize, delta / TransitionTime);
+            if (m_CoroutineRef != null)
+            {
+                Stop();
+            }
 
-            yield return null;
+            m_State = !m_State;
+            m_CoroutineRef = StartCoroutine(PlayLoop());
+        }
+
+        public void Stop()
+        {
+            if (m_Transform == null)
+            {
+                Initialize();
+            }
+
+            if (m_CoroutineRef == null)
+            {
+                return;
+            }
+
+            StopCoroutine(m_CoroutineRef);
+            m_CoroutineRef = null;
+            m_Transform.sizeDelta = m_State ? m_TrueSize : m_FalseSize;
+        }
+
+        private IEnumerator PlayLoop()
+        {
+            float delta = 0.0f;
+
+            while (delta < TransitionTime)
+            {
+                delta += Time.deltaTime;
+
+                m_Transform.sizeDelta = m_State
+                    ? Vector3.Lerp(m_FalseSize, m_TrueSize, delta / TransitionTime)
+                    : Vector3.Lerp(m_TrueSize, m_FalseSize, delta / TransitionTime);
+
+                yield return null;
+            }
         }
     }
 }

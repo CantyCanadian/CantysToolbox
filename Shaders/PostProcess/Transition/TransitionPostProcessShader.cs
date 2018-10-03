@@ -1,35 +1,38 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-[ExecuteInEditMode]
-public class TransitionPostProcessShader : MonoBehaviour
+namespace Canty.Shaders
 {
-    public Material ShaderMaterial;
-
-    public CurveTimer TransitionTimer;
-
-    [Range(0.0f, 1.0f)]
-    public float TransitionValue;
-
-    public void Play(bool backwards = false)
+    /// <summary>
+    /// Class to use when using transition post-process shaders. Includes extra content for easy editing and timing management.
+    /// </summary>
+    [ExecuteInEditMode]
+    public class TransitionPostProcessShader : PostProcessShaderBase
     {
-        TransitionTimer.Play(backwards);
-    }
+        public Material ShaderMaterial;
 
-    public void Update()
-    {
-        if (TransitionTimer.isPlaying)
+        public CurveTimer TransitionTimer;
+
+        [Range(0.0f, 1.0f)] public float TransitionValue;
+
+        public void Play(bool backwards = false)
         {
-            TransitionValue = TransitionTimer.Value;
+            TransitionTimer.Play(backwards);
         }
-    }
 
-    private void OnRenderImage(RenderTexture src, RenderTexture dst)
-    {
-        ShaderMaterial.SetFloat("_TransitionValue", TransitionValue);
-        ShaderMaterial.SetVector("_ScreenResolution", new Vector2(Screen.width, Screen.height));
+        public void Update()
+        {
+            if (TransitionTimer.isPlaying)
+            {
+                TransitionValue = TransitionTimer.Value;
+            }
+        }
 
-        Graphics.Blit(src, dst, ShaderMaterial);
+        public override void Blit(RenderTexture src, RenderTexture dst)
+        {
+            ShaderMaterial.SetFloat("_TransitionValue", TransitionValue);
+            ShaderMaterial.SetVector("_ScreenResolution", new Vector2(Screen.width, Screen.height));
+
+            Graphics.Blit(src, dst, ShaderMaterial);
+        }
     }
 }

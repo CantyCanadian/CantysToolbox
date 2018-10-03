@@ -1,5 +1,5 @@
-﻿using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
+using Canty;
 
 // Simple script to run the dissolve shader, made by CantyCanadian.
 public class DissolveShader : MonoBehaviour
@@ -21,8 +21,8 @@ public class DissolveShader : MonoBehaviour
         }
     }
 
-    private void Start ()
+    private void Start()
     {
         m_Renderer = GetComponent<Renderer>();
-	}
+    }
 }

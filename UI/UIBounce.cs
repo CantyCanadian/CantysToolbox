@@ -1,60 +1,66 @@
 ﻿using System.Collections;
 using UnityEngine;
 
-public class UIBounce : MonoBehaviour
+namespace Canty.UI
 {
-    public Vector2 BounceDifference;
-    public float BounceTime;
-
-    private RectTransform m_Transform;
-    private Vector2 m_OriginalPosition;
-
-    private Coroutine m_CoroutineRef;
-
-    public void Initialize()
+    /// <summary>
+    /// Adds a simple bounce effect to a UI element.
+    /// </summary>
+    public class UIBounce : MonoBehaviour
     {
-        m_Transform = GetComponent<RectTransform>();
-    }
+        public Vector2 BounceDifference;
+        public float BounceTime;
 
-    public void Play()
-    {
-        if (m_CoroutineRef != null)
-        { 
-            Stop();
-        }
+        private RectTransform m_Transform;
+        private Vector2 m_OriginalPosition;
 
-        m_OriginalPosition = m_Transform.anchoredPosition;
-        m_CoroutineRef = StartCoroutine(PlayLoop());
-    }
+        private Coroutine m_CoroutineRef;
 
-    public void Stop()
-    {
-        if (m_CoroutineRef == null)
+        public void Initialize()
         {
-            return;
+            m_Transform = GetComponent<RectTransform>();
         }
 
-        StopCoroutine(m_CoroutineRef);
-        m_CoroutineRef = null;
-        m_Transform.anchoredPosition = m_OriginalPosition;
-    }
-
-    private IEnumerator PlayLoop()
-    {
-        float delta = 0.0f;
-
-        while(true)
+        public void Play()
         {
-            delta += Time.deltaTime;
+            if (m_CoroutineRef != null)
+            {
+                Stop();
+            }
 
-            m_Transform.anchoredPosition = m_OriginalPosition + (BounceDifference * AbsSinOfPiX(delta));
-
-            yield return null;
+            m_OriginalPosition = m_Transform.anchoredPosition;
+            m_CoroutineRef = StartCoroutine(PlayLoop());
         }
-    }
 
-    private float AbsSinOfPiX(float x)
-    {
-        return Mathf.Abs(Mathf.Sin(Mathf.PI * x));
+        public void Stop()
+        {
+            if (m_CoroutineRef == null)
+            {
+                return;
+            }
+
+            StopCoroutine(m_CoroutineRef);
+            m_CoroutineRef = null;
+            m_Transform.anchoredPosition = m_OriginalPosition;
+        }
+
+        private IEnumerator PlayLoop()
+        {
+            float delta = 0.0f;
+
+            while (true)
+            {
+                delta += Time.deltaTime;
+
+                m_Transform.anchoredPosition = m_OriginalPosition + (BounceDifference * AbsSinOfPiX(delta));
+
+                yield return null;
+            }
+        }
+
+        private float AbsSinOfPiX(float x)
+        {
+            return Mathf.Abs(Mathf.Sin(Mathf.PI * x));
+        }
     }
 }

@@ -1,16 +1,19 @@
 using UnityEngine;
 
-public abstract class SaveableBase : MonoBehaviour
+namespace Canty.Managers
 {
-    public abstract string[] SaveData();
-    public abstract void LoadDefaultData();
-    public abstract void LoadData(string[] data);
-}
-
-public abstract class SaveableBase<I> : SaveableBase
-{
-    protected void Start()
+    public abstract class SaveableBase : MonoBehaviour
     {
-        SaveManager.Instance.RegisterSaveable(this, typeof(I));
+        public abstract string[] SaveData();
+        public abstract void LoadDefaultData();
+        public abstract void LoadData(string[] data);
+    }
+
+    public abstract class SaveableBase<I> : SaveableBase
+    {
+        protected void Start()
+        {
+            SaveManager.Instance.RegisterSaveable(this, typeof(I));
+        }
     }
 }

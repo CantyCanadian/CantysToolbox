@@ -1,61 +1,64 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>
-/// Inherits from IEnumerable. Contains utility functions that applies to any containers that can be counted.
-/// </summary>
-public static class ICollectionExtension
+namespace Canty
 {
     /// <summary>
-    /// Gets a random object from the ICollection.
+    /// Inherits from IEnumerable. Contains utility functions that applies to any containers that can be counted.
     /// </summary>
-    /// <returns>Random object.</returns>
-    public static I GetRandom<I>(this ICollection<I> target)
+    public static class ICollectionExtension
     {
-        int index = Random.Range(0, target.Count);
-        I result = default(I);
-
-        foreach(I item in target)
+        /// <summary>
+        /// Gets a random object from the ICollection.
+        /// </summary>
+        /// <returns>Random object.</returns>
+        public static I GetRandom<I>(this ICollection<I> target)
         {
-            if (index == 0)
+            int index = Random.Range(0, target.Count);
+            I result = default(I);
+
+            foreach (I item in target)
             {
-                result = item;
+                if (index == 0)
+                {
+                    result = item;
+                }
+                else
+                {
+                    index--;
+                }
             }
-            else
-            {
-                index--;
-            }
+
+            return result;
         }
 
-        return result;
-    }
-
-    /// <summary>
-    /// Converts ICollection to array.
-    /// </summary>
-    /// <returns>Array containing values inside ICollection.</returns>
-    public static I[] ToArray<I>(this ICollection<I> target)
-    {
-        I[] result = new I[target.Count];
-        target.CopyTo(result, 0);
-        return result;
-    }
-
-    /// <summary>
-    /// Converts the ICollection from type I to type NI using a passed in conversion function and returns it as the passed in generic ICollection list.
-    /// </summary>
-    /// <param name="valueConverter">Conversion function taking a item I and returning an item NI.</param>
-    /// <returns>IEnumerable containing original list, but converted.</returns>
-    public static NC ConvertUsing<I, NI, NC>(this ICollection<I> target, System.Func<I, NI> valueConverter) where NC : ICollection<NI>, new()
-    {
-        NC result = new NC();
-
-        foreach (I value in target)
+        /// <summary>
+        /// Converts ICollection to array.
+        /// </summary>
+        /// <returns>Array containing values inside ICollection.</returns>
+        public static I[] ToArray<I>(this ICollection<I> target)
         {
-            result.Add(valueConverter.Invoke(value));
+            I[] result = new I[target.Count];
+            target.CopyTo(result, 0);
+            return result;
         }
 
-        return result;
+        /// <summary>
+        /// Converts the ICollection from type I to type NI using a passed in conversion function and returns it as the passed in generic ICollection list.
+        /// </summary>
+        /// <param name="valueConverter">Conversion function taking a item I and returning an item NI.</param>
+        /// <returns>IEnumerable containing original list, but converted.</returns>
+        public static NC ConvertUsing<I, NI, NC>(this ICollection<I> target, System.Func<I, NI> valueConverter)
+            where NC : ICollection<NI>, new()
+        {
+            NC result = new NC();
+
+            foreach (I value in target)
+            {
+                result.Add(valueConverter.Invoke(value));
+            }
+
+            return result;
+        }
     }
 }

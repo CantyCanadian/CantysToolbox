@@ -8,10 +8,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e40be0c8ee9757e4e869dd1dc9d13c36, type: 3}
+  m_Script: {fileID: 11500000, guid: 46b61c2b58ece7b4bb8d3c4739eb6aeb, type: 3}
   m_Name: Trash Can
   m_EditorClassIdentifier: 
-  includeExtensions:
+  IncludeExtensions:
   - .cs
   - .js
   - .shader
@@ -23,10 +23,10 @@ MonoBehaviour:
   - .dae
   - .asset
   - .prefab
-  excludeExtensions:
+  ExcludeExtensions:
   - .meta
-  trash: []
-  saveAll: 1
-  saveNone: 0
-  folderName: Trash
-  search: 
+  Trash: []
+  SaveAll: 1
+  SaveNone: 0
+  FolderName: Trash
+  Search: 

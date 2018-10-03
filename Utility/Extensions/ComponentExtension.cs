@@ -1,20 +1,23 @@
 ﻿using UnityEngine;
 
-public static class ComponentExtension
+namespace Canty
 {
-    /// <summary>
-    /// Gets a component from the object or adds it if it doesn't exist.
-    /// </summary>
-    /// <returns>Component, either pre-existing or added.</returns>
-    public static T GetOrAddComponent<T>(this Component value) where T : Component
+    public static class ComponentExtension
     {
-        T result = value.GetComponent<T>();
-
-        if (result == null)
+        /// <summary>
+        /// Gets a component from the object or adds it if it doesn't exist.
+        /// </summary>
+        /// <returns>Component, either pre-existing or added.</returns>
+        public static T GetOrAddComponent<T>(this Component value) where T : Component
         {
-            result = value.gameObject.AddComponent<T>();
-        }
+            T result = value.GetComponent<T>();
 
-        return result;
+            if (result == null)
+            {
+                result = value.gameObject.AddComponent<T>();
+            }
+
+            return result;
+        }
     }
 }
