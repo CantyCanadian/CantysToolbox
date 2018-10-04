@@ -24,6 +24,13 @@ public class EffectSelector : MonoBehaviour
     private int m_CameraIndex = 0;
     private int m_CubesIndex = 0;
 
+    // Context 1
+    public List<GameObject> Objects;
+
+    public Text ObjectText;
+
+    private int m_ObjectIndex = 0;
+
     private void ShaderContext()
     {
         if (Input.GetKeyDown(KeyCode.A))
@@ -88,7 +95,31 @@ public class EffectSelector : MonoBehaviour
         }
     }
 
-	void Update()
+    private void ObjectContext()
+    {
+        if (Input.GetKeyDown(KeyCode.A))
+        {
+            MathUtil.DecrementWrap(ref m_ObjectIndex, 1, 0, Objects.Count);
+            m_ContentChanged = true;
+        }
+
+        if (Input.GetKeyDown(KeyCode.D))
+        {
+            MathUtil.IncrementWrap(ref m_ObjectIndex, 1, 0, Objects.Count);
+            m_ContentChanged = true;
+        }
+
+        if (m_ContentChanged)
+        {
+            Objects.SetAllActive(false);
+            Objects[m_ObjectIndex].SetActive(true);
+            ObjectText.text = Objects[m_ObjectIndex].name;
+
+            m_ContentChanged = false;
+        }
+    }
+
+    void Update()
     {
         if (Input.GetKeyDown(KeyCode.Q))
         {
@@ -104,10 +135,16 @@ public class EffectSelector : MonoBehaviour
 
         if (m_ContextChanged)
         {
+            PostProcessCameras.SetAllActive(false);
+            PostProcessCameras[0].SetActive(true);
+
             ContextParents.SetAllActive(false);
             ContextParents[m_ContextIndex].SetActive(true);
 
             ContextText.text = ContextParents[m_ContextIndex].name;
+
+            ContextTexts.SetAllActive(false);
+            ContextTexts[m_ContextIndex].SetActive(true);
 
             m_CameraIndex = 0;
             m_CubesIndex = 0;
@@ -120,6 +157,10 @@ public class EffectSelector : MonoBehaviour
         {
             case 0:
                 ShaderContext();
+                break;
+
+            case 1:
+                ObjectContext();
                 break;
         }
     }

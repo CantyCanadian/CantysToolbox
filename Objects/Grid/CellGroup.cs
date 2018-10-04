@@ -377,7 +377,7 @@ namespace Canty
             return null;
         }
 
-        private void RecursiveGet(ref List<Cell<T>> list, int x, int y, int steps)
+        private void RecursiveGet(ref Dictionary<Vector2Int, Cell<T>> list, int x, int y, int steps)
         {
             Cell<T> cell = TryGetCell(x, y);
 

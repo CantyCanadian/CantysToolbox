@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 namespace Canty
 {
-    public class Grid<T> where T : struct
+    public class DataGrid<T> where T : struct
     {
         public CellGroup<T> Cells { get { return m_Grid; } }
         private CellGroup<T> m_Grid = null;
@@ -22,7 +20,7 @@ namespace Canty
 
                     if (data.ContainsKey(pixel))
                     {
-                        cells.Add(new Vector2Int(x, y), new Cell<T>(data));
+                        cells.Add(new Vector2Int(x, y), new Cell<T>(data[pixel]));
                     }
                     else
                     {

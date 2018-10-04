@@ -13,6 +13,11 @@ namespace Canty
             m_Data = data;
         }
 
+        public void SetData(T data)
+        {
+            m_Data = data;
+        }
+
         public T GetData()
         {
             return m_Data;
