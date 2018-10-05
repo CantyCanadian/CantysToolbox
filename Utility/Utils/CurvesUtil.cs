@@ -1,11 +1,10 @@
-﻿using System;
+using System;
 using UnityEngine;
 
 namespace Canty
 {
     /// <summary>A collection of interpolation functions based on Robert Penner's easing equations that works using generic types casted to dynamic variable.
-    /// <para>The functions will assume that the passed-in variable type can be used for math equations. If it can't, problems with ensue.</para>
-    /// <para>Code will only work using .NET 4.6 because of the usage of dynamic variables.</para></summary>
+    /// <para>The functions will assume that the passed-in variable type can be used for math equations. If it can't, problems with ensue.</para></summary>
     public class CurvesUtil
     {
         #region Linear
