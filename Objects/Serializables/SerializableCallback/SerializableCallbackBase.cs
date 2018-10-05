@@ -1,9 +1,16 @@
+///====================================================================================================
+///
+///     SerializableCallbackBase by
+///     - CantyCanadian
+///		- Siccity
+///
+///====================================================================================================
+
 using System;
 using System.Linq;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-// Part of SerializableCallback by Siccity on Github : https://github.com/Siccity/SerializableCallback
 namespace Canty.Serializable
 {
     public abstract class SerializableCallbackBase<TReturn> : SerializableCallbackBase

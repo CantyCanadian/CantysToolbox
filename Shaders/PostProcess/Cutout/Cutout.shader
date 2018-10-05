@@ -1,5 +1,12 @@
-﻿// Make sure to use the CutoutPostProcessShader script instead of the regular PostProcessShader script.
-// Original shader found here : https://github.com/JPBotelho/Unity-Camera-cutout, modified by @CantyCanadian on Twitter.
+﻿///====================================================================================================
+///
+///     StencilMaskWrite by
+///     - CantyCanadian
+///		- JPBotelho
+///
+///		Make sure to use the CutoutPostProcessShader script instead of the regular PostProcessShader script.
+///
+///====================================================================================================
 Shader "Custom/PostProcess/Cutout"
 {
 	Properties

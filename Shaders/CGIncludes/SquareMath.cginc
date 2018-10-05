@@ -1,4 +1,11 @@
-﻿// Calculates the length of a 2x2 square from its center.
+﻿///====================================================================================================
+///
+///     SquareMath by
+///     - CantyCanadian
+///
+///====================================================================================================
+
+// Calculates the length of a 2x2 square from its center.
 float SquareLength(float angle)
 {
 	return lerp(1.0f, 1.4142f, -1.0f * (abs((angle % 90) - 45.0f) / 45.0f) + 1.0f);

@@ -1,4 +1,11 @@
-﻿// CG implementation of Vector2.Angle().
+﻿///====================================================================================================
+///
+///     AngleMath by
+///     - CantyCanadian
+///
+///====================================================================================================
+
+// CG implementation of Vector2.Angle().
 float AngleBetween(float2 v1, float2 v2)
 {
 	return dot(v1, v2) / (length(v1) * length(v2));

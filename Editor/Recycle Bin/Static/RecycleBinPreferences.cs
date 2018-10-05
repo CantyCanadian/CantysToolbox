@@ -1,10 +1,17 @@
-﻿#if UNITY_EDITOR
+﻿///====================================================================================================
+///
+///     RecycleBinPreferences by
+///     - CantyCanadian
+///     - JPBotelho
+///
+///====================================================================================================
+
+#if UNITY_EDITOR
 
 using UnityEngine;
 using System.Collections.Generic;
 using System.IO;
 
-// Part of Recycle Bin by JPBotelho on Github : https://github.com/JPBotelho/Recycle-Bin
 namespace Canty.Editor.RecycleBin
 {
     public class RecycleBinPreferences : ScriptableObject

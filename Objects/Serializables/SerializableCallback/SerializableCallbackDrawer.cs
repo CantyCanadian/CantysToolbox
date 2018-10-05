@@ -1,4 +1,12 @@
-﻿#if UNITY_EDITOR
+﻿///====================================================================================================
+///
+///     SerializableCallbackDrawer by
+///     - CantyCanadian
+///		- Siccity
+///
+///====================================================================================================
+
+#if UNITY_EDITOR
 
 using System;
 using System.Collections.Generic;
@@ -8,7 +16,6 @@ using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-// Part of SerializableCallback by Siccity on Github : https://github.com/Siccity/SerializableCallback
 namespace Canty.Serializable
 {
     [CustomPropertyDrawer(typeof(SerializableCallbackBase), true)]

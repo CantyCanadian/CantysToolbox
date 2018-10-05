@@ -1,4 +1,11 @@
-﻿using System.Collections.Generic;
+﻿///====================================================================================================
+///
+///     BasicInput by
+///     - CantyCanadian
+///
+///====================================================================================================
+
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 

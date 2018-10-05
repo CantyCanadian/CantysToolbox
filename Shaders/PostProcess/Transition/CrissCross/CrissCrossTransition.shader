@@ -1,5 +1,12 @@
-﻿// Taken from ellioman's Shader Project. https://github.com/ellioman/ShaderProject
-// Make sure to use the TransitionPostProcessShader script instead of the regular PostProcessShader script.
+﻿///====================================================================================================
+///
+///     CrissCrissTransition by
+///     - CantyCanadian
+///		- ellioman
+///
+///		Make sure to use the TransitionPostProcessShader script instead of the regular PostProcessShader script.
+///
+///====================================================================================================
 Shader "Custom/PostProcess/Transition/CrissCross"
 {
 	Properties

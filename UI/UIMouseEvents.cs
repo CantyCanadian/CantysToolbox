@@ -1,4 +1,11 @@
-﻿using UnityEngine;
+﻿///====================================================================================================
+///
+///     UIMouseEvents by
+///     - CantyCanadian
+///
+///====================================================================================================
+
+using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 

@@ -1,12 +1,18 @@
-﻿#if UNITY_EDITOR
+﻿///====================================================================================================
+///
+///     SerializableDictionaryPropertyDrawer by
+///     - CantyCanadian
+///		- azixMcAze
+///
+///====================================================================================================
+
+#if UNITY_EDITOR
 
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using System.Reflection;
 using System;
-
-// Part of SerializableDictionary by azixMcAze on Github : https://github.com/azixMcAze/Unity-SerializableDictionary
 
 namespace Canty.Serializable
 {

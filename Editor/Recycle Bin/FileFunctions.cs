@@ -1,12 +1,17 @@
+///====================================================================================================
+///
+///     FileFunctions by
+///     - CantyCanadian
+///     - JPBotelho
+///
+///====================================================================================================
+
 #if UNITY_EDITOR
 
 using System.Collections.Generic;
 using System.IO;
-using UnityEngine;
 using UnityEditor;
 
-// Part of Recycle Bin by JPBotelho on Github : https://github.com/JPBotelho/Recycle-Bin
-// CantyCanadian added comments, modified the code a bit and fixed naming conventions.
 namespace Canty.Editor.RecycleBin
 {
 	public static class FileFunctions

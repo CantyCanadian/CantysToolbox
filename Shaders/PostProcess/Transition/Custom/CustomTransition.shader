@@ -1,6 +1,12 @@
-﻿// Make sure to use the TransitionPostProcessShader script instead of the regular PostProcessShader script.
-// Packaged transition graphics are made by Makin' Stuff Look Good on Youtube : https://www.youtube.com/channel/UCEklP9iLcpExB8vp_fWQseg
-// Minus the Diamonds texture made by stellarNull on Twitter :  https://twitter.com/stellarNull 
+﻿///====================================================================================================
+///
+///     CustomTransition by
+///     - CantyCanadian
+///		- ellioman
+///
+///		Make sure to use the TransitionPostProcessShader script instead of the regular PostProcessShader script.
+///
+///====================================================================================================
 Shader "Custom/PostProcess/Transition/Custom"
 {
 	Properties

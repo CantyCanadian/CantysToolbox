@@ -1,9 +1,15 @@
-﻿// Original shader made by @minionsart on Twitter, heavily modified by @cantycanadian.
-// Special thanks to @bgolus for the grabpass hack I used to make the highly specific blending I wanted.
-
-// Known bug : You can't see another liquid through a transparent liquid. Won't fix since I have no clue how to actually fix that. I already had issues getting the transparency right...
-
-// Must use the LiquidShader script to get both liquid movement and proper container height.
+﻿///====================================================================================================
+///
+///     Liquid by
+///     - CantyCanadian
+///		- MinionsArt
+///		- bgolus
+///
+///		Known bug : You can't see another liquid through a transparent liquid.
+///
+///		Must use the LiquidShader.cs script to get both liquid movement and proper container height.
+///
+///====================================================================================================
 Shader "Custom/Unlit/Liquid"
 {
 	Properties

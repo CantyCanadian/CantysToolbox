@@ -1,10 +1,16 @@
-﻿using System;
+﻿///====================================================================================================
+///
+///     SerializableDictionary by
+///     - CantyCanadian
+///		- azixMcAze
+///
+///====================================================================================================
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using UnityEngine;
-
-// Part of SerializableDictionary by azixMcAze on Github : https://github.com/azixMcAze/Unity-SerializableDictionary
 
 namespace Canty
 {

@@ -1,4 +1,11 @@
-﻿// From the book Unity 5.x Shaders and Effects Cookbook. Taken from ellioman's Shader Project. https://github.com/ellioman/ShaderProject
+﻿///====================================================================================================
+///
+///     BlendModeOverlay by
+///     - CantyCanadian
+///		- ellioman
+///		- AlanZucconi
+///
+///====================================================================================================
 Shader "Custom/PostProcess/BlendMode/Overlay"
 {
 	Properties

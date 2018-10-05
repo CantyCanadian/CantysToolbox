@@ -1,4 +1,12 @@
-﻿#if UNITY_EDITOR
+﻿///====================================================================================================
+///
+///     SplineBezier by
+///     - CantyCanadian
+///		- CatLikeCoding
+///
+///====================================================================================================
+
+#if UNITY_EDITOR
 
 using UnityEditor;
 
@@ -6,8 +14,6 @@ using UnityEditor;
 
 using System;
 using UnityEngine;
-
-// Original code found on https://catlikecoding.com/unity/tutorials/curves-and-splines/, heavily modified by CantyCanadian.
 
 namespace Canty.Spline
 {

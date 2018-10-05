@@ -1,4 +1,11 @@
-﻿using System.Collections.Generic;
+﻿///====================================================================================================
+///
+///     CSVUtil by
+///     - CantyCanadian
+///
+///====================================================================================================
+
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Canty

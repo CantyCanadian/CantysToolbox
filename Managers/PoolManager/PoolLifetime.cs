@@ -1,4 +1,11 @@
-﻿using System.Collections;
+﻿///====================================================================================================
+///
+///     PoolLifetime by
+///     - CantyCanadian
+///
+///====================================================================================================
+
+using System.Collections;
 using UnityEngine;
 
 namespace Canty.Managers

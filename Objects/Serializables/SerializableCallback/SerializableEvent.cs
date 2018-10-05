@@ -1,5 +1,10 @@
-﻿
-// Part of SerializableCallback by Siccity on Github : https://github.com/Siccity/SerializableCallback
+﻿///====================================================================================================
+///
+///     SerializableEvent by
+///     - CantyCanadian
+///		- Siccity
+///
+///====================================================================================================
 
 namespace Canty.Serializable
 {

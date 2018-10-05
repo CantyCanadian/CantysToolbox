@@ -1,4 +1,10 @@
-﻿// Taken from ellioman's Shader Project. https://github.com/ellioman/ShaderProject
+﻿///====================================================================================================
+///
+///     AlphaMaskCulled by
+///     - CantyCanadian
+///		- ellioman
+///
+///====================================================================================================
 Shader "Custom/Surface/Masks/AlphaMaskCulled" 
 {
 	Properties

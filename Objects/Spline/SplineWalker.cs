@@ -1,7 +1,13 @@
-﻿using UnityEngine;
-using Canty.Spline;
+﻿///====================================================================================================
+///
+///     SplineWalker by
+///     - CantyCanadian
+///		- CatLikeCoding
+///
+///====================================================================================================
 
-// Original code found on https://catlikecoding.com/unity/tutorials/curves-and-splines/, heavily modified by CantyCanadian.
+using UnityEngine;
+using Canty.Spline;
 
 namespace Canty
 {

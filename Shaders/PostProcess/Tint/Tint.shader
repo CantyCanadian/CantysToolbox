@@ -1,4 +1,10 @@
-﻿// Taken from ellioman's Shader Project. https://github.com/ellioman/ShaderProject
+﻿///====================================================================================================
+///
+///     StencilMaskWrite by
+///     - CantyCanadian
+///		- ellioman
+///
+///====================================================================================================
 Shader "Custom/PostProcess/Tint"
 {
 	Properties

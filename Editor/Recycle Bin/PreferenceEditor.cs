@@ -1,12 +1,18 @@
-﻿#if UNITY_EDITOR
+﻿///====================================================================================================
+///
+///     PreferenceEditor by
+///     - CantyCanadian
+///     - JPBotelho
+///
+///====================================================================================================
+
+#if UNITY_EDITOR
 
 using UnityEngine;
 using UnityEditor;
 using System.IO;
 using System.Collections.Generic;
 
-// Part of Recycle Bin by JPBotelho on Github : https://github.com/JPBotelho/Recycle-Bin
-// CantyCanadian added comments, modified the code a bit and fixed naming conventions.
 namespace Canty.Editor.RecycleBin
 {
 	[CustomEditor(typeof(RecycleBinPreferences))]

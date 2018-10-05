@@ -1,6 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿///====================================================================================================
+///
+///     UpdateableBase by
+///     - CantyCanadian
+///
+///====================================================================================================
 
 namespace Canty.Managers
 {

@@ -1,4 +1,12 @@
-﻿using System;
+﻿///====================================================================================================
+///
+///     SortUtil by
+///     - CantyCanadian
+///     - CShartStar
+///
+///====================================================================================================
+
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -9,7 +17,6 @@ namespace Canty
     /// <para>Best means best case scenario (list is already sorted), average is the best value to compare, worst is if there is nothing properly sorted and everything is the furthest it can be from its right position, memory is the footprint of the algorithm on the ram.</para>
     /// <para>If an algorithm is stable, it means that equal values will stay in the same order as they were. Unstable algorithms can't assure that. Use stable sorting if you need to sort twice using two different parameters.</para>
     /// <para>When in doubt, use Quicksort. It's a popular sorting algorithm which is overall good, although, it is unstable.</para>
-    /// <para>Source for the algorithms : https://www.csharpstar.com/csharp-sorting-algorithms/ </para>
     /// </summary>
     public static class SortUtil
     {

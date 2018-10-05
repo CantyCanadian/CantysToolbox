@@ -1,4 +1,11 @@
-﻿using System.Collections.Generic;
+﻿///====================================================================================================
+///
+///     RandomUtil by
+///     - CantyCanadian
+///
+///====================================================================================================
+
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Canty
@@ -18,8 +25,7 @@ namespace Canty
             int result = -1;
             int loop = 0;
 
-            while (loop < 20
-            ) //You'd assume it would never go 20 times without touching an exception. If it does, you have no possible results.
+            while (loop < 20) //You'd assume it would never go 20 times without touching an exception. If it does, you have no possible results.
             {
                 result = Random.Range(min, max);
 

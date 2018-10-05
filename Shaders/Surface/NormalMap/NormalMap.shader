@@ -1,4 +1,10 @@
-﻿// Taken from ellioman's Shader Project. https://github.com/ellioman/ShaderProject
+﻿///====================================================================================================
+///
+///     NormalMap by
+///     - CantyCanadian
+///		- ellioman
+///
+///====================================================================================================
 Shader "Custom/Surface/NormalMap" 
 {
 	Properties

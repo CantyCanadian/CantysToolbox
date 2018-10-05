@@ -1,8 +1,14 @@
-﻿using System;
+﻿///====================================================================================================
+///
+///     EncryptionUtil by
+///     - CantyCanadian
+///     - sabresaurus
+///
+///====================================================================================================
+
+using System;
 using System.Security.Cryptography;
 using System.Text;
-
-// Original code taken from sabresaurus's PlayerPrefsEditor code : https://github.com/sabresaurus/PlayerPrefsEditor, heavily modified by CantyCanadian.
 
 namespace Canty
 {

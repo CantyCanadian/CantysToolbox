@@ -1,19 +1,27 @@
-﻿Shader "Custom/PostProcess/ColorOffset"
+﻿///====================================================================================================
+///
+///     ColorOffset by
+///     - CantyCanadian
+///
+///====================================================================================================
+Shader "Custom/PostProcess/ColorOffset"
 {
 	Properties
 	{
 		[HideInInspector]_MainTex ("Texture", 2D) = "white" {}
+		[Enum(Clamp, 0, Repeat, 1, Mirror, 2)] _Tiling ("Offset Tiling", Int) = 0
 
+		[Header(Red)]
 		_RedOffsetX ("Red Offset X", Float) = 0.0
 		_RedOffsetY ("Red Offset Y", Float) = 0.0
 
+		[Header(Green)]
 		_GreenOffsetX ("Green Offset X", Float) = 0.0
 		_GreenOffsetY ("Green Offset Y", Float) = 0.0
 
+		[Header(Blue)]
 		_BlueOffsetX ("Blue Offset X", Float) = 0.0
 		_BlueOffsetY ("Blue Offset Y", Float) = 0.0
-
-		[Enum(Clamp, 0, Repeat, 1, Mirror, 2)] _Tiling ("Offset Tiling", Int) = 0
 	}
 	SubShader
 	{

@@ -1,8 +1,14 @@
-﻿using System;
+﻿///====================================================================================================
+///
+///     PlayerPrefsUtil by
+///     - CantyCanadian
+///     - sabresaurus
+///
+///====================================================================================================
+
+using System;
 using System.Collections.Generic;
 using UnityEngine;
-
-// Idea taken from sabresaurus's PlayerPrefsEditor code : https://github.com/sabresaurus/PlayerPrefsEditor, made by CantyCanadian.
 
 namespace Canty
 {

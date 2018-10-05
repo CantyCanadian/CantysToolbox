@@ -1,4 +1,11 @@
-﻿// Taken from ellioman's Shader Project. https://github.com/ellioman/ShaderProject
+﻿///====================================================================================================
+///
+///     BlackWhite by
+///     - CantyCanadian
+///		- ellioman
+///		- AlanZucconi
+///
+///====================================================================================================
 Shader "Custom/PostProcess/BlackWhite"
 {
 	Properties
@@ -50,7 +57,7 @@ Shader "Custom/PostProcess/BlackWhite"
 			{
 				float4 col = tex2D(_MainTex, i.uv);
 						
-				// The three magic numbers represent the sensitivity of the human eye to the R, G and B components. This is taken from http://www.alanzucconi.com/2015/07/08/screen-shaders-and-postprocessing-effects-in-unity3d/
+				// The three magic numbers represent the sensitivity of the human eye to the R, G and B components.
 				float luminosity = (col.r * 0.3f) + (col.g * 0.59f) + (col.b * 0.11f);
 						
 				float4 result = col;

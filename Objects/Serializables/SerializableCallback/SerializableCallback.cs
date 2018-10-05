@@ -1,6 +1,12 @@
-using Canty.Serializable;
+///====================================================================================================
+///
+///     SerializableCallback by
+///     - CantyCanadian
+///		- Siccity
+///
+///====================================================================================================
 
-// Part of SerializableCallback by Siccity on Github : https://github.com/Siccity/SerializableCallback
+using Canty.Serializable;
 
 namespace Canty
 {

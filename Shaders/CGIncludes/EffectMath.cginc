@@ -1,4 +1,11 @@
-﻿// Blur function that decrease in strength the further you are from the vertex. Based of the CommandBuffer blur example by Unity.
+﻿///====================================================================================================
+///
+///     EffectMath by
+///     - CantyCanadian
+///
+///====================================================================================================
+
+// Blur function that decrease in strength the further you are from the vertex. Based of the CommandBuffer blur example by Unity.
 float4 Blur(sampler2D tex, float2 uv, int layers, float off)
 {
 	float4 col = float4(0.0f, 0.0f, 0.0f, 0.0f);

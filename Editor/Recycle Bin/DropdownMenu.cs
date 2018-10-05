@@ -1,8 +1,15 @@
-﻿#if UNITY_EDITOR
+﻿///====================================================================================================
+///
+///     DropdownMenu by
+///     - CantyCanadian
+///     - JPBotelho
+///
+///====================================================================================================
+
+#if UNITY_EDITOR
 
 using UnityEditor;
 
-// Part of Recycle Bin by JPBotelho on Github : https://github.com/JPBotelho/Recycle-Bin
 namespace Canty.Editor.RecycleBin
 {
 	public class DropdownMenu : EditorWindow

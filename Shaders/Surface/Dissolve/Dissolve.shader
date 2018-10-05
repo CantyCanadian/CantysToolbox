@@ -1,4 +1,10 @@
-﻿// Original shader made by JPBotelho on Github. https://github.com/JPBotelho/Dissolve-Shader
+﻿///====================================================================================================
+///
+///     Dissolve by
+///     - CantyCanadian
+///		- JPBotelho
+///
+///====================================================================================================
 Shader "Custom/Surface/Dissolve"
 {
 	Properties 

@@ -1,4 +1,11 @@
-﻿using System.Collections;
+﻿///====================================================================================================
+///
+///     NonMonoUpdateManager by
+///     - CantyCanadian
+///
+///====================================================================================================
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 

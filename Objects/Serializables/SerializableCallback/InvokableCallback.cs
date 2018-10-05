@@ -1,6 +1,12 @@
-﻿using System;
+﻿///====================================================================================================
+///
+///     InvokableCallback by
+///     - CantyCanadian
+///		- Siccity
+///
+///====================================================================================================
 
-// Part of SerializableCallback by Siccity on Github : https://github.com/Siccity/SerializableCallback
+using System;
 
 namespace Canty.Serializable
 {

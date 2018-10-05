@@ -11,6 +11,12 @@ public class ShittyPlayer : MonoBehaviour
             tpps.Play();
         }
 
+        ShittyAtlas sa = GetComponent<ShittyAtlas>();
+        if (sa != null)
+        {
+            sa.Play();
+        }
+
         DissolveShader ds = GetComponent<DissolveShader>();
         if (ds != null)
         {
