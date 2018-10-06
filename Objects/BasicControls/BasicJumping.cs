@@ -5,47 +5,37 @@ using UnityEngine;
 public class BasicJumping : MonoBehaviour
 {
     public GameObject JumpingObject;
-    public Collider ObjectRigidbody;
     public KeyCode JumpingKey;
-
-    public float JumpingTime = 1.0f;
+    
     public float JumpingStrength = 1.0f;
+    public float Gravity = 9.8f;
 
-    private Coroutine m_JumpingReference;
+    private float m_VerticalVelocity = 0.0f;
+    
     private bool m_IsGrounded = true;
+    private bool m_IsJumping = false;
 
 	void Update ()
 	{
-	    if (Input.GetKeyDown(JumpingKey) && m_IsGrounded == true)
+	    if (Input.GetKeyDown(JumpingKey) && m_IsGrounded)
 	    {
-	        if (m_JumpingReference == null)
-	        {
-	            m_JumpingReference = StartCoroutine(JumpingLoop());
-            }
+	        m_IsJumping = true;
 	    }
     }
 
-    private IEnumerator JumpingLoop()
+    void FixedUpdate()
     {
-        float delta = 0.0f;
-
-        while (Input.GetKey(JumpingKey))
+        if (m_IsGrounded && m_IsJumping)
         {
-            delta += Time.deltaTime;
-
-            JumpingObject.transform.position += Vector3.up * JumpingStrength;
-
-            if (delta >= JumpingTime)
-            {
-                break;
-            }
-
-            yield return null;
+            m_VerticalVelocity = JumpingStrength;
+            m_IsJumping = false;
+        }
+        else if (!m_IsGrounded)
+        {
+            m_VerticalVelocity -= Gravity * Time.fixedDeltaTime;
         }
 
-        yield return new WaitUntil(() => m_IsGrounded);
-
-        m_JumpingReference = null;
+        transform.position += Vector3.up * m_VerticalVelocity * Time.fixedDeltaTime;
     }
 
     private void OnCollisionEnter(Collision other)

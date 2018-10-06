@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class BasicMouseCamera : MonoBehaviour
 {
+    public int PlayerID = 0;
+
     public GameObject YawObject;
     public GameObject PitchObject;
 
@@ -47,16 +49,14 @@ public class BasicMouseCamera : MonoBehaviour
 	{
 	    if (YawInLocalSpace)
 	    {
-	        YawObject.transform.localEulerAngles += new Vector3(0.0f, Input.GetAxis("Mouse X") * YawSpeed, 0.0f);
+	        YawObject.transform.localEulerAngles += new Vector3(0.0f, Input.GetAxis("Player" + PlayerID.ToString() + "RightJoystickX") * YawSpeed, 0.0f);
         }
 	    else
 	    {
-	        YawObject.transform.eulerAngles += new Vector3(0.0f, Input.GetAxis("Mouse X") * YawSpeed, 0.0f);
+	        YawObject.transform.eulerAngles += new Vector3(0.0f, Input.GetAxis("Player" + PlayerID.ToString() + "RightJoystickX") * YawSpeed, 0.0f);
         }
-
-        //PitchObject.transform.Rotate(new Vector3(-Input.GetAxis("Mouse Y"), 0.0f, 0.0f));
-        m_CurrentPitch -= Input.GetAxis("Mouse Y") * PitchSpeed;
-
+        
+        m_CurrentPitch -= Input.GetAxis("Player" + PlayerID.ToString() + "RightJoystickY") * PitchSpeed;
 	    m_CurrentPitch = Mathf.Clamp(m_CurrentPitch, m_InitialPitch - HalfPitchLimits.x, m_InitialPitch + HalfPitchLimits.y);
         
         Quaternion rotation = Quaternion.Euler(m_CurrentPitch, 0.0f, 0.0f);
