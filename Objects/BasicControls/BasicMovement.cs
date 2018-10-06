@@ -16,19 +16,21 @@ namespace Canty
     /// </summary>
     public class BasicMovement : MonoBehaviour
     {
-        public enum Direction
+        public enum Action
         {
             Up,
             Down,
             Left,
             Right,
             Forward,
-            Backward
+            Backward,
+            Sprint
         }
 
-        public KeyCodeMovementDictionary KeyMovement;
+        public KeyCodeActionDictionary KeyMovement;
         public bool UseLocalDirection = false;
         public float MovementSpeed = 3.0f;
+        public float SprintMultiplier = 2.0f;
 
         private bool m_PreventMovement = false;
 
@@ -42,45 +44,52 @@ namespace Canty
             if (!m_PreventMovement)
             {
                 Vector3 velocity = new Vector3();
+                float speed = 1.0f;
 
-                foreach (KeyValuePair<KeyCode, Direction> kvp in KeyMovement)
+                foreach (KeyValuePair<KeyCode, Action> kvp in KeyMovement)
                 {
                     if (Input.GetKey(kvp.Key))
                     {
                         switch (kvp.Value)
                         {
-                            case Direction.Up:
-                                velocity.y += MovementSpeed * Time.deltaTime;
+                            case Action.Up:
+                                velocity.y += 1.0f;
                                 break;
 
-                            case Direction.Down:
-                                velocity.y -= MovementSpeed * Time.deltaTime;
+                            case Action.Down:
+                                velocity.y -= 1.0f;
                                 break;
 
-                            case Direction.Left:
-                                velocity.x -= MovementSpeed * Time.deltaTime;
+                            case Action.Left:
+                                velocity.x -= 1.0f;
                                 break;
 
-                            case Direction.Right:
-                                velocity.x += MovementSpeed * Time.deltaTime;
+                            case Action.Right:
+                                velocity.x += 1.0f;
                                 break;
 
-                            case Direction.Forward:
-                                velocity.z += MovementSpeed * Time.deltaTime;
+                            case Action.Forward:
+                                velocity.z += 1.0f;
                                 break;
 
-                            case Direction.Backward:
-                                velocity.z -= MovementSpeed * Time.deltaTime;
+                            case Action.Backward:
+                                velocity.z -= 1.0f;
+                                break;
+
+                            case Action.Sprint:
+                                speed = SprintMultiplier;
                                 break;
                         }
                     }
                 }
 
+                velocity = velocity.normalized * (MovementSpeed * Time.deltaTime);
+
                 if (UseLocalDirection)
                 {
-                    Vector3 sideways = transform.right * velocity.x;
+                    Vector3 sideways = transform.right * velocity.x * speed;
                     Vector3 upward = transform.up * velocity.y;
-                    Vector3 forward = transform.forward * velocity.z;
+                    Vector3 forward = transform.forward * velocity.z * speed;
 
                     transform.position += sideways + upward + forward;
                 }
@@ -92,7 +101,7 @@ namespace Canty
         }
 
         [System.Serializable]
-        public class KeyCodeMovementDictionary : SerializableDictionary<KeyCode, Direction>
+        public class KeyCodeActionDictionary : SerializableDictionary<KeyCode, Action>
         {
         }
     }

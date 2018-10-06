@@ -32,6 +32,7 @@ namespace Canty
 
         private float m_Value = 0.0f;
         private float m_Delta = 0.0f;
+        private float m_TimeScale = 1.0f;
 
         private bool m_Initialized = false;
 
@@ -66,6 +67,11 @@ namespace Canty
             }
         }
 
+        public void SetTimeScale(float scale)
+        {
+            m_TimeScale = scale;
+        }
+
         public override void Update()
         {
             if (m_Flip)
@@ -80,7 +86,7 @@ namespace Canty
                 float initial = m_Backwards ? 1.0f : 0.0f;
                 float target = m_Backwards ? 0.0f : 1.0f;
 
-                m_Delta += Time.deltaTime;
+                m_Delta += Time.deltaTime * m_TimeScale;
 
                 if (m_Delta > CurveTime)
                 {
