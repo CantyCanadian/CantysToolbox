@@ -5,6 +5,7 @@ using UnityEngine;
 public class BasicMouseCamera : MonoBehaviour
 {
     public int PlayerID = 0;
+    public Animator PlayerAnimator;
 
     public GameObject YawObject;
     public GameObject PitchObject;
@@ -47,15 +48,19 @@ public class BasicMouseCamera : MonoBehaviour
 
 	void Update ()
 	{
-	    if (YawInLocalSpace)
+	    float XRotation = Input.GetAxis("Player" + PlayerID.ToString() + "RightJoystickX");
+
+        if (YawInLocalSpace)
 	    {
-	        YawObject.transform.localEulerAngles += new Vector3(0.0f, Input.GetAxis("Player" + PlayerID.ToString() + "RightJoystickX") * YawSpeed, 0.0f);
+	        YawObject.transform.localEulerAngles += new Vector3(0.0f, XRotation * YawSpeed, 0.0f);
         }
 	    else
 	    {
-	        YawObject.transform.eulerAngles += new Vector3(0.0f, Input.GetAxis("Player" + PlayerID.ToString() + "RightJoystickX") * YawSpeed, 0.0f);
+	        YawObject.transform.eulerAngles += new Vector3(0.0f, XRotation * YawSpeed, 0.0f);
         }
-        
+
+	    PlayerAnimator.SetFloat("Rotation", XRotation);
+
         m_CurrentPitch -= Input.GetAxis("Player" + PlayerID.ToString() + "RightJoystickY") * PitchSpeed;
 	    m_CurrentPitch = Mathf.Clamp(m_CurrentPitch, m_InitialPitch - HalfPitchLimits.x, m_InitialPitch + HalfPitchLimits.y);
         
