@@ -11,27 +11,17 @@ public class BasicItemPickup : MonoBehaviour
     public float MaximumItemDistance;
 
     private AudioSource m_AudioSource = null;
+    private IPickable m_Pickable = null;
 
 	void Update ()
 	{
-	    RaycastHit hit;
-	    if (Physics.Raycast(CharacterCamera.transform.position, CharacterCamera.transform.forward, out hit))
+	    if (m_Pickable != null && Input.GetButtonDown("Player" + PlayerID.ToString() + "Interact"))
 	    {
-	        if (Vector3.Distance(hit.transform.position, Character.transform.position) <= MaximumItemDistance)
-	        {
-	            IPickable pickable = hit.transform.GetComponent<IPickable>();
-
-	            if (pickable != null)
-	            {
-                    Debug.Log("Seeing that item");
-	                if (Input.GetButtonDown("Player" + PlayerID.ToString() + "Interact"))
-	                {
-                        pickable.OnPickup();
-	                }
-	            }
-            }
+	        m_Pickable.OnPickup();
+            PlayPickupSound(m_Pickable);
+	        m_Pickable = null;
 	    }
-	}
+    }
 
     private void PlayPickupSound(IPickable pickable)
     {
@@ -46,6 +36,24 @@ public class BasicItemPickup : MonoBehaviour
         {
             m_AudioSource.clip = pickupClip;
             m_AudioSource.Play();
+        }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        IPickable pickable = other.GetComponent<IPickable>();
+
+        if (pickable != null)
+        {
+            m_Pickable = pickable;
+        }
+    }
+
+    private void OnTriggerExit()
+    {
+        if (m_Pickable != null)
+        {
+            m_Pickable = null;
         }
     }
 }
