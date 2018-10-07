@@ -9,6 +9,7 @@ public class BasicMouseCamera : MonoBehaviour
 
     public GameObject YawObject;
     public GameObject PitchObject;
+    public GameObject Camera;
 
     public bool YawInLocalSpace = true;
     public bool PitchInLocalSpace = true;
@@ -67,5 +68,12 @@ public class BasicMouseCamera : MonoBehaviour
         Quaternion rotation = Quaternion.Euler(m_CurrentPitch, 0.0f, 0.0f);
 
         m_PitchRotation = rotation;
-    }
+
+	    Vector3 pos = Camera.transform.position;
+
+        float height = Terrain.activeTerrain.SampleHeight(pos);
+
+	    pos.y = height + 2.0f;
+        Camera.transform.position = pos;
+	}
 }
