@@ -11,7 +11,7 @@ Shader "Custom/Stencil/StencilMaskWrite"
 
 	Properties
 	{
-		_StencilVal ("Stencil Mask ID", Range(0, 255)) = 1
+		[IntRange] _StencilVal ("Stencil Mask ID", Range(0, 255)) = 1
 	}
 		
 	SubShader 

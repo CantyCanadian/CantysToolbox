@@ -19,6 +19,7 @@ namespace Canty
     {
     }
 
+    /// Attribute taken from It3ration on Unity Answers.
     [CustomPropertyDrawer(typeof(ReadOnlyAttribute))]
     public class ReadOnlyDrawer : PropertyDrawer
     {

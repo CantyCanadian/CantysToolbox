@@ -9,21 +9,18 @@ Shader "Custom/Surface/Dissolve"
 {
 	Properties 
 	{
+		[Header(Surface)]
+		_MainTex ("Main Texture (RGB)", 2D) = "white" {}
 		_Color ("Color", Color) = (1,1,1,1)
 		_EdgeColor ("Edge Color", Color) = (1,1,1,1)
-
-		_MainTex ("Albedo (RGB)", 2D) = "white" {}
-
 		_Glossiness ("Smoothness", Range(0,1)) = 0.5
 		_Metallic ("Metallic", Range(0,1)) = 0.0
 
+		[Header(Dissolve)]
+		_Noise ("Dissolve Texture", 2D) = "white" {}
 		_Dissolve ("Dissolve", Range(0,1)) = 0.0
-
-		_Noise ("Noise", 2D) = "white" {}
-
 		_EdgeThreshold ("Edge", Range (0, 0.25)) = 0
 		_SecondEdgeThreshold ("Second Edge", Range (0, 0.25)) = 0
-
 		[MaterialToggle] _Invert("Invert", Float) = 0
 	}
 	SubShader 

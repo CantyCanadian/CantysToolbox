@@ -14,9 +14,9 @@ Shader "Custom/Stencil/StencilMaskDiffuse"
 		_Color ("Main Color", Color) = (1,1,1,1)
 
 		[Header(Stencil)]
-		[IntRange] _StencilVal ("Stencil Mask ID [0;255]", Int) = 1
-		[IntRange] _ReadMask ("Read Mask [0;255]", Int) = 255
-        [IntRange] _WriteMask ("Write Mask [0;255]", Int) = 255
+		[IntRange] _StencilVal ("Stencil Mask ID", Range(0, 255)) = 1
+		[IntRange] _ReadMask ("Read Mask", Range(0, 255)) = 255
+        [IntRange] _WriteMask ("Write Mask", Range(0, 255)) = 255
         [Enum(UnityEngine.Rendering.CompareFunction)] _StencilComp ("Stencil Comparison", Int) = 3
         [Enum(UnityEngine.Rendering.StencilOp)] _StencilOp ("Stencil Operation", Int) = 0
         [Enum(UnityEngine.Rendering.StencilOp)] _StencilFail ("Stencil Fail", Int) = 0

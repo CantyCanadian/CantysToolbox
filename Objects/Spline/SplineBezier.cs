@@ -279,7 +279,7 @@ namespace Canty.Spline
         }
     }
 
-#if UNITY_EDITOR
+    #if UNITY_EDITOR
 
     [CustomEditor(typeof(SplineBezier))]
     public class SplineBezierInspector : Editor
@@ -421,6 +421,5 @@ namespace Canty.Spline
             return point;
         }
     }
+    #endif
 }
-
-#endif

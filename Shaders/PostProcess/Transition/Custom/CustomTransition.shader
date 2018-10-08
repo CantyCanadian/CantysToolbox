@@ -78,17 +78,19 @@ Shader "Custom/PostProcess/Transition/Custom"
 				float value = 0.0f;
 				float alpha = 1.0f;
 
-				if (transitionPattern >= _TransitionValue + _Blur)
+				float transitionValue = 1.0f - _TransitionValue;
+
+				if (transitionPattern >= transitionValue + _Blur)
 				{
 					value = 1.0f;
 				}
-				else if (transitionPattern >= _TransitionValue)
+				else if (transitionPattern >= transitionValue)
 				{
-					float blurLevel = min(_Blur, _TransitionValue);
+					float blurLevel = min(_Blur, transitionValue);
 
 					if (blurLevel > 0.0f)
 					{
-						float percent = (transitionPattern - _TransitionValue) / blurLevel;
+						float percent = (transitionPattern - transitionValue) / blurLevel;
 
 						value = smoothstep(0.0f, 1.0f, percent);
 					}

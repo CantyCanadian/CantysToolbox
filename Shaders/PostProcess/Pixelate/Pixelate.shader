@@ -9,7 +9,7 @@ Shader "Custom/PostProcess/Pixelate"
 {
 	Properties
 	{
-		_MainTex ("Base (RGB)", 2D) = "white" {}
+		[HideInInspector] _MainTex ("Base (RGB)", 2D) = "white" {}
 		_PixelSize ("Pixel Size", Range(1, 100)) = 1
 	}
 

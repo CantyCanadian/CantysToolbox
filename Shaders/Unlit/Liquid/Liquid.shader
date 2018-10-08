@@ -14,17 +14,17 @@ Shader "Custom/Unlit/Liquid"
 {
 	Properties
 	{
-		_Tint("Tint", Color) = (1, 1, 1, 1)
+		[Header(Color)]
 		_MainTex("Texture", 2D) = "white" {}
-		_Alpha("General Alpha", Range(0, 1)) = 1.0
-
-		_FillAmount("Fill Amount", Range(0, 1)) = 0.0
-
+		_Tint("Tint", Color) = (1, 1, 1, 1)
 		_TopColor("Top Color", Color) = (1, 1, 1, 1)
 		_FoamColor("Foam Line Color", Color) = (1, 1, 1, 1)
-		_FoamRim("Foam Line Width", Range(0, 1.0)) = 0.0
-
 		_RimColor("Rim Color", Color) = (1,1,1,1)
+		_Alpha("General Alpha", Range(0, 1)) = 1.0
+
+		[Header(Data)]
+		_FillAmount("Fill Amount", Range(0, 1)) = 0.0
+		_FoamRim("Foam Line Width", Range(0, 1.0)) = 0.0
 		_RimPower("Rim Power", Range(0, 10)) = 0.0
 
 		[HideInInspector] _WobbleX("WobbleX", Range(-1, 1)) = 0.0

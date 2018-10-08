@@ -10,15 +10,12 @@ public class GridHeightmap : MonoBehaviour
     public GameObject CubePrefab;
 
     private DataGrid<Vector2Int> m_Grid;
-    private Texture2D m_Texture;
-    private bool m_Initialized = false;
     private Dictionary<Cell<Vector2Int>, GameObject> m_Cubes;
 
     void Start()
     {
         m_Grid = new DataGrid<Vector2Int>();
         m_Cubes = new Dictionary<Cell<Vector2Int>, GameObject>();
-        m_Texture = new Texture2D(HeightmapSize.x, HeightmapSize.y);
 
         m_Grid.GenerateGrid(HeightmapSize.x, HeightmapSize.y);
 
