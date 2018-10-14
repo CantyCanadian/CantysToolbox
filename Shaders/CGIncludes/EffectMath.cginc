@@ -18,6 +18,8 @@ float4 Blur(sampler2D tex, float2 uv, int layers, float off)
 
 	baseRatio = 1.0f / ((baseRatio * 4) + 1);
 
+	off /= 1000.0f;
+
 	if (layers > 0)
 	{
 		for(int l = 0; l < layers; l++)

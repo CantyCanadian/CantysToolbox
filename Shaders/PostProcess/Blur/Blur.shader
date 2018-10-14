@@ -11,7 +11,7 @@ Shader "Custom/PostProcess/Blur"
 		[HideInInspector] _MainTex ("Texture", 2D) = "white" {}
 
 		_BlurLayers ("Blur Layers", Int) = 3
-		_Blur ("Blur Offset", Float) = 0.01
+		_Blur ("Blur Offset", Float) = 1
 	}
 	SubShader
 	{

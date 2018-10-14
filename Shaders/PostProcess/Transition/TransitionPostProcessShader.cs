@@ -13,7 +13,7 @@ namespace Canty.Shaders
     /// Class to use when using transition post-process shaders. Includes extra content for easy editing and timing management.
     /// </summary>
     [ExecuteInEditMode]
-    public class TransitionPostProcessShader : PostProcessShaderBase
+    public class TransitionPostProcessShader : MonoBehaviour
     {
         public Material ShaderMaterial;
 
@@ -26,20 +26,20 @@ namespace Canty.Shaders
             TransitionTimer.Play(backwards);
         }
 
-        public void Update()
-        {
-            if (TransitionTimer.isPlaying)
-            {
-                TransitionValue = TransitionTimer.Value;
-            }
-        }
-
-        public override void Blit(RenderTexture src, RenderTexture dst)
+        private void OnRenderImage(RenderTexture src, RenderTexture dst)
         {
             ShaderMaterial.SetFloat("_TransitionValue", TransitionValue);
             ShaderMaterial.SetVector("_ScreenResolution", new Vector2(Screen.width, Screen.height));
 
             Graphics.Blit(src, dst, ShaderMaterial);
+        }
+
+        private void Update()
+        {
+            if (TransitionTimer.isPlaying)
+            {
+                TransitionValue = TransitionTimer.Value;
+            }
         }
     }
 }

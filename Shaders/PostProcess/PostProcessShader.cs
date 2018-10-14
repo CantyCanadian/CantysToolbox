@@ -13,11 +13,11 @@ namespace Canty.Shaders
     /// Basic class to use when using post-process shaders. Use this one unless specified otherwise in the shader file.
     /// </summary>
     [ExecuteInEditMode]
-    public class PostProcessShader : PostProcessShaderBase
+    public class PostProcessShader : MonoBehaviour
     {
         public Material ShaderMaterial;
 
-        public override void Blit(RenderTexture src, RenderTexture dst)
+        private void OnRenderImage(RenderTexture src, RenderTexture dst)
         {
             Graphics.Blit(src, dst, ShaderMaterial);
         }
