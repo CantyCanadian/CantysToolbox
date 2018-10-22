@@ -28,5 +28,11 @@ public class ShittyPlayer : MonoBehaviour
         {
             nes.Play();
         }
+
+        RadialBarShader rbs = GetComponent<RadialBarShader>();
+        if (rbs != null)
+        {
+            rbs.Play();
+        }
     }
 }
