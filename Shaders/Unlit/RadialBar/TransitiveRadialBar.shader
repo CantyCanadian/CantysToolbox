@@ -1,10 +1,10 @@
 ﻿///====================================================================================================
 ///
-///     CompleteRadialBar by
+///     TransitiveRadialBar by
 ///     - CantyCanadian
 ///
 ///====================================================================================================
-Shader "Custom/Unlit/RadialBar/CompleteRadialBar"
+Shader "Custom/Unlit/RadialBar/TransitiveRadialBar"
 {
 	Properties
 	{
@@ -31,22 +31,6 @@ Shader "Custom/Unlit/RadialBar/CompleteRadialBar"
         _BarBackAlpha1 ("Texture Alpha", Range(0.0, 1.0)) = 1.0
         [HDR] _BarBackColor1 ("Color", Color) = (1.0, 1.0, 1.0, 1.0)
         _BarBackBalance1 ("Texture-Color Balance", Range(0.0, 1.0)) = 0.0
-
-        [Header(Bar Outline)]
-        _BarOutlineSize("Size", Range(0.0, 1.0)) = 0.0
-        [Toggle] _BarOutlineProgress ("Outline Follows Progress", Int) = 1
-
-        [Header(Bar Outline at 0)]
-        _BarOutlineTex0 ("Texture", 2D) = "white" {}
-        _BarOutlineAlpha0 ("Texture Alpha", Range(0.0, 1.0)) = 1.0
-        [HDR] _BarOutlineColor0 ("Color", Color) = (1.0, 1.0, 1.0, 1.0)
-        _BarOutlineBalance0 ("Texture-Color Balance", Range(0.0, 1.0)) = 0.0
-
-        [Header(Bar Outline at 1)]
-        _BarOutlineTex1 ("Texture", 2D) = "white" {}
-        _BarOutlineAlpha1 ("Texture Alpha", Range(0.0, 1.0)) = 1.0
-        [HDR] _BarOutlineColor1 ("Color", Color) = (1.0, 1.0, 1.0, 1.0)
-        _BarOutlineBalance1 ("Texture-Color Balance", Range(0.0, 1.0)) = 0.0
 
 		[Header(Bar Data)]
 		_BarProgress ("Progress", Range(0.0, 1.0)) = 0.0
@@ -89,10 +73,9 @@ Shader "Custom/Unlit/RadialBar/CompleteRadialBar"
 			struct v2f
 			{
 				float4 vertex : SV_POSITION;
-                float2 uv : TEXCOORD0;
+				float2 uv : TEXCOORD0;
                 float2 uvtex : TEXCOORD1;
                 float2 uvtexback : TEXCOORD2;
-                float2 uvtexoutline : TEXCOORD3;
 			};
 
 			sampler2D _BarTex0;
@@ -113,24 +96,17 @@ Shader "Custom/Unlit/RadialBar/CompleteRadialBar"
             float4 _BarColor1;
 			float4 _BarBackColor0;
             float4 _BarBackColor1;
-            float4 _BarOutlineColor0;
-            float4 _BarOutlineColor1;
 
 			float _BarAlpha0;
             float _BarAlpha1;
 			float _BarBackAlpha0;
             float _BarBackAlpha1;
-            float _BarOutlineAlpha0;
-            float _BarOutlineAlpha1;
 
 			float _BarBalance0;
             float _BarBalance1;
 			float _BarBackBalance0;
             float _BarBackBalance1;
-            float _BarOutlineBalance0;
-            float _BarOutlineBalance1;
 
-            float _BarOutlineSize;
 			float _BarProgress;
 			float _BarAngle;
             float _BarRadius;
@@ -143,10 +119,9 @@ Shader "Custom/Unlit/RadialBar/CompleteRadialBar"
 				v2f o;
 
 				o.vertex = UnityObjectToClipPos(v.vertex);
-				o.uv = v.uv;
-                o.uvtex = lerp(TRANSFORM_TEX(v.uv, _BarTex0), TRANSFORM_TEX(v.uv, _BarTex1), _BarProgress);
+                o.uv = v.uv;
+				o.uvtex = lerp(TRANSFORM_TEX(v.uv, _BarTex0), TRANSFORM_TEX(v.uv, _BarTex1), _BarProgress);
                 o.uvtexback = lerp(TRANSFORM_TEX(v.uv, _BarBackTex0), TRANSFORM_TEX(v.uv, _BarBackTex1), _BarProgress);
-                o.uvtexoutline = lerp(TRANSFORM_TEX(v.uv, _BarOutlineTex0), TRANSFORM_TEX(v.uv, _BarOutlineTex1), _BarProgress);
 
 				return o;
 			}
@@ -166,22 +141,12 @@ Shader "Custom/Unlit/RadialBar/CompleteRadialBar"
 				float4 back = lerp(backTex, backCol, lerp(_BarBackBalance0, _BarBackBalance1, _BarProgress));
                 back.a *= lerp(_BarBackAlpha0, _BarBackAlpha1, _BarProgress);
 
-                float4 outlineTex = lerp(tex2D(_BarOutlineTex0, i.uvtexoutline), tex2D(_BarOutlineTex1, i.uvtexoutline), _BarProgress);
-                float4 outlineCol = lerp(_BarOutlineColor0, _BarOutlineColor1, _BarProgress);
-                float4 outline = lerp(outlineTex, outlineCol, lerp(_BarOutlineBalance0, _BarOutlineBalance1, _BarProgress));
-                outline.a *= lerp(_BarOutlineAlpha0, _BarOutlineAlpha1, _BarProgress);
-
 				float angle = AngleBetween(float2(0.0f, -1.0f), newUV);
 
-				if (uvDist > _BarRadius + _BarOutlineSize || uvDist < _BarRadius - _BarWidth - _BarOutlineSize || (!_BarOutlineProgress && angle < _BarAngle - _BarOutlineSize))
+				if (uvDist > _BarRadius || uvDist < _BarRadius - _BarWidth)
 				{
 					discard;
 				}
-
-                if (uvDist > _BarRadius || uvDist < _BarRadius - _BarWidth || angle < _BarAngle)
-                {
-                    return outline;
-                }
 
 				angle = sign(newUV.x) == 1.0f ? 360.0f - angle : angle;
 				float progression = (angle - _BarAngle) / (360.0f - _BarAngle - _BarAngle);
