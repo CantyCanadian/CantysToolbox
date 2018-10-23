@@ -4,7 +4,7 @@
 ///     - CantyCanadian
 ///
 ///====================================================================================================
-Shader "Custom/Unlit/RadialBar/TransitiveRadialBar"
+Shader "Custom/Unlit/RadialBar/Transitive"
 {
 	Properties
 	{
@@ -143,7 +143,7 @@ Shader "Custom/Unlit/RadialBar/TransitiveRadialBar"
 
 				float angle = AngleBetween(float2(0.0f, -1.0f), newUV);
 
-				if (uvDist > _BarRadius || uvDist < _BarRadius - _BarWidth)
+				if (uvDist > _BarRadius || uvDist < _BarRadius - _BarWidth || angle < _BarAngle)
 				{
 					discard;
 				}

@@ -77,6 +77,17 @@ namespace Canty
 
             return path;
         }
+
+        public static GameObject CreateMenuItemGameObject(MenuCommand menuCommand, string name)
+        {
+            GameObject menuItemObject = new GameObject(name);
+
+            GameObjectUtility.SetParentAndAlign(menuItemObject, menuCommand.context as GameObject);
+            Undo.RegisterCreatedObjectUndo(menuItemObject, "Create " + menuItemObject.name);
+            Selection.activeObject = menuItemObject;
+
+            return menuItemObject;
+        }
     }
 }
 

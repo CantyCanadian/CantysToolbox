@@ -6,7 +6,7 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: BasicRadialBarShader
+  m_Name: DemoRadialBarShader
   m_Shader: {fileID: 4800000, guid: bf5bd02eee157af4789bc90f5b4b94c1, type: 3}
   m_ShaderKeywords: _BAROUTLINEPROGRESS_ON
   m_LightmapFlags: 4
@@ -94,14 +94,14 @@ Material:
     - _BarAlpha: 1
     - _BarAlpha0: 1
     - _BarAlpha1: 1
-    - _BarAngle: 45
-    - _BarBackAlpha: 1
+    - _BarAngle: 0
+    - _BarBackAlpha: 0.6
     - _BarBackAlpha0: 1
     - _BarBackAlpha1: 1
-    - _BarBackBalance: 1
+    - _BarBackBalance: 0
     - _BarBackBalance0: 0
     - _BarBackBalance1: 0
-    - _BarBalance: 1
+    - _BarBalance: 0
     - _BarBalance0: 0
     - _BarBalance1: 0
     - _BarEnd: 336.3
@@ -113,11 +113,11 @@ Material:
     - _BarOutlineBalance1: 0
     - _BarOutlineProgress: 1
     - _BarOutlineSize: 0.066
-    - _BarProgress: 0.45
-    - _BarRadius: 0.75
+    - _BarProgress: 1
+    - _BarRadius: 1
     - _BarRotation: 0
     - _BarStart: 24.5
-    - _BarWidth: 0.3
+    - _BarWidth: 1
     - _BumpScale: 1
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
@@ -142,7 +142,7 @@ Material:
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:
-    - _BarBackColor: {r: 0, g: 0, b: 0, a: 1}
+    - _BarBackColor: {r: 0.8014706, g: 0.8014706, b: 0.8014706, a: 1}
     - _BarBackColor0: {r: 1, g: 1, b: 1, a: 1}
     - _BarBackColor1: {r: 1, g: 1, b: 1, a: 1}
     - _BarColor: {r: 1, g: 0, b: 0, a: 1}

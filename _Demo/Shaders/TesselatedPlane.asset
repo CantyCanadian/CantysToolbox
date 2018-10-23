@@ -5,7 +5,7 @@ Mesh:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: Plane100x100W10L5HC
+  m_Name: TesselatedPlane
   serializedVersion: 8
   m_SubMeshes:
   - serializedVersion: 2

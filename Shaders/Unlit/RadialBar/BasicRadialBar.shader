@@ -4,7 +4,7 @@
 ///     - CantyCanadian
 ///
 ///====================================================================================================
-Shader "Custom/Unlit/RadialBar/BasicRadialBar"
+Shader "Custom/Unlit/RadialBar/Basic"
 {
 	Properties
 	{
@@ -92,8 +92,8 @@ Shader "Custom/Unlit/RadialBar/BasicRadialBar"
 
 				o.vertex = UnityObjectToClipPos(v.vertex);
 				o.uv = v.uv;
-                o.uvtex = lerp(TRANSFORM_TEX(v.uv, _BarTex0), TRANSFORM_TEX(v.uv, _BarTex1), _BarProgress);
-                o.uvtexback = lerp(TRANSFORM_TEX(v.uv, _BarBackTex0), TRANSFORM_TEX(v.uv, _BarBackTex1), _BarProgress);
+                o.uvtex = TRANSFORM_TEX(v.uv, _BarTex);
+                o.uvtexback = TRANSFORM_TEX(v.uv, _BarBackTex);
 
 				return o;
 			}

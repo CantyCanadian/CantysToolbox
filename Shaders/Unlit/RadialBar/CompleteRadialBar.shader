@@ -4,7 +4,7 @@
 ///     - CantyCanadian
 ///
 ///====================================================================================================
-Shader "Custom/Unlit/RadialBar/CompleteRadialBar"
+Shader "Custom/Unlit/RadialBar/Complete"
 {
 	Properties
 	{
@@ -173,18 +173,23 @@ Shader "Custom/Unlit/RadialBar/CompleteRadialBar"
 
 				float angle = AngleBetween(float2(0.0f, -1.0f), newUV);
 
-				if (uvDist > _BarRadius + _BarOutlineSize || uvDist < _BarRadius - _BarWidth - _BarOutlineSize || (!_BarOutlineProgress && angle < _BarAngle - _BarOutlineSize))
+				if (uvDist > _BarRadius + _BarOutlineSize || uvDist < _BarRadius - _BarWidth - _BarOutlineSize || angle < _BarAngle - (_BarOutlineSize * 100.0f))
 				{
 					discard;
 				}
 
-                if (uvDist > _BarRadius || uvDist < _BarRadius - _BarWidth || angle < _BarAngle)
-                {
-                    return outline;
-                }
-
 				angle = sign(newUV.x) == 1.0f ? 360.0f - angle : angle;
 				float progression = (angle - _BarAngle) / (360.0f - _BarAngle - _BarAngle);
+
+                if (uvDist > _BarRadius || uvDist < _BarRadius - _BarWidth || angle < _BarAngle || progression > 1.0f)
+                {
+					if (_BarOutlineProgress && progression > _BarProgress)
+					{
+						discard;
+					}
+
+                    return outline;
+                }
 
 				return progression > _BarProgress ? back : front;
 			}

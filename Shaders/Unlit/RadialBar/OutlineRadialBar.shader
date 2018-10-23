@@ -4,7 +4,7 @@
 ///     - CantyCanadian
 ///
 ///====================================================================================================
-Shader "Custom/Unlit/RadialBar/OutlineRadialBar"
+Shader "Custom/Unlit/RadialBar/Outline"
 {
 	Properties
 	{
@@ -103,15 +103,17 @@ Shader "Custom/Unlit/RadialBar/OutlineRadialBar"
             float _BarRadius;
 			float _BarWidth;
 
+			int _BarOutlineProgress;
+
 			v2f vert (appdata v)
 			{
 				v2f o;
 
 				o.vertex = UnityObjectToClipPos(v.vertex);
 				o.uv = v.uv;
-                o.uvtex = lerp(TRANSFORM_TEX(v.uv, _BarTex0), TRANSFORM_TEX(v.uv, _BarTex1), _BarProgress);
-                o.uvtexback = lerp(TRANSFORM_TEX(v.uv, _BarBackTex0), TRANSFORM_TEX(v.uv, _BarBackTex1), _BarProgress);
-                o.uvtexoutline = lerp(TRANSFORM_TEX(v.uv, _BarOutlineTex0), TRANSFORM_TEX(v.uv, _BarOutlineTex1), _BarProgress);
+                o.uvtex = TRANSFORM_TEX(v.uv, _BarTex);
+                o.uvtexback = TRANSFORM_TEX(v.uv, _BarBackTex);
+                o.uvtexoutline = TRANSFORM_TEX(v.uv, _BarOutlineTex);
 
 				return o;
 			}
@@ -132,18 +134,23 @@ Shader "Custom/Unlit/RadialBar/OutlineRadialBar"
 
 				float angle = AngleBetween(float2(0.0f, -1.0f), newUV);
 
-                if (uvDist > _BarRadius + _BarOutlineSize || uvDist < _BarRadius - _BarWidth - _BarOutlineSize || (!_BarOutlineProgress && angle < _BarAngle - _BarOutlineSize))
+                if (uvDist > _BarRadius + _BarOutlineSize || uvDist < _BarRadius - _BarWidth - _BarOutlineSize || angle < _BarAngle - (_BarOutlineSize * 100.0f))
                 {
                     discard;
                 }
 
-                if (uvDist > _BarRadius || uvDist < _BarRadius - _BarWidth || angle < _BarAngle)
-                {
-                    return outline;
-                }
-
 				angle = sign(newUV.x) == 1.0f ? 360.0f - angle : angle;
 				float progression = (angle - _BarAngle) / (360.0f - _BarAngle - _BarAngle);
+
+                if (uvDist > _BarRadius || uvDist < _BarRadius - _BarWidth || angle < _BarAngle || progression > 1.0f)
+                {
+					if (_BarOutlineProgress && progression > _BarProgress)
+					{
+						discard;
+					}
+
+                    return outline;
+                }
 
 				return progression > _BarProgress ? back : front;
 			}

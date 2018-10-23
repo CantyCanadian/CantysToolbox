@@ -6,9 +6,9 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: BasicRadialBarShader
-  m_Shader: {fileID: 4800000, guid: bf5bd02eee157af4789bc90f5b4b94c1, type: 3}
-  m_ShaderKeywords: _BAROUTLINEPROGRESS_ON
+  m_Name: TransitionRadialBarShader0
+  m_Shader: {fileID: 4800000, guid: 92dd087873f8f2f4781bdf003d973237, type: 3}
+  m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -99,21 +99,21 @@ Material:
     - _BarBackAlpha0: 1
     - _BarBackAlpha1: 1
     - _BarBackBalance: 1
-    - _BarBackBalance0: 0
-    - _BarBackBalance1: 0
+    - _BarBackBalance0: 1
+    - _BarBackBalance1: 1
     - _BarBalance: 1
-    - _BarBalance0: 0
-    - _BarBalance1: 0
+    - _BarBalance0: 1
+    - _BarBalance1: 1
     - _BarEnd: 336.3
     - _BarOutlineAlpha: 1
     - _BarOutlineAlpha0: 1
     - _BarOutlineAlpha1: 1
-    - _BarOutlineBalance: 0
+    - _BarOutlineBalance: 1
     - _BarOutlineBalance0: 0
     - _BarOutlineBalance1: 0
-    - _BarOutlineProgress: 1
-    - _BarOutlineSize: 0.066
-    - _BarProgress: 0.45
+    - _BarOutlineProgress: 0
+    - _BarOutlineSize: 0.1
+    - _BarProgress: 0.3
     - _BarRadius: 0.75
     - _BarRotation: 0
     - _BarStart: 24.5
@@ -143,12 +143,12 @@ Material:
     - _ZWrite: 1
     m_Colors:
     - _BarBackColor: {r: 0, g: 0, b: 0, a: 1}
-    - _BarBackColor0: {r: 1, g: 1, b: 1, a: 1}
-    - _BarBackColor1: {r: 1, g: 1, b: 1, a: 1}
+    - _BarBackColor0: {r: 0, g: 0, b: 0, a: 1}
+    - _BarBackColor1: {r: 0, g: 0, b: 0, a: 1}
     - _BarColor: {r: 1, g: 0, b: 0, a: 1}
-    - _BarColor0: {r: 1, g: 1, b: 1, a: 1}
-    - _BarColor1: {r: 1, g: 1, b: 1, a: 1}
-    - _BarOutlineColor: {r: 1, g: 1, b: 1, a: 1}
+    - _BarColor0: {r: 1, g: 0.8088235, b: 0.8088235, a: 1}
+    - _BarColor1: {r: 1, g: 0, b: 0, a: 1}
+    - _BarOutlineColor: {r: 0, g: 0, b: 0, a: 1}
     - _BarOutlineColor0: {r: 1, g: 1, b: 1, a: 1}
     - _BarOutlineColor1: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
