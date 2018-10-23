@@ -8,19 +8,20 @@ Shader "Custom/Unlit/RadialBar/Basic"
 {
 	Properties
 	{
-		[Header(Bar Front)]
+		[Header(Bar Under Progress Side)]
 		_BarTex ("Texture", 2D) = "white" {}
 		_BarAlpha ("Texture Alpha", Range(0.0, 1.0)) = 1.0
 		[HDR] _BarColor ("Color", Color) = (1.0, 1.0, 1.0, 1.0)
 		_BarBalance ("Texture-Color Balance", Range(0.0, 1.0)) = 0.0
 
-		[Header(Bar Back)]
+		[Header(Bar Over Progress Side)]
 		_BarBackTex ("Texture", 2D) = "white" {}
 		_BarBackAlpha ("Texture Alpha", Range(0.0, 1.0)) = 1.0
 		[HDR] _BarBackColor ("Color", Color) = (1.0, 1.0, 1.0, 1.0)
 		_BarBackBalance ("Texture-Color Balance", Range(0.0, 1.0)) = 0.0
 
 		[Header(Bar Data)]
+        _BarAlphaMask ("Alpha Mask", 2D) = "white" {}
 		_BarProgress ("Progress", Range(0.0, 1.0)) = 0.0
 		_BarAngle ("Angle", Range(0.0, 180.0)) = 45.0
         _BarRadius("Radius", Range(0.0, 1.0)) = 1.0
@@ -62,15 +63,18 @@ Shader "Custom/Unlit/RadialBar/Basic"
 			{
 				float4 vertex : SV_POSITION;
                 float2 uv : TEXCOORD0;
-                float2 uvtex : TEXCOORD1;
-                float2 uvtexback : TEXCOORD2;
+                float2 uvalpha : TEXCOORD1;
+                float2 uvtex : TEXCOORD2;
+                float2 uvtexback : TEXCOORD3;
 			};
 
 			sampler2D _BarTex;
 			sampler2D _BarBackTex;
+            sampler2D _BarAlphaMask;
 
             float4 _BarTex_ST;
             float4 _BarBackTex_ST;
+            float4 _BarAlphaMask_ST;
 
 			float4 _BarColor;
 			float4 _BarBackColor;
@@ -92,6 +96,7 @@ Shader "Custom/Unlit/RadialBar/Basic"
 
 				o.vertex = UnityObjectToClipPos(v.vertex);
 				o.uv = v.uv;
+                o.uvalpha = TRANSFORM_TEX(v.uv, _BarAlphaMask);
                 o.uvtex = TRANSFORM_TEX(v.uv, _BarTex);
                 o.uvtexback = TRANSFORM_TEX(v.uv, _BarBackTex);
 
@@ -109,9 +114,11 @@ Shader "Custom/Unlit/RadialBar/Basic"
 				float4 backCol = lerp(tex2D(_BarBackTex, i.uvtexback), _BarBackColor, _BarBackBalance);
 				backCol.a *= _BarBackAlpha;
 
+                float4 alphaMask = tex2D(_BarAlphaMask, i.uvalpha);
+
 				float angle = AngleBetween(float2(0.0f, -1.0f), newUV);
 
-				if (uvDist > _BarRadius || uvDist < _BarRadius - _BarWidth || angle < _BarAngle)
+				if (alphaMask.r == 0.0f || uvDist > _BarRadius || uvDist < _BarRadius - _BarWidth || angle < _BarAngle)
 				{
 					discard;
 				}
@@ -119,7 +126,10 @@ Shader "Custom/Unlit/RadialBar/Basic"
 				angle = sign(newUV.x) == 1.0f ? 360.0f - angle : angle;
 				float progression = (angle - _BarAngle) / (360.0f - _BarAngle - _BarAngle);
 
-				return progression > _BarProgress ? backCol : col;
+                float4 finalColor = progression > _BarProgress ? backCol : col;
+                finalColor.a *= alphaMask.r;
+
+				return finalColor;
 			}
 			ENDCG
 		}

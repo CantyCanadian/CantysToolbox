@@ -8,13 +8,13 @@ Shader "Custom/Unlit/RadialBar/Outline"
 {
 	Properties
 	{
-		[Header(Bar Front)]
+		[Header(Bar Under Progress Side)]
 		_BarTex ("Texture", 2D) = "white" {}
 		_BarAlpha ("Texture Alpha", Range(0.0, 1.0)) = 1.0
 		[HDR] _BarColor ("Color", Color) = (1.0, 1.0, 1.0, 1.0)
 		_BarBalance ("Texture-Color Balance", Range(0.0, 1.0)) = 0.0
 
-		[Header(Bar Back)]
+		[Header(Bar Over Progress Side)]
 		_BarBackTex ("Texture", 2D) = "white" {}
 		_BarBackAlpha ("Texture Alpha", Range(0.0, 1.0)) = 1.0
 		[HDR] _BarBackColor ("Color", Color) = (1.0, 1.0, 1.0, 1.0)
@@ -31,6 +31,7 @@ Shader "Custom/Unlit/RadialBar/Outline"
         _BarOutlineBalance ("Texture-Color Balance", Range(0.0, 1.0)) = 0.0
 
 		[Header(Bar Data)]
+        _BarAlphaMask("Alpha Mask", 2D) = "white" {}
 		_BarProgress ("Progress", Range(0.0, 1.0)) = 0.0
 		_BarAngle ("Angle", Range(0.0, 180.0)) = 45.0
         _BarRadius("Radius", Range(0.0, 1.0)) = 1.0
@@ -72,9 +73,10 @@ Shader "Custom/Unlit/RadialBar/Outline"
 			{
 				float4 vertex : SV_POSITION;
                 float2 uv : TEXCOORD0;
-                float2 uvtex : TEXCOORD1;
-                float2 uvtexback : TEXCOORD2;
-                float2 uvtexoutline : TEXCOORD3;
+                float2 uvalpha : TEXCOORD1;
+                float2 uvtex : TEXCOORD2;
+                float2 uvtexback : TEXCOORD3;
+                float2 uvtexoutline : TEXCOORD4;
 			};
 
 			sampler2D _BarTex;
@@ -111,6 +113,7 @@ Shader "Custom/Unlit/RadialBar/Outline"
 
 				o.vertex = UnityObjectToClipPos(v.vertex);
 				o.uv = v.uv;
+                o.uvalpha = TRANSFORM_TEX(v.uv, _BarAlphaMask);
                 o.uvtex = TRANSFORM_TEX(v.uv, _BarTex);
                 o.uvtexback = TRANSFORM_TEX(v.uv, _BarBackTex);
                 o.uvtexoutline = TRANSFORM_TEX(v.uv, _BarOutlineTex);
@@ -132,6 +135,8 @@ Shader "Custom/Unlit/RadialBar/Outline"
                 float4 outline = lerp(tex2D(_BarOutlineTex, i.uvtexoutline), _BarOutlineColor, _BarOutlineBalance);
                 outline.a *= _BarOutlineAlpha;
 
+                float4 alphaMask = tex2D(_BarAlphaMask, i.uvalpha);
+
 				float angle = AngleBetween(float2(0.0f, -1.0f), newUV);
 
                 if (uvDist > _BarRadius + _BarOutlineSize || uvDist < _BarRadius - _BarWidth - _BarOutlineSize || angle < _BarAngle - (_BarOutlineSize * 100.0f))
@@ -152,7 +157,10 @@ Shader "Custom/Unlit/RadialBar/Outline"
                     return outline;
                 }
 
-				return progression > _BarProgress ? back : front;
+                float4 finalColor = progression > _BarProgress ? backCol : col;
+                finalColor.a *= alphaMask.r;
+
+                return finalColor;
 			}
 			ENDCG
 		}

@@ -8,31 +8,32 @@ Shader "Custom/Unlit/RadialBar/Transitive"
 {
 	Properties
 	{
-		[Header(Bar Front at 0)]
+		[Header(Bar Under Progress at 0)]
         _BarTex0 ("Texture", 2D) = "white" {}
 		_BarAlpha0 ("Texture Alpha", Range(0.0, 1.0)) = 1.0
 		[HDR] _BarColor0 ("Color", Color) = (1.0, 1.0, 1.0, 1.0)
 		_BarBalance0 ("Texture-Color Balance", Range(0.0, 1.0)) = 0.0
 
-        [Header(Bar Front at 1)]
+        [Header(Bar Under Progress at 1)]
         _BarTex1 ("Texture", 2D) = "white" {}
         _BarAlpha1 ("Texture Alpha", Range(0.0, 1.0)) = 1.0
         [HDR] _BarColor1 ("Color", Color) = (1.0, 1.0, 1.0, 1.0)
         _BarBalance1 ("Texture-Color Balance", Range(0.0, 1.0)) = 0.0
 
-		[Header(Bar Back at 0)]
+		[Header(Bar Over Progress at 0)]
         _BarBackTex0 ("Texture", 2D) = "white" {}
 		_BarBackAlpha0 ("Texture Alpha", Range(0.0, 1.0)) = 1.0
 		[HDR] _BarBackColor0 ("Color", Color) = (1.0, 1.0, 1.0, 1.0)
 		_BarBackBalance0 ("Texture-Color Balance", Range(0.0, 1.0)) = 0.0
 
-        [Header(Bar Back at 1)]
+        [Header(Bar Over Progress at 1)]
         _BarBackTex1 ("Texture", 2D) = "white" {}
         _BarBackAlpha1 ("Texture Alpha", Range(0.0, 1.0)) = 1.0
         [HDR] _BarBackColor1 ("Color", Color) = (1.0, 1.0, 1.0, 1.0)
         _BarBackBalance1 ("Texture-Color Balance", Range(0.0, 1.0)) = 0.0
 
 		[Header(Bar Data)]
+        _BarAlphaMask("Alpha Mask", 2D) = "white" {}
 		_BarProgress ("Progress", Range(0.0, 1.0)) = 0.0
 		_BarAngle ("Angle", Range(0.0, 180.0)) = 45.0
         _BarRadius ("Radius", Range(0.0, 1.0)) = 1.0
@@ -74,8 +75,9 @@ Shader "Custom/Unlit/RadialBar/Transitive"
 			{
 				float4 vertex : SV_POSITION;
 				float2 uv : TEXCOORD0;
-                float2 uvtex : TEXCOORD1;
-                float2 uvtexback : TEXCOORD2;
+                float2 uvalpha : TEXCOORD1;
+                float2 uvtex : TEXCOORD2;
+                float2 uvtexback : TEXCOORD3;
 			};
 
 			sampler2D _BarTex0;
@@ -120,6 +122,7 @@ Shader "Custom/Unlit/RadialBar/Transitive"
 
 				o.vertex = UnityObjectToClipPos(v.vertex);
                 o.uv = v.uv;
+                o.uvalpha = TRANSFORM_TEX(v.uv, _BarAlphaMask);
 				o.uvtex = lerp(TRANSFORM_TEX(v.uv, _BarTex0), TRANSFORM_TEX(v.uv, _BarTex1), _BarProgress);
                 o.uvtexback = lerp(TRANSFORM_TEX(v.uv, _BarBackTex0), TRANSFORM_TEX(v.uv, _BarBackTex1), _BarProgress);
 
@@ -141,6 +144,8 @@ Shader "Custom/Unlit/RadialBar/Transitive"
 				float4 back = lerp(backTex, backCol, lerp(_BarBackBalance0, _BarBackBalance1, _BarProgress));
                 back.a *= lerp(_BarBackAlpha0, _BarBackAlpha1, _BarProgress);
 
+                float4 alphaMask = tex2D(_BarAlphaMask, i.uvalpha);
+
 				float angle = AngleBetween(float2(0.0f, -1.0f), newUV);
 
 				if (uvDist > _BarRadius || uvDist < _BarRadius - _BarWidth || angle < _BarAngle)
@@ -151,7 +156,10 @@ Shader "Custom/Unlit/RadialBar/Transitive"
 				angle = sign(newUV.x) == 1.0f ? 360.0f - angle : angle;
 				float progression = (angle - _BarAngle) / (360.0f - _BarAngle - _BarAngle);
 
-				return progression > _BarProgress ? back : front;
+                float4 finalColor = progression > _BarProgress ? backCol : col;
+                finalColor.a *= alphaMask.r;
+
+                return finalColor;
 			}
 			ENDCG
 		}
