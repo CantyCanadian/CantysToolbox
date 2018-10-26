@@ -5,7 +5,7 @@
 ///
 ///====================================================================================================
 
-using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Canty.Managers
@@ -15,8 +15,7 @@ namespace Canty.Managers
         public Vector3 PositionInfluence = new Vector3(0.5f, 0.5f, 0.5f);
         public Vector3 RotationInfluence = new Vector3(1.0f, 1.0f, 1.0f);
 
-        private ShakeInformation? m_MainShake = null;
-        private ShakeInformation? m_UnderlyingShake = null;
+        private Dictionary<GameObject, ShakeInformation> m_Shakes = null;
 
         private struct ShakeInformation
         {
@@ -90,108 +89,103 @@ namespace Canty.Managers
             }
         }
 
-        public void Shake(float strength, float smoothness, float time)
+        public void StartShake(GameObject target, float strength, float smoothness)
         {
-            Shake(strength, smoothness, 0.0f, time, 0.0f);
+            Shake(target, strength, smoothness, 0.0f, -1.0f, 0.0f);
         }
 
-        public void Shake(float strength, float smoothness, float easeInTime, float upTime, float easeOutTime)
+        public void StartShake(GameObject target, float strength, float smoothness, float easeInTime)
         {
-            ShakeInformation mainShake = new ShakeInformation();
+            Shake(target, strength, smoothness, easeInTime, -1.0f, 0.0f);
+        }
 
-            mainShake.Strength = strength;
-            mainShake.Smoothness = smoothness;
-            mainShake.EaseInTime = easeInTime;
-            mainShake.UpTime = upTime;
-            mainShake.EaseOutTime = easeOutTime;
+        public void ShakeOnce(GameObject target, float strength, float smoothness, float time)
+        {
+            Shake(target, strength, smoothness, 0.0f, time, 0.0f);
+        }
 
-            if (m_MainShake != null && m_MainShake.Value.TotalTime() > mainShake.TotalTime())
+        public void ShakeOnce(GameObject target,  float strength, float smoothness, float easeInTime, float upTime, float easeOutTime)
+        {
+            Shake(target, strength, smoothness, easeInTime, upTime, easeOutTime);
+        }
+
+        public void EndShake(GameObject target)
+        {
+            EndShake(target, 0.0f);
+        }
+
+        public void EndShake(GameObject target, float easeOutTime)
+        {
+            if (m_Shakes.ContainsKey(target))
+            {
+                m_Shakes[target].UpTime = 0.0f;
+                m_Shakes[target].EaseOutTime = easeOutTime;
+            }
+            else
+            {
+                Debug.LogWarning("ScreenShake : Trying to end a non-existing shake.");
+            }
+        }
+
+        private void Shake(GameObject target, float strength, float smoothness, float easeInTime, float upTime, float easeOutTime)
+        {
+            ShakeInformation newShake = new ShakeInformation();
+
+            newShake.Strength = strength;
+            newShake.Smoothness = smoothness;
+            newShake.EaseInTime = easeInTime;
+            newShake.UpTime = upTime;
+            newShake.EaseOutTime = easeOutTime;
+
+            if (m_Shakes != null && m_Shakes.Contains(target) && m_Shakes[target].Value.TotalTime() > newShake.TotalTime())
             {
                 return;
             }
+            else if (m_Shakes.Contains(target))
+            {
+                m_Shakes.Remove(target);
+            }
 
-            m_MainShake = mainShake;
-        }
-
-        public void StartShake(float strength, float smoothness)
-        {
-            StartShake(strength, smoothness, 0.0f);
-        }
-
-        public void StartShake(float strength, float smoothness, float easeInTime)
-        {
-            ShakeInformation underlyingShake = new ShakeInformation();
-
-            underlyingShake.Strength = strength;
-            underlyingShake.Smoothness = smoothness;
-            underlyingShake.EaseInTime = easeInTime;
-            underlyingShake.UpTime = -1.0f;
-            underlyingShake.EaseOutTime = 0.0f;
-
-            m_UnderlyingShake = underlyingShake;
-        }
-
-        public void EndShake()
-        {
-            EndShake(0.0f);
-        }
-
-        public void EndShake(float easeOutTime)
-        {
-            ShakeInformation currentShake = m_UnderlyingShake.Value;
-
-            currentShake.UpTime = 0.0f;
-            currentShake.EaseOutTime = easeOutTime;
-
-            m_UnderlyingShake = currentShake;
+            m_Shakes.Add(newShake);
         }
 
         private void Start()
         {
             if (transform.localPosition != new Vector3(0.0f, 0.0f, 0.0f))
             {
-                Debug.LogWarning(
-                    "ScreenShake : Object local position not set to 0. Must be at 0 to use screen shake. Will force it to 0.");
+                Debug.LogWarning("ScreenShake : Object local position not set to 0. Must be at 0 to use screen shake. Will force it to 0.");
                 transform.localPosition = new Vector3(0.0f, 0.0f, 0.0f);
             }
 
             if (transform.localEulerAngles != new Vector3(0.0f, 0.0f, 0.0f))
             {
-                Debug.LogWarning(
-                    "ScreenShake : Object local rotation not set to 0. Must be at 0 to use screen shake. Will force it to 0.");
+                Debug.LogWarning("ScreenShake : Object local rotation not set to 0. Must be at 0 to use screen shake. Will force it to 0.");
                 transform.localEulerAngles = new Vector3(0.0f, 0.0f, 0.0f);
             }
+
+            m_Shakes = new Dictionary<GameObject, ShakeInformation>();
         }
 
         private IEnumerator ShakeLoop()
         {
+            List<string> toRemove = new List<string>();
+
             while (true)
             {
-                float underlyingStrength = 0.0f;
-                float underlyingSmoothness = 0.0f;
+                toRemove.Clear();
 
-                if (m_UnderlyingShake != null)
+                foreach (KeyValuePair<GameObject, ShakeInformation> shake in m_Shakes)
                 {
-                    if (m_UnderlyingShake.Value.UpdateInformation(ref underlyingStrength, ref underlyingSmoothness))
+                    float strength = 0.0f;
+                    float smoothness = 0.0f;
+
+                    if (shake.Value.UpdateInformation(ref strength, ref smoothness))
                     {
-                        m_UnderlyingShake = null;
+                        toRemove.Add(shake.Key);
                     }
+
+                    //Screenshake code
                 }
-
-                float mainStrength = 0.0f;
-                float mainSmoothness = 0.0f;
-
-                if (m_MainShake != null)
-                {
-                    if (m_MainShake.Value.UpdateInformation(ref mainStrength, ref mainSmoothness))
-                    {
-                        m_MainShake = null;
-                    }
-                }
-
-                //Screenshake code
-
-                yield return null;
             }
         }
     }
