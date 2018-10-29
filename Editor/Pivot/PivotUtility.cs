@@ -16,7 +16,7 @@ namespace Canty.Editor
     public static class PivotUtilities
     {
         [MenuItem("GameObject/Pivot/Create Pivot", false, 0)]
-        static void CreatePivotObjectMenuItem()
+        private static void CreatePivotObjectMenuItem()
         {
             if (Selection.activeGameObject != null)
             {
@@ -26,7 +26,7 @@ namespace Canty.Editor
         }
 
         [MenuItem("GameObject/Pivot/Create Pivot (Parent Zero)", false, 0)]
-        static void CreatePivotObjectParentZeroMenuItem()
+        private static void CreatePivotObjectParentZeroMenuItem()
         {
             if (Selection.activeGameObject != null)
             {
@@ -36,7 +36,7 @@ namespace Canty.Editor
         }
 
         [MenuItem("GameObject/Pivot/Create Pivot (World Zero)", false, 0)]
-        static void CreatePivotObjectWorldZeroMenuItem()
+        private static void CreatePivotObjectWorldZeroMenuItem()
         {
             if (Selection.activeGameObject != null)
             {
