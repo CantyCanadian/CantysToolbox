@@ -82,10 +82,12 @@ Shader "Custom/Unlit/RadialBar/Outline"
 			sampler2D _BarTex;
 			sampler2D _BarBackTex;
             sampler2D _BarOutlineTex;
+			sampler2D _BarAlphaMask;
 
             float4 _BarTex_ST;
             float4 _BarBackTex_ST;
             float4 _BarOutlineTex_ST;
+			float4 _BarAlphaMask_ST;
 
 			float4 _BarColor;
 			float4 _BarBackColor;
@@ -157,7 +159,7 @@ Shader "Custom/Unlit/RadialBar/Outline"
                     return outline;
                 }
 
-                float4 finalColor = progression > _BarProgress ? backCol : col;
+                float4 finalColor = progression > _BarProgress ? back : front;
                 finalColor.a *= alphaMask.r;
 
                 return finalColor;

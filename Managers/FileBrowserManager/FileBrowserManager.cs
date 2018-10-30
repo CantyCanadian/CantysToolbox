@@ -6,6 +6,8 @@
 ///
 ///====================================================================================================
 
+using System;
+
 namespace Canty.Managers
 {
     public class FileBrowserManager : Singleton<FileBrowserManager>
@@ -20,7 +22,7 @@ namespace Canty.Managers
         /// <param name="extension">Allowed extension</param>
         /// <param name="multiselect">Allow multiple file selection</param>
         /// <returns>Returns array of chosen paths. Zero length array when cancelled</returns>
-        public string[] OpenFilePanel(string title, string directory, string extension, bool multiselect)
+        public static string[] OpenFilePanel(string title, string directory, string extension, bool multiselect)
         {
             ExtensionFilter[] extensions = string.IsNullOrEmpty(extension) ? null : new ExtensionFilter[] { new ExtensionFilter("", extension) };
             return OpenFilePanel(title, directory, extensions, multiselect);
@@ -34,7 +36,7 @@ namespace Canty.Managers
         /// <param name="extensions">List of extension filters. Filter Example: new ExtensionFilter("Image Files", "jpg", "png")</param>
         /// <param name="multiselect">Allow multiple file selection</param>
         /// <returns>Returns array of chosen paths. Zero length array when cancelled</returns>
-        public string[] OpenFilePanel(string title, string directory, ExtensionFilter[] extensions, bool multiselect)
+        public static string[] OpenFilePanel(string title, string directory, ExtensionFilter[] extensions, bool multiselect)
         {
             if (m_PlatformWrapper == null)
             {
@@ -84,7 +86,7 @@ namespace Canty.Managers
         /// <param name="directory">Root directory</param>
         /// <param name="multiselect"></param>
         /// <returns>Returns array of chosen paths. Zero length array when cancelled</returns>
-        public string[] OpenFolderPanel(string title, string directory, bool multiselect)
+        public static string[] OpenFolderPanel(string title, string directory, bool multiselect)
         {
             if (m_PlatformWrapper == null)
             {
@@ -115,7 +117,7 @@ namespace Canty.Managers
         /// <param name="defaultName">Default file name</param>
         /// <param name="extension">File extension</param>
         /// <returns>Returns chosen path. Empty string when cancelled</returns>
-        public string SaveFilePanel(string title, string directory, string defaultName, string extension)
+        public static string SaveFilePanel(string title, string directory, string defaultName, string extension)
         {
             ExtensionFilter[] extensions = string.IsNullOrEmpty(extension) ? null : new ExtensionFilter[] { new ExtensionFilter("", extension) };
 
@@ -130,7 +132,7 @@ namespace Canty.Managers
         /// <param name="defaultName">Default file name</param>
         /// <param name="extensions">List of extension filters. Filter Example: new ExtensionFilter("Image Files", "jpg", "png")</param>
         /// <returns>Returns chosen path. Empty string when canceled.</returns>
-        public string SaveFilePanel(string title, string directory, string defaultName, ExtensionFilter[] extensions)
+        public static string SaveFilePanel(string title, string directory, string defaultName, ExtensionFilter[] extensions)
         {
             if (m_PlatformWrapper == null)
             {
@@ -175,16 +177,16 @@ namespace Canty.Managers
         /// <summary>
         /// Select which type of file browser to use depending on the environment.
         /// </summary>
-        private void Initalize()
+        private static void Initalize()
         {
 #if UNITY_STANDALONE_OSX
-            _platformWrapper = new StandaloneFileBrowserMac();
+            m_PlatformWrapper = new StandaloneFileBrowserMac();
 #elif UNITY_STANDALONE_WIN
-            _platformWrapper = new StandaloneFileBrowserWindows();
+            m_PlatformWrapper = new StandaloneFileBrowserWindows();
 #elif UNITY_STANDALONE_LINUX
-            _platformWrapper = new StandaloneFileBrowserLinux();
+            m_PlatformWrapper = new StandaloneFileBrowserLinux();
 #elif UNITY_EDITOR
-            _platformWrapper = new StandaloneFileBrowserEditor();
+            m_PlatformWrapper = new StandaloneFileBrowserEditor();
 #endif
         }
     }
@@ -198,6 +200,14 @@ namespace Canty.Managers
         {
             Name = filterName;
             Extensions = filterExtensions;
+        }
+
+        public static ExtensionFilter[] GetImageFileFilter()
+        {
+            ExtensionFilter png = new ExtensionFilter("png", "png");
+            ExtensionFilter jpg = new ExtensionFilter("jpg", "jpg");
+
+            return new ExtensionFilter[] { png, jpg };
         }
     }
 }

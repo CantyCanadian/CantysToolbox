@@ -124,9 +124,9 @@ namespace Canty.Editor
 
             GameObject newObject = new GameObject("Pivot");
 
-            newObject.transform.position = Vector3.zero;
-            newObject.transform.scale = Vector3.one;
-            newObject.transform.rotation = Quaternion.identity;
+            newObject.transform.localPosition = Vector3.zero;
+            newObject.transform.localScale = Vector3.one;
+            newObject.transform.localRotation = Quaternion.identity;
 
             newObject.transform.SetParent(current.transform.parent);
             newObject.transform.SetSiblingIndex(siblingIndex);

@@ -6,6 +6,8 @@
 ///
 ///====================================================================================================
 
+using System;
+
 namespace Canty.Managers
 {
     public interface IStandaloneFileBrowser

@@ -86,6 +86,7 @@ Shader "Custom/Unlit/RadialBar/Transitive"
             sampler2D _BarBackTex1;
             sampler2D _BarOutlineTex0;
             sampler2D _BarOutlineTex1;
+			sampler2D _BarAlphaMask;
 
             float4 _BarTex0_ST;
             float4 _BarTex1_ST;
@@ -93,6 +94,7 @@ Shader "Custom/Unlit/RadialBar/Transitive"
             float4 _BarBackTex1_ST;
             float4 _BarOutlineTex0_ST;
             float4 _BarOutlineTex1_ST;
+			float4 _BarAlphaMask_ST;
 
 			float4 _BarColor0;
             float4 _BarColor1;
@@ -156,7 +158,7 @@ Shader "Custom/Unlit/RadialBar/Transitive"
 				angle = sign(newUV.x) == 1.0f ? 360.0f - angle : angle;
 				float progression = (angle - _BarAngle) / (360.0f - _BarAngle - _BarAngle);
 
-                float4 finalColor = progression > _BarProgress ? backCol : col;
+                float4 finalColor = progression > _BarProgress ? back : front;
                 finalColor.a *= alphaMask.r;
 
                 return finalColor;

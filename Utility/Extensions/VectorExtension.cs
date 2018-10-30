@@ -11,6 +11,182 @@ namespace Canty
 {
     public static class VectorExtention
     {
+        #region AddScalar
+
+        /// <summary>
+        /// Simple vector function to add a value to each values of the vector.
+        /// </summary>
+        /// <param name="scalars">Scalars to add.</param>
+        /// <returns>The result vector.</returns>
+        public static Vector2 AddScalar(this Vector2 target, params float[] scalars)
+        {
+            for (int i = 0; i < scalars.Length; i++)
+            {
+                target.x += scalars[i];
+                target.y += scalars[i];
+            }
+
+            return target;
+        }
+
+        /// <summary>
+        /// Simple vector function to add a value to each values of the vector.
+        /// </summary>
+        /// <param name="scalars">Scalars to add.</param>
+        /// <returns>The result vector.</returns>
+        public static Vector2Int AddScalar(this Vector2Int target, params int[] scalars)
+        {
+            for (int i = 0; i < scalars.Length; i++)
+            {
+                target.x += scalars[i];
+                target.y += scalars[i];
+            }
+
+            return target;
+        }
+
+        /// <summary>
+        /// Simple vector function to add a value to each values of the vector.
+        /// </summary>
+        /// <param name="scalars">Scalars to add.</param>
+        /// <returns>The result vector.</returns>
+        public static Vector3 AddScalar(this Vector3 target, params float[] scalars)
+        {
+            for (int i = 0; i < scalars.Length; i++)
+            {
+                target.x += scalars[i];
+                target.y += scalars[i];
+                target.z += scalars[i];
+            }
+
+            return target;
+        }
+
+        /// <summary>
+        /// Simple vector function to add a value to each values of the vector.
+        /// </summary>
+        /// <param name="scalars">Scalars to add.</param>
+        /// <returns>The result vector.</returns>
+        public static Vector3Int AddScalar(this Vector3Int target, params int[] scalars)
+        {
+            for (int i = 0; i < scalars.Length; i++)
+            {
+                target.x += scalars[i];
+                target.y += scalars[i];
+                target.z += scalars[i];
+            }
+
+            return target;
+        }
+
+        /// <summary>
+        /// Simple vector function to add a value to each values of the vector.
+        /// </summary>
+        /// <param name="scalars">Scalars to add.</param>
+        /// <returns>The result vector.</returns>
+        public static Vector4 AddScalar(this Vector4 target, params float[] scalars)
+        {
+            for (int i = 0; i < scalars.Length; i++)
+            {
+                target.w += scalars[i];
+                target.x += scalars[1];
+                target.y += scalars[i];
+                target.z += scalars[i];
+            }
+
+            return target;
+        }
+
+        #endregion
+
+        #region MinusScalar
+
+        /// <summary>
+        /// Simple vector function to minus a value to each values of the vector.
+        /// </summary>
+        /// <param name="scalars">Scalars to minus.</param>
+        /// <returns>The result vector.</returns>
+        public static Vector2 MinusScalar(this Vector2 target, params float[] scalars)
+        {
+            for (int i = 0; i < scalars.Length; i++)
+            {
+                target.x -= scalars[i];
+                target.y -= scalars[i];
+            }
+
+            return target;
+        }
+
+        /// <summary>
+        /// Simple vector function to minus a value to each values of the vector.
+        /// </summary>
+        /// <param name="scalars">Scalars to minus.</param>
+        /// <returns>The result vector.</returns>
+        public static Vector2Int MinusScalar(this Vector2Int target, params int[] scalars)
+        {
+            for (int i = 0; i < scalars.Length; i++)
+            {
+                target.x -= scalars[i];
+                target.y -= scalars[i];
+            }
+
+            return target;
+        }
+
+        /// <summary>
+        /// Simple vector function to minus a value to each values of the vector.
+        /// </summary>
+        /// <param name="scalars">Scalars to minus.</param>
+        /// <returns>The result vector.</returns>
+        public static Vector3 MinusScalar(this Vector3 target, params float[] scalars)
+        {
+            for (int i = 0; i < scalars.Length; i++)
+            {
+                target.x -= scalars[i];
+                target.y -= scalars[i];
+                target.z -= scalars[i];
+            }
+
+            return target;
+        }
+
+        /// <summary>
+        /// Simple vector function to minus a value to each values of the vector.
+        /// </summary>
+        /// <param name="scalars">Scalars to minus.</param>
+        /// <returns>The result vector.</returns>
+        public static Vector3Int MinusScalar(this Vector3Int target, params int[] scalars)
+        {
+            for (int i = 0; i < scalars.Length; i++)
+            {
+                target.x -= scalars[i];
+                target.y -= scalars[i];
+                target.z -= scalars[i];
+            }
+
+            return target;
+        }
+
+        /// <summary>
+        /// Simple vector function to minus a value to each values of the vector.
+        /// </summary>
+        /// <param name="scalars">Scalars to minus.</param>
+        /// <returns>The result vector.</returns>
+        public static Vector4 MinusScalar(this Vector4 target, params float[] scalars)
+        {
+            for (int i = 0; i < scalars.Length; i++)
+            {
+                target.w -= scalars[i];
+                target.x -= scalars[1];
+                target.y -= scalars[i];
+                target.z -= scalars[i];
+            }
+
+            return target;
+        }
+
+        #endregion
+
         #region Multiply
 
         /// <summary>

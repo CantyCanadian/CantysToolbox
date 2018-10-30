@@ -5,20 +5,28 @@
 ///
 ///====================================================================================================
 
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace Canty.Managers
 {
-    public class ScreenShake : Singleton<ScreenShake>
+    public class ScreenShakeManager : Singleton<ScreenShakeManager>
     {
-        public Vector3 PositionInfluence = new Vector3(0.5f, 0.5f, 0.5f);
+        public Vector3 PositionInfluence = new Vector3(1.0f, 1.0f, 1.0f);
         public Vector3 RotationInfluence = new Vector3(1.0f, 1.0f, 1.0f);
+
+        public bool UseLocalPosition = true;
+        public bool UseLocalRotation = true;
 
         private Dictionary<GameObject, ShakeInformation> m_Shakes = null;
 
-        private struct ShakeInformation
+        // This is a class instead of a struct because, for some reason, changing the delta from inside of the struct doesn't work.
+        private class ShakeInformation
         {
+            public Vector3 OriginalPosition;
+            public Vector3 OriginalRotation;
+
             public float Strength;
             public float Smoothness;
             public float EaseInTime;
@@ -80,8 +88,8 @@ namespace Canty.Managers
                     }
                     else
                     {
-                        strength = Mathf.Lerp(Strength, 0.0f, Delta / EaseInTime);
-                        smoothness = Mathf.Lerp(Smoothness, 0.0f, Delta / EaseInTime);
+                        strength = Mathf.Lerp(Strength, 0.0f, Delta / EaseOutTime);
+                        smoothness = Mathf.Lerp(Smoothness, 0.0f, Delta / EaseOutTime);
                     }
                 }
 
@@ -116,10 +124,19 @@ namespace Canty.Managers
 
         public void EndShake(GameObject target, float easeOutTime)
         {
+            if (m_Shakes == null)
+            {
+                m_Shakes = new Dictionary<GameObject, ShakeInformation>();
+            }
+
             if (m_Shakes.ContainsKey(target))
             {
-                m_Shakes[target].UpTime = 0.0f;
-                m_Shakes[target].EaseOutTime = easeOutTime;
+                ShakeInformation info = m_Shakes[target];
+
+                info.UpTime = 0.0f;
+                info.EaseOutTime = easeOutTime;
+
+                m_Shakes[target] = info;
             }
             else
             {
@@ -129,24 +146,33 @@ namespace Canty.Managers
 
         private void Shake(GameObject target, float strength, float smoothness, float easeInTime, float upTime, float easeOutTime)
         {
+            if (m_Shakes == null)
+            {
+                m_Shakes = new Dictionary<GameObject, ShakeInformation>();
+            }
+
             ShakeInformation newShake = new ShakeInformation();
+
+            newShake.OriginalPosition = UseLocalPosition ? target.transform.localPosition : target.transform.position;
+            newShake.OriginalRotation = UseLocalRotation ? target.transform.localEulerAngles : target.transform.eulerAngles;
 
             newShake.Strength = strength;
             newShake.Smoothness = smoothness;
             newShake.EaseInTime = easeInTime;
             newShake.UpTime = upTime;
             newShake.EaseOutTime = easeOutTime;
+            newShake.Delta = 0.0f;
 
-            if (m_Shakes != null && m_Shakes.Contains(target) && m_Shakes[target].Value.TotalTime() > newShake.TotalTime())
+            if (m_Shakes != null && m_Shakes.ContainsKey(target) && m_Shakes[target].TotalTime() > newShake.TotalTime())
             {
                 return;
             }
-            else if (m_Shakes.Contains(target))
+            else if (m_Shakes.ContainsKey(target))
             {
                 m_Shakes.Remove(target);
             }
 
-            m_Shakes.Add(newShake);
+            m_Shakes.Add(target, newShake);
         }
 
         private void Start()
@@ -163,12 +189,15 @@ namespace Canty.Managers
                 transform.localEulerAngles = new Vector3(0.0f, 0.0f, 0.0f);
             }
 
-            m_Shakes = new Dictionary<GameObject, ShakeInformation>();
+            StartCoroutine(ShakeLoop());
         }
 
         private IEnumerator ShakeLoop()
         {
-            List<string> toRemove = new List<string>();
+            List<GameObject> toRemove = new List<GameObject>();
+
+            Vector3 shakePosition;
+            Vector3 shakeRotation;
 
             while (true)
             {
@@ -182,10 +211,65 @@ namespace Canty.Managers
                     if (shake.Value.UpdateInformation(ref strength, ref smoothness))
                     {
                         toRemove.Add(shake.Key);
-                    }
 
-                    //Screenshake code
+                        if (UseLocalPosition)
+                        {
+                            shake.Key.transform.localPosition = shake.Value.OriginalPosition;
+                        }
+                        else
+                        {
+                            shake.Key.transform.position = shake.Value.OriginalPosition;
+                        }
+
+                        if (UseLocalRotation)
+                        {
+                            shake.Key.transform.localEulerAngles = shake.Value.OriginalRotation;
+                        }
+                        else
+                        {
+                            shake.Key.transform.eulerAngles = shake.Value.OriginalRotation;
+                        }
+                    }
+                    else
+                    {
+                        float time = Time.time / Mathf.Max(smoothness, 0.001f);
+                        float mod = 100.0f / Mathf.Max(smoothness, 0.001f);
+
+                        // Making sure to offset each perlin noise samples to prevent overlap.
+                        shakePosition = new Vector3(Mathf.PerlinNoise(time + 1 * mod, time + 1 * mod), Mathf.PerlinNoise(time + 2 * mod, time + 2 * mod), Mathf.PerlinNoise(time + 3 * mod, time + 3 * mod));
+                        shakeRotation = new Vector3(Mathf.PerlinNoise(time + 4 * mod, time + 4 * mod), Mathf.PerlinNoise(time + 5 * mod, time + 5 * mod), Mathf.PerlinNoise(time + 6 * mod, time + 6 * mod));
+                        
+                        // Centering the shaking from (0,1) to (-1,1)
+                        shakePosition = (shakePosition * 2).MinusScalar(1);
+                        shakeRotation = (shakeRotation * 2).MinusScalar(1);
+
+                        shakePosition *= strength;
+                        shakeRotation *= strength;
+
+                        shakePosition = shakePosition.Multiply(PositionInfluence);
+                        shakeRotation = shakeRotation.Multiply(RotationInfluence);
+
+                        if (UseLocalPosition)
+                        {
+                            shake.Key.transform.localPosition = shake.Value.OriginalPosition + shakePosition;
+                        }
+                        else
+                        {
+                            shake.Key.transform.position = shake.Value.OriginalPosition + shakePosition;
+                        }
+
+                        if (UseLocalRotation)
+                        {
+                            shake.Key.transform.localEulerAngles = shake.Value.OriginalRotation + shakeRotation;
+                        }
+                        else
+                        {
+                            shake.Key.transform.eulerAngles = shake.Value.OriginalRotation + shakeRotation;
+                        }
+                    }
                 }
+
+                yield return null;
             }
         }
     }
