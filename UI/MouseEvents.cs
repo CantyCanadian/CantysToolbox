@@ -1,6 +1,6 @@
 ﻿///====================================================================================================
 ///
-///     UIMouseEvents by
+///     MouseEvents by
 ///     - CantyCanadian
 ///
 ///====================================================================================================
@@ -14,7 +14,7 @@ namespace Canty.UI
     /// <summary>
     /// Basic class that supports two types of mouse pointer enter, stay and exit for quick editing.
     /// </summary>
-    public class UIMouseEvents : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerUpHandler
+    public class MouseEvents : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerUpHandler
     {
         public bool OutputEvent = false;
         public EventTypes EventType;

@@ -988,5 +988,28 @@ namespace Canty
         }
 
         #endregion
+
+        #region ToQuaternion
+
+        /// <summary>
+        /// Directly converts Vector4 to Quaternion.
+        /// </summary>
+        /// <returns>Quaternion made from Vector4.</returns>
+        public static Quaternion ToQuaternion(this Vector4 target)
+        {
+            return new Quaternion(target.x, target.y, target.z, target.w);
+        }
+
+        /// <summary>
+        /// Converts Vector4 to Quaternion after normalizing it.
+        /// </summary>
+        /// <returns>Quaternion made from Vector4.</returns>
+        public static Quaternion ToNormalizedQuaternion(this Vector4 target)
+        {
+            target = Vector4.Normalize(target);
+            return new Quaternion(target.x, target.y, target.z, target.w);
+        }
+
+        #endregion
     }
 }

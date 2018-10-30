@@ -39,27 +39,6 @@ namespace Canty
         }
 
         /// <summary>
-        /// Creates asset at location, then calls rename on it, just like a regular Unity asset creation.
-        /// </summary>
-        /// <typeparam name="T">Type of object being created. Must inherit from ScriptableObject.</typeparam>
-        /// <param name="assetName">Asset name, without extension or path.</param>
-        /// <returns>Created object for further modification.</returns>
-        public static T CreateAssetAtLocation<T>(string assetName) where T : ScriptableObject
-        {
-            T asset = ScriptableObject.CreateInstance<T>();
-
-            AssetDatabase.CreateAsset(asset,
-                AssetDatabase.GenerateUniqueAssetPath(GetAssetFolderPath(Selection.activeObject) + assetName +
-                                                      ".asset"));
-
-            Selection.activeObject = asset;
-            EditorUtility.FocusProjectWindow();
-            StartRenameSelectedAsset();
-
-            return asset;
-        }
-
-        /// <summary>
         /// Returns the path of an asset, but without including the asset name in the path itself.
         /// </summary>
         public static string GetAssetFolderPath(Object asset)

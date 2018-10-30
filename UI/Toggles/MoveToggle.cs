@@ -1,6 +1,6 @@
 ﻿///====================================================================================================
 ///
-///     UISizeToggle by
+///     MoveToggle by
 ///     - CantyCanadian
 ///
 ///====================================================================================================
@@ -11,44 +11,44 @@ using UnityEngine;
 namespace Canty.UI
 {
     /// <summary>
-    /// Basic class that toggles a UI element's size between two values.
+    /// Basic class that toggles a UI element's position between two values.
     /// </summary>
-    public class UISizeToggle : MonoBehaviour
+    public class MoveToggle : MonoBehaviour
     {
-        public Vector2 SizeDifference;
+        public Vector2 PositionDifference;
         public float TransitionTime;
 
         private RectTransform m_Transform;
 
-        private Vector2 m_FalseSize;
-        private Vector2 m_TrueSize;
+        private Vector2 m_FalseLocalPosition;
+        private Vector2 m_TrueLocalPosition;
 
         private Coroutine m_CoroutineRef;
         private bool m_State = false;
 
         public void Initialize()
         {
-            m_Transform = GetComponent<RectTransform>();
+            m_Transform = m_Transform == null ? GetComponent<RectTransform>() : m_Transform;
 
-            m_FalseSize = m_Transform.sizeDelta;
-            m_TrueSize = m_FalseSize + SizeDifference;
+            m_FalseLocalPosition = transform.localPosition;
+            m_TrueLocalPosition = m_FalseLocalPosition + PositionDifference;
         }
 
         public void Initialize(Vector2 newOrigin)
         {
-            m_Transform = GetComponent<RectTransform>();
+            m_Transform = m_Transform == null ? GetComponent<RectTransform>() : m_Transform;
 
-            m_FalseSize = newOrigin;
-            m_TrueSize = m_FalseSize + SizeDifference;
+            m_FalseLocalPosition = newOrigin;
+            m_TrueLocalPosition = m_FalseLocalPosition + PositionDifference;
         }
 
         public void Initialize(Vector2 newOrigin, Vector2 newDifference)
         {
-            m_Transform = GetComponent<RectTransform>();
-            SizeDifference = newDifference;
+            m_Transform = m_Transform == null ? GetComponent<RectTransform>() : m_Transform;
+            PositionDifference = newDifference;
 
-            m_FalseSize = newOrigin;
-            m_TrueSize = m_FalseSize + SizeDifference;
+            m_FalseLocalPosition = newOrigin;
+            m_TrueLocalPosition = m_FalseLocalPosition + PositionDifference;
         }
 
         public void Play(bool state)
@@ -80,7 +80,6 @@ namespace Canty.UI
             }
 
             m_State = state;
-
             yield return StartCoroutine(PlayLoop());
         }
 
@@ -114,7 +113,7 @@ namespace Canty.UI
 
             StopCoroutine(m_CoroutineRef);
             m_CoroutineRef = null;
-            m_Transform.sizeDelta = m_State ? m_TrueSize : m_FalseSize;
+            m_Transform.localPosition = m_State ? m_TrueLocalPosition : m_FalseLocalPosition;
         }
 
         private IEnumerator PlayLoop()
@@ -125,9 +124,9 @@ namespace Canty.UI
             {
                 delta += Time.deltaTime;
 
-                m_Transform.sizeDelta = m_State
-                    ? Vector3.Lerp(m_FalseSize, m_TrueSize, delta / TransitionTime)
-                    : Vector3.Lerp(m_TrueSize, m_FalseSize, delta / TransitionTime);
+                m_Transform.localPosition = m_State
+                    ? Vector3.Lerp(m_FalseLocalPosition, m_TrueLocalPosition, delta / TransitionTime)
+                    : Vector3.Lerp(m_TrueLocalPosition, m_FalseLocalPosition, delta / TransitionTime);
 
                 yield return null;
             }

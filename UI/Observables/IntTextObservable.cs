@@ -1,6 +1,6 @@
 ﻿///====================================================================================================
 ///
-///     UIIntTextObservable by
+///     IntTextObservable by
 ///     - CantyCanadian
 ///
 ///====================================================================================================
@@ -14,7 +14,7 @@ namespace Canty.UI
     /// Int implementation of the SerializableCallback class. Changes the text dynamically using passed-in int-returning function.
     /// </summary>
     [RequireComponent(typeof(Text))]
-    public class UIIntTextObservable : MonoBehaviour
+    public class IntTextObservable : MonoBehaviour
     {
         public IntObservable ValueToObserve;
 

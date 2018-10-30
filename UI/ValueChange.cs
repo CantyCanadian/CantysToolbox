@@ -1,6 +1,6 @@
 ﻿///====================================================================================================
 ///
-///     UIValueChange by
+///     ValueChange by
 ///     - CantyCanadian
 ///
 ///====================================================================================================
@@ -13,7 +13,7 @@ namespace Canty.UI
     /// <summary>
     /// Basic class that supports all default UI callbacks for quick editing.
     /// </summary>
-    public class UIValueChange : MonoBehaviour
+    public class ValueChange : MonoBehaviour
     {
         public Text UIText;
 
