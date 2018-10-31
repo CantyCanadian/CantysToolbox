@@ -16,7 +16,7 @@ namespace Canty
     /// </summary>
     public class BasicInput : MonoBehaviour
     {
-        public KeyCodeUnityEventDictionary KeyEvent;
+        public KeyCodeUnityEventDictionary KeyEvents;
 
         private void Update()
         {
