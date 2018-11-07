@@ -20,7 +20,7 @@ namespace Canty
 
         private void Update()
         {
-            foreach (KeyValuePair<KeyCode, UnityEvent> kvp in KeyEvent)
+            foreach (KeyValuePair<KeyCode, UnityEvent> kvp in KeyEvents)
             {
                 if (Input.GetKey(kvp.Key))
                 {
