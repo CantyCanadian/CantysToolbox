@@ -330,6 +330,15 @@ namespace Canty
             return new CellGroup<T>(cells);
         }
 
+        public CellGroup<T> GetCellsConditionalRecursive(int x, int y, int steps, System.Func<T, bool> condition)
+        {
+            Dictionary<Vector2Int, Cell<T>> cells = new Dictionary<Vector2Int, Cell<T>>();
+
+            RecursiveGet(ref cells, x, y, steps, condition);
+
+            return new CellGroup<T>(cells);
+        }
+
         public CellGroup<T> Plus(CellGroup<T> toAdd)
         {
             Dictionary<Vector2Int, Cell<T>> cells = new Dictionary<Vector2Int, Cell<T>>(m_Cells);
@@ -387,6 +396,26 @@ namespace Canty
             Cell<T> cell = TryGetCell(x, y);
 
             if (steps <= 0)
+            {
+                return;
+            }
+
+            if (cell != null)
+            {
+                list.Add(new Vector2Int(x, y), cell);
+
+                RecursiveGet(ref list, x - 1, y, steps - 1);
+                RecursiveGet(ref list, x + 1, y, steps - 1);
+                RecursiveGet(ref list, x, y - 1, steps - 1);
+                RecursiveGet(ref list, x, y + 1, steps - 1);
+            }
+        }
+
+        private void RecursiveGet(ref Dictionary<Vector2Int, Cell<T>> list, int x, int y, int steps, System.Func<T, bool> condition)
+        {
+            Cell<T> cell = TryGetCell(x, y);
+
+            if (steps <= 0 || !condition.Invoke(cell.GetData()))
             {
                 return;
             }
