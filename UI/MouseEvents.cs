@@ -19,55 +19,210 @@ namespace Canty.UI
         public bool OutputEvent = false;
 
         // When clicking on and off the object.
-        public UnityEvent OnSelect;
-        public UnityEvent OnDeselect;
+        public UnityEvent OnSelectEvent;
+        public UnityEvent OnDeselectEvent;
 
         // When the selected object is updated.
-        public UnityEvent OnUpdateSelected;
+        public UnityEvent OnUpdateSelectedEvent;
 
         // Right before a drag, whether the drag will work or not doesn't matter.
-        public UnityEvent OnInitializePotentialDrag;
+        public UnityEvent OnInitializePotentialDragEvent;
 
         // When dragging an object.
-        public UnityEvent OnBeginDrag;
-        public UnityEvent OnDrag;
-        public UnityEvent OnEndDrag;
+        public UnityEvent OnBeginDragEvent;
+        public UnityEvent OnDragEvent;
+        public UnityEvent OnEndDragEvent;
 
         // When dropping an object upon it.
-        public UnityEvent OnDrop;
+        public UnityEvent OnDropEvent;
 
         // When using key events.
-        public UnityEvent OnSubmit;
-        public UnityEvent OnCancel;
+        public UnityEvent OnSubmitEvent;
+        public UnityEvent OnCancelEvent;
 
         // When clicking.
-        public UnityEvent OnPointerDown;
-        public UnityEvent OnPointerClick;
-        public UnityEvent OnPointerUp;
+        public UnityEvent OnPointerDownEvent;
+        public UnityEvent OnPointerClickEvent;
+        public UnityEvent OnPointerUpEvent;
 
         // When using hover.
-        public UnityEvent OnPointerEnter;
-        public UnityEvent OnPointerExit;
+        public UnityEvent OnPointerEnterEvent;
+        public UnityEvent OnPointerExitEvent;
 
         // When using keys to move the selection.
-        public UnityEvent OnMove;
+        public UnityEvent OnMoveEvent;
 
         // When the mouse wheel scrolls.
-        public UnityEvent OnScroll;
+        public UnityEvent OnScrollEvent;
 
-        public void OnPointerEnter(PointerEventData eventData)
+        public override void OnSelect(BaseEventData eventData)
         {
-            if (EventType == EventTypes.Pointer)
+            if (OutputEvent)
             {
-                m_onPointerOver = true;
-
-                if (OutputEvent)
-                {
-                    Debug.Log(transform.name + " : OnPointerEnter");
-                }
-
-                onMouseEnter.Invoke();
+                Debug.Log(transform.name + " : OnSelect");
             }
+
+            OnSelectEvent.Invoke();
+        }
+
+        public override void OnDeselect(BaseEventData eventData)
+        {
+            if (OutputEvent)
+            {
+                Debug.Log(transform.name + " : OnDeselect");
+            }
+
+            OnDeselectEvent.Invoke();
+        }
+
+        public override void OnUpdateSelected(BaseEventData eventData)
+        {
+            if (OutputEvent)
+            {
+                Debug.Log(transform.name + " : OnUpdateSelected");
+            }
+
+            OnUpdateSelectedEvent.Invoke();
+        }
+
+        public override void OnInitializePotentialDrag(PointerEventData eventData)
+        {
+            if (OutputEvent)
+            {
+                Debug.Log(transform.name + " : OnInitializePotentialDrag");
+            }
+
+            OnInitializePotentialDragEvent.Invoke();
+        }
+
+        public override void OnBeginDrag(PointerEventData eventData)
+        {
+            if (OutputEvent)
+            {
+                Debug.Log(transform.name + " : OnBeginDrag");
+            }
+
+            OnBeginDragEvent.Invoke();
+        }
+
+        public override void OnDrag(PointerEventData eventData)
+        {
+            if (OutputEvent)
+            {
+                Debug.Log(transform.name + " : OnDrag");
+            }
+
+            OnDragEvent.Invoke();
+        }
+
+        public override void OnEndDrag(PointerEventData eventData)
+        {
+            if (OutputEvent)
+            {
+                Debug.Log(transform.name + " : OnEndDrag");
+            }
+
+            OnEndDragEvent.Invoke();
+        }
+
+        public override void OnDrop(PointerEventData eventData)
+        {
+            if (OutputEvent)
+            {
+                Debug.Log(transform.name + " : OnDrop");
+            }
+
+            OnDropEvent.Invoke();
+        }
+
+        public override void OnSubmit(BaseEventData eventData)
+        {
+            if (OutputEvent)
+            {
+                Debug.Log(transform.name + " : OnSubmit");
+            }
+
+            OnSubmitEvent.Invoke();
+        }
+
+        public override void OnCancel(BaseEventData eventData)
+        {
+            if (OutputEvent)
+            {
+                Debug.Log(transform.name + " : OnCancel");
+            }
+
+            OnCancelEvent.Invoke();
+        }
+
+        public override void OnPointerDown(PointerEventData eventData)
+        {
+            if (OutputEvent)
+            {
+                Debug.Log(transform.name + " : OnPointerDown");
+            }
+
+            OnPointerDownEvent.Invoke();
+        }
+
+        public override void OnPointerClick(PointerEventData eventData)
+        {
+            if (OutputEvent)
+            {
+                Debug.Log(transform.name + " : OnPointerClick");
+            }
+
+            OnPointerClickEvent.Invoke();
+        }
+
+        public override void OnPointerUp(PointerEventData eventData)
+        {
+            if (OutputEvent)
+            {
+                Debug.Log(transform.name + " : OnPointerUp");
+            }
+
+            OnPointerUpEvent.Invoke();
+        }
+
+        public override void OnPointerEnter(PointerEventData eventData)
+        {
+            if (OutputEvent)
+            {
+                Debug.Log(transform.name + " : OnPointerEnter");
+            }
+
+            OnPointerEnterEvent.Invoke();
+        }
+
+        public override void OnPointerExit(PointerEventData eventData)
+        {
+            if (OutputEvent)
+            {
+                Debug.Log(transform.name + " : OnPointerExit");
+            }
+
+            OnPointerExitEvent.Invoke();
+        }
+
+        public override void OnMove(AxisEventData eventData)
+        {
+            if (OutputEvent)
+            {
+                Debug.Log(transform.name + " : OnMove");
+            }
+
+            OnMoveEvent.Invoke();
+        }
+
+        public override void OnScroll(PointerEventData eventData)
+        {
+            if (OutputEvent)
+            {
+                Debug.Log(transform.name + " : OnScroll");
+            }
+
+            OnScrollEvent.Invoke();
         }
     }
 }
