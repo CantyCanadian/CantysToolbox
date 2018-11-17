@@ -45,7 +45,7 @@ namespace Canty
 
                 foreach (KeyValuePair<KeyCode, Direction> kvp in KeyMovement)
                 {
-                    if (Input.GetKey(kvp.Key))
+                    if (UnityEngine.Input.GetKey(kvp.Key))
                     {
                         switch (kvp.Value)
                         {
