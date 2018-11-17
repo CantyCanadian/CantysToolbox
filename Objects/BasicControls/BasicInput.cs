@@ -22,7 +22,7 @@ namespace Canty
         {
             foreach (KeyValuePair<KeyCode, UnityEvent> kvp in KeyEvents)
             {
-                if (Input.GetKey(kvp.Key))
+                if (UnityEngine.Input.GetKey(kvp.Key))
                 {
                     kvp.Value.Invoke();
                 }
