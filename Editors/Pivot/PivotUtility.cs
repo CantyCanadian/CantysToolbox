@@ -11,7 +11,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 
-namespace Canty.Editor
+namespace Canty.Editors
 {
     public static class PivotUtilities
     {
