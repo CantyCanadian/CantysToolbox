@@ -30,17 +30,49 @@ namespace Canty.Managers
         }
 
         /// <summary>
-        /// Gets the strings associated to the key from cache.
+        /// Gets the first string associated to the key from cache.
         /// </summary>
-        public string[] GetData(string key)
+        public string GetValue(string key)
+        {
+            return m_Data[key][0];
+        }
+
+        /// <summary>
+        /// Gets a specific string associated to the key from cache.
+        /// </summary>
+        public string GetValue(string key, int index)
+        {
+            return m_Data[key][index];
+        }
+
+        /// <summary>
+        /// Gets the first string associated to the key from cache, converted in the desired type.
+        /// </summary>
+        public T GetValue<T>(string key) where T : IConvertible
+        {
+            return m_Data[key][0].ConvertTo<T>();
+        }
+
+        /// <summary>
+        /// Gets a specific string associated to the key from cache, converted in the desired type.
+        /// </summary>
+        public T GetValue<T>(string key, int index) where T : IConvertible
+        {
+            return m_Data[key][index].ConvertTo<T>();
+        }
+
+        /// <summary>
+        /// Gets all the strings associated to the key from cache.
+        /// </summary>
+        public string[] GetValues(string key)
         {
             return m_Data[key];
         }
 
         /// <summary>
-        /// Gets the data associated to the key from cache, converted in the desired type.
+        /// Gets all the strings associated to the key from cache, converted in the desired type.
         /// </summary>
-        public T[] GetData<T>(string key) where T : IConvertible
+        public T[] GetValues<T>(string key) where T : IConvertible
         {
             return m_Data[key].ConvertUsing<string, T, List<T>>((obj) => { return obj.ConvertTo<T>(); }).ToArray();
         }

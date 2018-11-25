@@ -5,8 +5,9 @@
 ///
 ///====================================================================================================
 
+using System;
 using System.Collections.Generic;
-using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Canty
 {
@@ -104,6 +105,17 @@ namespace Canty
         public static bool RandomBool()
         {
             return Random.Range(0, 2) == 0 ? false : true;
+        }
+
+        /// <summary>
+        /// Returns a random enum value from within an enum type.
+        /// </summary>
+        /// <typeparam name="E">Enum type.</typeparam>
+        /// <returns>Random enum value.</returns>
+        public static E RandomEnum<E>() where E : struct, IConvertible
+        {
+            Array values = Enum.GetValues(typeof(E));
+            return (E)values.GetValue(Random.Range(0, values.Length));
         }
     }
 }
