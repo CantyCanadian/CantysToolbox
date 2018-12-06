@@ -125,5 +125,37 @@ namespace Canty
             Array values = Enum.GetValues(typeof(E));
             return (E)values.GetValue(Random.Range(0, values.Length));
         }
+        
+        /// <summary>
+        /// Returns a list of random enum values from within an enum type. Those values cannot be duplicated.
+        /// </summary>
+        /// <typeparam name="E">Enum type.</typeparam>
+        /// <returns>Random enum values.</returns>
+        public static List<E> RandomEnumsUnique<E>(int count) where E : struct, IConvertible
+        {
+            Array values = Enum.GetValues(typeof(E));
+            List<E> valueList = List<E>(values);
+
+            if (values.Length == count)
+            {
+                return valueList;
+            }
+            else if (values.Length > count)
+            {
+                Debug.LogError("RandomUtil : Trying to get more unique enum types than possible.");
+                return valueList;
+            }
+
+            List<E> returnList = new List<E>();
+
+            for(int i = 0; i < count; i++)
+            {
+                int randomValue = Random.Range(0, valueList.Count);
+                returnList.Add((E)values.GetValue(randomValue));
+                valueList.RemoveAt(randomValue);
+            }
+
+            return returnList;
+        }
     }
 }
