@@ -97,6 +97,14 @@ namespace Canty
 
             return numbers[Random.Range(0, numbers.Count)];
         }
+        
+        /// <summary>
+        /// Implementation of Unity's Random.Range function, but to return a value from a passed in array set as a params argument.
+        /// </summary>
+        public static int RandomFrom(params int[] numbers)
+        {
+            return numbers[Random.Range(0, numbers.Length)];
+        }
 
         /// <summary>
         /// Implementation of Unity's Random.Range function, but to return a bool instead of a number.
