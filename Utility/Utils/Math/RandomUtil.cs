@@ -14,6 +14,77 @@ namespace Canty
     public static class RandomUtil
     {
         /// <summary>
+        /// Extension of Unity's Random.Range function, making so it gets multiple numbers at once.
+        /// </summary>
+        /// <param name="min">Minimum value [inclusive]</param>
+        /// <param name="max">Maximum value [exclusive]</param>
+        /// <param name="count">How many values to get.</param>
+        /// <returns>All the random values.</returns>
+        public static int[] RangeMultiple(int min, int max, int count)
+        {
+            int[] result = new int[count];
+
+            for(int i = 0; i < count; i++)
+            {
+                result[i] = Random.Range(min, max);
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Extension of Unity's Random.Range function, making so it gets multiple numbers at once.
+        /// </summary>
+        /// <param name="min">Minimum value [inclusive]</param>
+        /// <param name="max">Maximum value [inclusive]</param>
+        /// <param name="count">How many values to get.</param>
+        /// <returns>All the random values.</returns>
+        public static float[] RangeMultiple(float min, float max, int count)
+        {
+            float[] result = new float[count];
+
+            for (int i = 0; i < count; i++)
+            {
+                result[i] = Random.Range(min, max);
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Extension of Unity's Random.Range function, making so it gets multiple numbers at once. However, each numbers are unique.
+        /// </summary>
+        /// <param name="min">Minimum value [inclusive]</param>
+        /// <param name="max">Maximum value [exclusive]</param>
+        /// <param name="count">How many values to get.</param>
+        /// <returns>All the random values.</returns>
+        public static int[] RangeMultipleUnique(int min, int max, int count)
+        {
+            List<int> container = ListUtil.RangePopulate(min, max);
+
+            if (container.Count == count)
+            {
+                return container.ToArray();
+            }
+
+            if (container.Count < count)
+            {
+                Debug.LogError("RandomUtil : Requesting more unique random number than there are available.");
+                return container.ToArray();
+            }
+
+            int[] result = new int[count];
+
+            for (int i = 0; i < count; i++)
+            {
+                result[i] = container.GetRandom();
+                container.Remove(result[i]);
+            }
+
+            return result;
+        }
+
+        /// <summary>
         /// Extension of Unity's Random.Range function, adding extra integers that the result CANNOT be.
         /// </summary>
         /// <param name="min">Minimum value [inclusive]</param>
@@ -22,97 +93,126 @@ namespace Canty
         /// <returns>Random value.</returns>
         public static int RangeExcept(int min, int max, params int[] exceptions)
         {
-            List<int> container = new List<int>(exceptions);
-            int result = -1;
-            int loop = 0;
+            List<int> container = ListUtil.RangePopulate(min, max);
+            container.RemoveEquals(new List<int>(exceptions));
+            
+            return container.GetRandom();
+        }
 
-            while (loop < 20) //You'd assume it would never go 20 times without touching an exception. If it does, you have no possible results.
+
+        /// <summary>
+        /// Implementation of Unity's Random.Range function, but to return a value from a passed in array set as a params argument.
+        /// </summary>
+        /// <param name="values">Possible values to pick from.</param>
+        public static T RangeFrom<T>(params T[] values)
+        {
+            return values[Random.Range(0, values.Length)];
+        }
+
+        /// <summary>
+        /// Implementation of Unity's Random.Range function, but to return multiple values from a passed in array set as a params argument.
+        /// </summary>
+        /// <param name="count">How many values to get.</param>
+        /// <param name="values">Possible values to pick from.</param>
+        public static T[] RangeFromMultiple<T>(int count, params T[] values)
+        {
+            T[] result = new T[count];
+
+            List<T> container = new List<T>(values);
+
+            for (int i = 0; i < count; i++)
             {
-                result = Random.Range(min, max);
-
-                if (!container.Contains(result))
-                {
-                    break;
-                }
-
-                loop++;
+                result[i] = container.GetRandom();
             }
 
             return result;
         }
 
         /// <summary>
-        /// Extension of Unity's Random.Range function, but allows the user to put more chances behind certain numbers.
+        /// Implementation of Unity's Random.Range function, but to return multiple values from a passed in array set as a params argument. No values are picked twice.
+        /// </summary>
+        /// <param name="count">How many values to get.</param>
+        /// <param name="values">Possible values to pick from.</param>
+        public static T[] RangeFromMultipleUnique<T>(int count, params T[] values)
+        {
+            List<T> container = new List<T>(values);
+
+            if (container.Count == count)
+            {
+                return container.ToArray();
+            }
+
+            if (container.Count < count)
+            {
+                Debug.LogError("RandomUtil : Requesting more unique random number than there are available.");
+                return container.ToArray();
+            }
+
+            T[] result = new T[count];
+
+            for (int i = 0; i < count; i++)
+            {
+                result[i] = container.GetRandom();
+                container.Remove(result[i]);
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Extension of Unity's Random.Range function, adding extra integers that the result CANNOT be.
         /// </summary>
         /// <param name="min">Minimum value [inclusive]</param>
         /// <param name="max">Maximum value [exclusive]</param>
-        /// <param name="emphasisPower">How many extra time this number has the chance to be picked up.</param>
-        /// <param name="emphasisNumbers">The numbers who gets extra chances.</param>
-        /// <returns>Random number.</returns>
-        public static int RangeEmphasis(int min, int max, int emphasisPower, params int[] emphasisNumbers)
+        /// <param name="exceptions">Values that can't be the result.</param>
+        /// <returns>Random value.</returns>
+        public static int[] RangeMultipleExcept(int min, int max, int count, params int[] exceptions)
         {
-            List<int> numbers = new List<int>();
+            int[] result = new int[count];
 
-            for (int i = min; i < max; i++)
+            List<int> container = ListUtil.RangePopulate(min, max);
+            container.RemoveEquals(new List<int>(exceptions));
+
+            for (int i = 0; i < count; i++)
             {
-                numbers.Add(i);
+                result[i] = container.GetRandom();
             }
 
-            for (int i = 0; i < emphasisNumbers.Length; i++)
-            {
-                for (int j = 0; j < emphasisPower; j++)
-                {
-                    numbers.Add(emphasisNumbers[i]);
-                }
-            }
-
-            return numbers[Random.Range(0, numbers.Count)];
+            return result;
         }
 
         /// <summary>
-        /// Extension of Unity's Random.Range function, but allows the user to put more chances behind certain numbers.
+        /// Extension of Unity's Random.Range function, adding extra integers that the result CANNOT be.
         /// </summary>
         /// <param name="min">Minimum value [inclusive]</param>
         /// <param name="max">Maximum value [exclusive]</param>
-        /// <param name="emphasisPower">How many extra time this number has the chance to be picked up.</param>
-        /// <param name="emphasisNumbers">The numbers who gets extra chances.</param>
-        /// <returns>Random number.</returns>
-        public static int RangeEmphasis(int min, int max, int emphasisPower, ICollection<int> emphasisNumbers)
+        /// <param name="exceptions">Values that can't be the result.</param>
+        /// <returns>Random value.</returns>
+        public static int[] RangeMultipleUniqueExcept(int min, int max, int count, params int[] exceptions)
         {
-            List<int> numbers = new List<int>();
+            List<int> container = ListUtil.RangePopulate(min, max);
+            container.RemoveEquals(new List<int>(exceptions));
 
-            for (int i = min; i < max; i++)
+            if (container.Count == count)
             {
-                numbers.Add(i);
+                return container.ToArray();
             }
 
-            List<int> emphasis = new List<int>(emphasisNumbers);
-            for (int i = 0; i < emphasis.Count; i++)
+            if (container.Count < count)
             {
-                for (int j = 0; j < emphasisPower; j++)
-                {
-                    numbers.Add(emphasis[i]);
-                }
+                Debug.LogError("RandomUtil : Requesting more unique random number than there are available.");
+                return container.ToArray();
             }
 
-            return numbers[Random.Range(0, numbers.Count)];
-        }
-        
-        /// <summary>
-        /// Implementation of Unity's Random.Range function, but to return a value from a passed in array set as a params argument.
-        /// </summary>
-        public static int RandomFrom(params int[] numbers)
-        {
-            return numbers[Random.Range(0, numbers.Length)];
-        }
+            int[] result = new int[count];
 
-        /// <summary>
-        /// Implementation of Unity's Random.Range function, but to return a bool instead of a number.
-        /// </summary>
-        /// <returns>Random bool.</returns>
-        public static bool RandomBool()
-        {
-            return Random.Range(0, 2) == 0 ? false : true;
+            for (int i = 0; i < count; i++)
+            {
+                result[i] = container.GetRandom();
+                container.Remove(result[i]);
+            }
+
+            return result;
         }
 
         /// <summary>
@@ -125,37 +225,77 @@ namespace Canty
             Array values = Enum.GetValues(typeof(E));
             return (E)values.GetValue(Random.Range(0, values.Length));
         }
-        
+
         /// <summary>
-        /// Returns a list of random enum values from within an enum type. Those values cannot be duplicated.
+        /// Returns multiple random enum values from within an enum type.
         /// </summary>
         /// <typeparam name="E">Enum type.</typeparam>
-        /// <returns>Random enum values.</returns>
-        public static List<E> RandomEnumsUnique<E>(int count) where E : struct, IConvertible
+        /// <param name="count">How many values.</param>
+        /// <returns>Random enum value.</returns>
+        public static T[] RandomEnumsMultiple<T>(int count) where T : struct, IConvertible
         {
-            Array values = Enum.GetValues(typeof(E));
-            List<E> valueList = List<E>(values);
+            List<T> container = List<T>(Enum.GetValues(typeof(T)));
 
-            if (values.Length == count)
+            if (container.Length == count)
             {
-                return valueList;
+                return container.ToArray();
             }
-            else if (values.Length > count)
+            else if (container.Length > count)
             {
-                Debug.LogError("RandomUtil : Trying to get more unique enum types than possible.");
-                return valueList;
+                Debug.LogError("RandomUtil : Requesting more unique random enum values than there are available.");
+                return container.ToArray();
             }
 
-            List<E> returnList = new List<E>();
+            T[] returnList = new T[count];
 
-            for(int i = 0; i < count; i++)
+            for (int i = 0; i < count; i++)
             {
-                int randomValue = Random.Range(0, valueList.Count);
-                returnList.Add((E)values.GetValue(randomValue));
-                valueList.RemoveAt(randomValue);
+                int randomValue = Random.Range(0, container.Count);
+                returnList[i] = (T)values.GetValue(randomValue);
             }
 
             return returnList;
+        }
+
+        /// <summary>
+        /// Returns multiple random enum values from within an enum type. Each values have no duplicates.
+        /// </summary>
+        /// <typeparam name="E">Enum type.</typeparam>
+        /// <param name="count">How many values.</param>
+        /// <returns>Random enum value.</returns>
+        public static T[] RandomEnumsMultipleUnique<T>(int count) where T : struct, IConvertible
+        {
+            List<T> container = List<T>(Enum.GetValues(typeof(T)));
+
+            if (container.Length == count)
+            {
+                return container.ToArray();
+            }
+            else if (container.Length > count)
+            {
+                Debug.LogError("RandomUtil : Requesting more unique random enum values than there are available.");
+                return container.ToArray();
+            }
+
+            T[] returnList = new T[count];
+
+            for(int i = 0; i < count; i++)
+            {
+                int randomValue = Random.Range(0, container.Count);
+                returnList[i] = (T)values.GetValue(randomValue);
+                container.RemoveAt(randomValue);
+            }
+
+            return returnList;
+        }
+
+        /// <summary>
+        /// Implementation of Unity's Random.Range function, but to return a bool instead of a number.
+        /// </summary>
+        /// <returns>Random bool.</returns>
+        public static bool RandomBool()
+        {
+            return Random.Range(0, 2) == 0 ? false : true;
         }
     }
 }

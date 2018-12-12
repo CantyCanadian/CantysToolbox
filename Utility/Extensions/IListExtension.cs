@@ -197,7 +197,7 @@ namespace Canty
         }
 
         /// <summary>
-        /// Removes multiple items at once..
+        /// Removes multiple items at once.
         /// </summary>
         /// <param name="firstIndex">First item being removed.</param>
         /// <param name="removeCount">How many items are being removed.</param>
@@ -212,6 +212,22 @@ namespace Canty
             for (int i = 0; i < removeCount; i++)
             {
                 target.RemoveAt(firstIndex);
+            }
+        }
+
+        /// <summary>
+        /// Removes all the values that are found inside the comparison list from your list.
+        /// </summary>
+        /// <param name="comparison">Values to remove.</param>
+        public static void RemoveEquals(this IList<I> target, IList<I> comparison)
+        {
+            for(int i = 0; i < target.Count; i++)
+            {
+                if (comparison.Contains(target[i]))
+                {
+                    target.RemoveAt(i);
+                    i--;
+                }
             }
         }
 
