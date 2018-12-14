@@ -13,7 +13,98 @@ namespace Canty.Managers
 {
     public class SettingsManager : Singleton<SettingsManager>
     {
-        private Dictionary<string, List<Vector2Int>> m_ResolutionList = null;
+        #region Public Properties
+
+        // Resolution
+        public AspectRatios AspectRatio;
+        public int ResolutionIndex;
+
+        // Graphics
+        public TextureQualityTypes TextureQuality;
+        public bool AnisotropicFiltering;
+        public AntiAliasingTypes AntiAliasing;
+        public bool SoftParticles;
+        public bool RealtimeReflectionProbe;
+
+        // Shadows
+        public ShadowDistanceTypes ShadowDistance;
+        public ShadowmaskMode ShadowmaskModeType;
+        public ShadowResolution ShadowResolutionType;
+        public ShadowQuality ShadowQualityType;
+        public ShadowProjection ShadowProjectionType;
+
+        // Other
+        public Dictionary<AspectRatios, List<Vector2Int>> ResolutionData { get { return m_ResolutionList; } }
+
+        #endregion
+
+        #region Private Properties
+
+        // Resolution
+        private AspectRatios m_CurrentAspectRatio;
+        private int m_CurrentResolutionIndex;
+
+        // Graphics
+        private TextureQualityTypes m_CurrentTextureQualityType;
+        private bool m_CurrentAnisotropicFiltering;
+        private AntiAliasingTypes m_CurrentAntiAliasingType;
+        private bool m_CurrentSoftParticles;
+        private bool m_CurrentRealtimeReflectionProbe;
+
+        // Shadows
+        private ShadowDistanceTypes m_CurrentShadowDistanceType;
+        private ShadowmaskMode m_CurrentShadowmaskModeType;
+        private ShadowResolution m_CurrentShadowResolutionType;
+        private ShadowQuality m_CurrentShadowQualityType;
+        private ShadowProjection m_CurrentShadowProjectionType;
+
+        // Other
+        private Dictionary<AspectRatios, List<Vector2Int>> m_ResolutionList = null;
+
+        #endregion
+
+        #region SettingTypes
+
+        public enum AspectRatios
+        {
+            AR43,           // 4:3
+            AR169,          // 16:9
+            AR1610          // 16:10
+        }
+
+        public enum TextureQualityTypes
+        {
+            // Best to worst
+            FullRes = 0,
+            HalfRes = 1,
+            QuarterRes = 2,
+            EighthRes = 3
+        }
+
+        public enum AntiAliasingTypes
+        {
+            // Worst to best
+            Disabled = 0,
+            MSAAx2 = 2,     // Multi Sampling x2
+            MSAAx4 = 4,     // Multi Sampling x4
+            MSAAx8 = 8      // Multi Sampling x8
+        }
+
+        public enum ShadowDistanceTypes // Values made up considering that default is 150. Change if desired.
+        {
+            // Worst to best
+            Low = 0,
+            Medium = 50,
+            High = 100,
+            Ultra = 150
+        }
+
+        public enum ShadowCascadeTypes
+        {
+            NoCascade,
+            TwoCascade,
+            FourCascade
+        }
 
         private void PopulateResolutionList()
         {
@@ -51,10 +142,12 @@ namespace Canty.Managers
                 new Vector2Int(2560, 1600)
             };
 
-            m_ResolutionList.Add("4:3", ratio43);
-            m_ResolutionList.Add("16:9", ratio169);
-            m_ResolutionList.Add("16:10", ratio1610);
+            m_ResolutionList.Add(AspectRatios.AR43, ratio43);
+            m_ResolutionList.Add(AspectRatios.AR169, ratio169);
+            m_ResolutionList.Add(AspectRatios.AR1610, ratio1610);
         }
+
+        #endregion
 
         private void Start()
         {
