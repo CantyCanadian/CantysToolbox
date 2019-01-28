@@ -19,7 +19,7 @@ namespace Canty
         /// <param name="min">Minimum value (inclusive).</param>
         /// <param name="max">Maximum value (exclusive).</param>
         /// <returns>Generic list with all the integer values.</returns>
-        public IList<int> RangePopulate(int min, int max)
+        public static List<int> RangePopulate(int min, int max)
         {
             List<int> result = new List<int>();
 

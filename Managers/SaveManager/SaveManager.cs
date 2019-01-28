@@ -44,8 +44,7 @@ namespace Canty.Managers
 
             if (m_RegisteredSaveables.ContainsKey(originalType))
             {
-                Debug.LogError("SaveManager : Trying to add two objects of the same type, [" + originalType.ToString() +
-                               "], as saveables. Recommended to create a manager if multiples of the same item needs saving.");
+                Debug.LogError("SaveManager : Trying to add two objects of the same type, [" + originalType.ToString() + "], as saveables. Recommended to create a container if multiples of the same item needs saving.");
                 return;
             }
 

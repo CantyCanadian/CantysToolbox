@@ -219,7 +219,7 @@ namespace Canty
         /// Removes all the values that are found inside the comparison list from your list.
         /// </summary>
         /// <param name="comparison">Values to remove.</param>
-        public static void RemoveEquals(this IList<I> target, IList<I> comparison)
+        public static void RemoveEquals<I>(this IList<I> target, IList<I> comparison)
         {
             for(int i = 0; i < target.Count; i++)
             {

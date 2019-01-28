@@ -15,33 +15,10 @@ namespace Canty
 {
     public static class EditorUtil
     {
-        private static System.Type ProjectWindowType = typeof(EditorWindow).Assembly.GetType(" UnityEditor.ProjectBrowser");
-
-        private static EditorWindow projectWindow = null;
-
         /// <summary>
-        /// Small editor hack, allowing selected asset to be flagged as being renamed.
+        /// Returns the path of an asset.
         /// </summary>
-        public static void StartRenameSelectedAsset()
-        {
-            if (projectWindow == null)
-            {
-                projectWindow = EditorWindow.GetWindow(ProjectWindowType);
-            }
-
-            if (projectWindow != null)
-            {
-                Event f2Event = new Event();
-                f2Event.keyCode = KeyCode.F2;
-                f2Event.type = EventType.KeyDown;
-                projectWindow.SendEvent(f2Event);
-            }
-        }
-
-        /// <summary>
-        /// Returns the path of an asset, but without including the asset name in the path itself.
-        /// </summary>
-        public static string GetAssetFolderPath(Object asset)
+        public static string GetAssetFolderPath(Object asset, bool includeAssetName = false)
         {
             string path = AssetDatabase.GetAssetPath(asset);
 
@@ -51,13 +28,20 @@ namespace Canty
             }
             else if (Path.GetExtension(path) != "")
             {
-                path = path.Replace(Path.GetFileName(AssetDatabase.GetAssetPath(Selection.activeObject)), "");
+                if (!includeAssetName)
+                {
+                    path = path.Replace(Path.GetFileName(AssetDatabase.GetAssetPath(Selection.activeObject)), "");
+                }
             }
 
             return path;
         }
 
-        public static GameObject CreateMenuItemGameObject(MenuCommand menuCommand, string name)
+        /// <summary>
+        /// Shortcut method to create a GameObject in the world for the purpose of custom create utility functions.
+        /// This is assumed to be used from inside a function with the MenuItem attribute, which adds a MenuCommand argument that can be passed through.
+        /// </summary>
+        public static GameObject CreateGameObjectInWorld(MenuCommand menuCommand, string name)
         {
             GameObject menuItemObject = new GameObject(name);
 
@@ -66,6 +50,19 @@ namespace Canty
             Selection.activeObject = menuItemObject;
 
             return menuItemObject;
+        }
+
+        /// <summary>
+        /// Shortcut method to create a ScriptableObject from within the resource browser.
+        /// </summary>
+        public static void CreateScriptableObject<T>() where T : ScriptableObject
+        {
+            T scriptableObject = ScriptableObject.CreateInstance<T>();
+            
+            ProjectWindowUtil.CreateAsset(scriptableObject, "New" + typeof(T).ToString() + ".asset");
+
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
         }
     }
 }

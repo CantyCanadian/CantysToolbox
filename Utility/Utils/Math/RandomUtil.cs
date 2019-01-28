@@ -7,6 +7,7 @@
 
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 using Random = UnityEngine.Random;
 
 namespace Canty
@@ -234,7 +235,7 @@ namespace Canty
         /// <returns>Random enum value.</returns>
         public static T[] RandomEnumsMultiple<T>(int count) where T : struct, IConvertible
         {
-            List<T> container = List<T>(Enum.GetValues(typeof(T)));
+            T[] container = (T[])Enum.GetValues(typeof(T));
 
             if (container.Length == count)
             {
@@ -250,8 +251,8 @@ namespace Canty
 
             for (int i = 0; i < count; i++)
             {
-                int randomValue = Random.Range(0, container.Count);
-                returnList[i] = (T)values.GetValue(randomValue);
+                int randomValue = Random.Range(0, container.Length);
+                returnList[i] = container[randomValue];
             }
 
             return returnList;
@@ -265,13 +266,14 @@ namespace Canty
         /// <returns>Random enum value.</returns>
         public static T[] RandomEnumsMultipleUnique<T>(int count) where T : struct, IConvertible
         {
-            List<T> container = List<T>(Enum.GetValues(typeof(T)));
+            T[] values = (T[])Enum.GetValues(typeof(T));
+            List<T> container = new List<T>(values);
 
-            if (container.Length == count)
+            if (container.Count == count)
             {
                 return container.ToArray();
             }
-            else if (container.Length > count)
+            else if (container.Count > count)
             {
                 Debug.LogError("RandomUtil : Requesting more unique random enum values than there are available.");
                 return container.ToArray();
@@ -282,7 +284,7 @@ namespace Canty
             for(int i = 0; i < count; i++)
             {
                 int randomValue = Random.Range(0, container.Count);
-                returnList[i] = (T)values.GetValue(randomValue);
+                returnList[i] = container[randomValue];
                 container.RemoveAt(randomValue);
             }
 
@@ -295,7 +297,7 @@ namespace Canty
         /// <returns>Random bool.</returns>
         public static bool RandomBool()
         {
-            return Random.Range(0, 2) == 0 ? false : true;
+            return Random.Range(0, 2) == 1;
         }
     }
 }

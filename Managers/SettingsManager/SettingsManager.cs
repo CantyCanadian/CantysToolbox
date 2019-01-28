@@ -7,7 +7,10 @@
 
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
+using UnityEngine.Rendering;
+using UnityEngine.UI;
 
 namespace Canty.Managers
 {
@@ -15,40 +18,50 @@ namespace Canty.Managers
     {
         #region Public Properties
 
-        // Resolution
-        public AspectRatios AspectRatio;
-        public int ResolutionIndex;
+        public Dictionary<string, SettingsPreset> Presets;
+
+        public bool UsePresetAsDefault = false;
+        public int PresetUsedAsDefault = 0;
+
+        // Screen
+        public UnityEditor.AspectRatio AspectRatio = AspectRatio.Aspect16by9;
+        public int ResolutionIndex = -1;
+        public bool Fullscreen = true;
+        public int RefreshRate = 60;
 
         // Graphics
-        public TextureQualityTypes TextureQuality;
-        public bool AnisotropicFiltering;
-        public AntiAliasingTypes AntiAliasing;
-        public bool SoftParticles;
-        public bool RealtimeReflectionProbe;
-        public int VSyncCount;
+        public int PixelLightCount = 4;
+        public TextureQualityTypes TextureQuality = TextureQualityTypes.FullRes;
+        public bool AnisotropicFiltering = true;
+        public AntiAliasingTypes AntiAliasing = AntiAliasingTypes.MSAAx8;
+        public bool SoftParticles = true;
+        public bool RealtimeReflectionProbe = true;
+        public int VSyncCount = 1;
 
         // Shadows
-        public ShadowDistanceTypes ShadowDistance;
-        public ShadowmaskMode ShadowmaskModeType;
-        public ShadowResolution ShadowResolutionType;
-        public ShadowQuality ShadowQualityType;
-        public ShadowProjection ShadowProjectionType;
-        public int ShadowDistance;
-        public int ShadowNearPlaneOffset;
-        public ShadowCascadeTypes ShadowCascadeType;
+        public ShadowQuality ShadowQualityType = ShadowQuality.All;
+        public ShadowResolution ShadowResolutionType = ShadowResolution.VeryHigh;
+        public ShadowProjection ShadowProjectionType = ShadowProjection.StableFit;
+        public ShadowDistanceTypes ShadowDistance = ShadowDistanceTypes.Ultra;
+        public ShadowmaskMode ShadowmaskModeType = ShadowmaskMode.DistanceShadowmask;
+        public int ShadowNearPlaneOffset = 3;
+        public ShadowCascadeTypes ShadowCascadeType = ShadowCascadeTypes.FourCascade;
 
         // Other
-        public Dictionary<AspectRatios, List<Vector2Int>> ResolutionData { get { return m_ResolutionList; } }
+        public Dictionary<UnityEditor.AspectRatio, Vector2Int[]> ResolutionData { get { return m_ResolutionList; } }
 
         #endregion
 
         #region Private Properties
 
-        // Resolution
-        private AspectRatios m_CurrentAspectRatio;
+        // Screen
+        private UnityEditor.AspectRatio m_CurrentAspectRatio;
         private int m_CurrentResolutionIndex;
+        private bool m_CurrentlyFullscreen;
+        private int m_CurrentRefreshRate;
 
         // Graphics
+        private int m_CurrentPixelLightCount;
         private TextureQualityTypes m_CurrentTextureQualityType;
         private bool m_CurrentAnisotropicFiltering;
         private AntiAliasingTypes m_CurrentAntiAliasingType;
@@ -57,28 +70,20 @@ namespace Canty.Managers
         private int m_CurrentVSyncCount;
 
         // Shadows
+        private ShadowQuality m_CurrentShadowQualityType;
+        private ShadowResolution m_CurrentShadowResolutionType;
+        private ShadowProjection m_CurrentShadowProjectionType;
         private ShadowDistanceTypes m_CurrentShadowDistanceType;
         private ShadowmaskMode m_CurrentShadowmaskModeType;
-        private ShadowResolution m_CurrentShadowResolutionType;
-        private ShadowQuality m_CurrentShadowQualityType;
-        private ShadowProjection m_CurrentShadowProjectionType;
-        private int m_CurrentShadowDistance;
         private int m_CurrentShadowNearPlaneOffset;
         private ShadowCascadeTypes m_CurrentShadowCascadeType;
 
         // Other
-        private Dictionary<AspectRatios, List<Vector2Int>> m_ResolutionList = null;
+        private Dictionary<UnityEditor.AspectRatio, Vector2Int[]> m_ResolutionList = null;
 
         #endregion
 
         #region Setting Types
-
-        public enum AspectRatios
-        {
-            AR43,           // 4:3
-            AR169,          // 16:9
-            AR1610          // 16:10
-        }
 
         public enum TextureQualityTypes
         {
@@ -109,28 +114,157 @@ namespace Canty.Managers
 
         public enum ShadowCascadeTypes
         {
-            NoCascade,
-            TwoCascade,
-            FourCascade
+            // Worst to best
+            NoCascade = 0,
+            TwoCascade = 2,
+            FourCascade = 4
         }
 
-        public void ApplyChanges()
+        public void ApplyChanges(bool overwrite = false)
         {
+            // Screen
+            if (overwrite || (m_CurrentResolutionIndex != ResolutionIndex || m_CurrentAspectRatio != AspectRatio || m_CurrentlyFullscreen != Fullscreen || m_CurrentRefreshRate != RefreshRate))
+            {
+                m_CurrentAspectRatio = AspectRatio;
+                m_CurrentResolutionIndex = ResolutionIndex;
+                m_CurrentlyFullscreen = Fullscreen;
+                m_CurrentRefreshRate = RefreshRate;
+                Vector2Int resolution = m_ResolutionList[m_CurrentAspectRatio][m_CurrentResolutionIndex];
+                Screen.SetResolution(resolution.x, resolution.y, m_CurrentlyFullscreen, m_CurrentRefreshRate);
 
+                PlayerPrefsUtil.SetEnum("SETTINGSMANAGER_ASPECTRATIO", m_CurrentAspectRatio);
+                PlayerPrefs.SetInt("SETTINGSMANAGER_RESOLUTIONINDEX", m_CurrentResolutionIndex);
+                PlayerPrefsUtil.SetBool("SETTINGSMANAGER_FULLSCREEN", m_CurrentlyFullscreen);
+                PlayerPrefs.GetInt("SETTINGSMANAGER_REFRESHRATE", m_CurrentRefreshRate);
+            }
+
+            // Graphics
+            if (overwrite || (m_CurrentPixelLightCount != PixelLightCount))
+            {
+                m_CurrentPixelLightCount = PixelLightCount;
+                QualitySettings.pixelLightCount = m_CurrentPixelLightCount;
+
+                PlayerPrefs.SetInt("SETTINGSMANAGER_PIXELLIGHTCOUNT", m_CurrentPixelLightCount);
+            }
+
+            if (overwrite || (m_CurrentTextureQualityType != TextureQuality))
+            {
+                m_CurrentTextureQualityType = TextureQuality;
+                QualitySettings.masterTextureLimit = (int)m_CurrentTextureQualityType;
+
+                PlayerPrefsUtil.SetEnum("SETTINGSMANAGER_TEXTUREQUALITYTYPE", m_CurrentTextureQualityType);
+            }
+
+            if (overwrite || (m_CurrentAnisotropicFiltering != AnisotropicFiltering))
+            {
+                m_CurrentAnisotropicFiltering = AnisotropicFiltering;
+                QualitySettings.anisotropicFiltering = m_CurrentAnisotropicFiltering ? UnityEngine.AnisotropicFiltering.Enable : UnityEngine.AnisotropicFiltering.Disable;
+
+                PlayerPrefsUtil.SetBool("SETTINGSMANAGER_ANISOTROPICFILTERING", m_CurrentAnisotropicFiltering);
+            }
+
+            if (overwrite || (m_CurrentAntiAliasingType != AntiAliasing))
+            {
+                m_CurrentAntiAliasingType = AntiAliasing;
+                QualitySettings.antiAliasing = (int)m_CurrentAntiAliasingType;
+
+                PlayerPrefsUtil.SetEnum("SETTINGSMANAGER_ANTIALIASINGTYPE", m_CurrentAntiAliasingType);
+            }
+
+            if (overwrite || (m_CurrentSoftParticles != SoftParticles))
+            {
+                m_CurrentSoftParticles = SoftParticles;
+                QualitySettings.softParticles = m_CurrentSoftParticles;
+
+                PlayerPrefsUtil.SetBool("SETTINGSMANAGER_SOFTPARTICLES", m_CurrentSoftParticles);
+            }
+
+            if (overwrite || (m_CurrentRealtimeReflectionProbe != RealtimeReflectionProbe))
+            {
+                m_CurrentRealtimeReflectionProbe = RealtimeReflectionProbe;
+                QualitySettings.realtimeReflectionProbes = m_CurrentRealtimeReflectionProbe;
+
+                PlayerPrefsUtil.SetBool("SETTINGSMANAGER_REALTIMEREFLECTIONPROBE", m_CurrentRealtimeReflectionProbe);
+            }
+
+            if (overwrite || (m_CurrentVSyncCount != VSyncCount))
+            {
+                m_CurrentVSyncCount = VSyncCount;
+                QualitySettings.vSyncCount = VSyncCount;
+
+                PlayerPrefs.SetInt("SETTINGSMANAGER_VSYNCCOUNT", m_CurrentVSyncCount);
+            }
+
+            // Shadows
+            if (overwrite || (m_CurrentShadowQualityType != ShadowQualityType))
+            {
+                m_CurrentShadowQualityType = ShadowQualityType;
+                QualitySettings.shadows = m_CurrentShadowQualityType;
+
+                PlayerPrefsUtil.SetEnum("SETTINGSMANAGER_SHADOWQUALITYTYPE", m_CurrentShadowQualityType);
+            }
+
+            if (overwrite || (m_CurrentShadowResolutionType != ShadowResolutionType))
+            {
+                m_CurrentShadowResolutionType = ShadowResolutionType;
+                QualitySettings.shadowResolution = m_CurrentShadowResolutionType;
+
+                PlayerPrefsUtil.SetEnum("SETTINGSMANAGER_SHADOWRESOLUTIONTYPE", m_CurrentShadowQualityType);
+            }
+
+            if (overwrite || (m_CurrentShadowProjectionType != ShadowProjectionType))
+            {
+                m_CurrentShadowProjectionType = ShadowProjectionType;
+                QualitySettings.shadowProjection = m_CurrentShadowProjectionType;
+
+                PlayerPrefsUtil.SetEnum("SETTINGSMANAGER_SHADOWPROJECTIONTYPE", m_CurrentShadowProjectionType);
+            }
+
+            if (overwrite || (m_CurrentShadowDistanceType != ShadowDistance))
+            {
+                m_CurrentShadowDistanceType = ShadowDistance;
+                QualitySettings.shadowDistance = (int)m_CurrentShadowDistanceType;
+
+                PlayerPrefsUtil.SetEnum("SETTINGSMANAGER_SHADOWDISTANCETYPE", m_CurrentShadowProjectionType);
+            }
+
+            if (overwrite || (m_CurrentShadowmaskModeType != ShadowmaskModeType))
+            {
+                m_CurrentShadowmaskModeType = ShadowmaskModeType;
+                QualitySettings.shadowmaskMode = m_CurrentShadowmaskModeType;
+
+                PlayerPrefsUtil.SetEnum("SETTINGSMANAGER_SHADOWMASKMODE", m_CurrentShadowmaskModeType);
+            }
+
+            if (overwrite || (m_CurrentShadowNearPlaneOffset != ShadowNearPlaneOffset))
+            {
+                m_CurrentShadowNearPlaneOffset = ShadowNearPlaneOffset;
+                QualitySettings.shadowNearPlaneOffset = m_CurrentShadowNearPlaneOffset;
+
+                PlayerPrefs.SetInt("SETTINGSMANAGER_SHADOWNEARPLANEOFFSET", m_CurrentShadowNearPlaneOffset);
+            }
+
+            if (overwrite || (m_CurrentShadowCascadeType != ShadowCascadeType))
+            {
+                m_CurrentShadowCascadeType = ShadowCascadeType;
+                QualitySettings.shadowCascades = (int)m_CurrentShadowCascadeType;
+
+                PlayerPrefsUtil.SetEnum("SETTINGSMANAGER_SHADOWCASCADETYPE", m_CurrentShadowCascadeType);
+            }
         }
 
-        private void LoadInitialValues()
-        {            
-            ResolutionIndex = PlayerPrefs.GetInt("SETTINGSMANAGER_RESOLUTIONINDEX", -1);
+        private void LoadValues()
+        {
+            ResolutionIndex = PlayerPrefs.GetInt("SETTINGSMANAGER_RESOLUTIONINDEX", ResolutionIndex);
 
-            if (ResolutionIndex == -1)
+            if (ResolutionIndex <= -1)
             {
                 Vector2Int currentResolution = new Vector2Int(Screen.currentResolution.width, Screen.currentResolution.height);
 
                 bool exit = false;
-                foreach(KeyValuePair<AspectRatios, Vector2Int[]> aspectRatio in m_ResolutionList)
+                foreach (KeyValuePair<UnityEditor.AspectRatio, Vector2Int[]> aspectRatio in m_ResolutionList)
                 {
-                    for(int i = 0; i < aspectRatio.Value.Length; i++)
+                    for (int i = 0; i < aspectRatio.Value.Length; i++)
                     {
                         if (currentResolution == aspectRatio.Value[i])
                         {
@@ -151,31 +285,33 @@ namespace Canty.Managers
                 {
                     // Standard 1080p
                     ResolutionIndex = 2;
-                    AspectRatio = AspectRatios.AR169;
+                    AspectRatio = UnityEditor.AspectRatio.Aspect16by9;
                 }
             }
             else
             {
-                AspectRatio = PlayerPrefsUtil.GetEnum<AspectRatios>("SETTINGSMANAGER_ASPECTRATIO", AspectRatios.AR169);
+                AspectRatio = PlayerPrefsUtil.GetEnum("SETTINGSMANAGER_ASPECTRATIO", AspectRatio);
             }
 
+            Fullscreen = PlayerPrefsUtil.GetBool("SETTINGSMANAGER_FULLSCREEN", Fullscreen);
+            RefreshRate = PlayerPrefs.GetInt("SETTINGSMANAGER_REFRESHRATE", RefreshRate);
 
-            TextureQuality = PlayerPrefsUtil.GetEnum<TextureQualityTypes>("SETTINGSMANAGER_TEXTUREQUALITYTYPE", TextureQualityTypes.FullRes);
-            AnisotropicFiltering = PlayerPrefsUtil.GetBool("SETTINGSMANAGER_ANISOTROPICFILTERING", false);
-            AntiAliasing = PlayerPrefsUtil.GetEnum<AntiAliasingTypes>("SETTINGSMANAGER_ANTIALIASING", AntiAliasingTypes.Disabled);
-            SoftParticles = PlayerPrefsUtil.GetBool("SETTINGSMANAGER_SOFTPARTICLES", false);
-            RealtimeReflectionProbe = PlayerPrefsUtil.GetBool("SETTINGSMANAGER_REALTIMEREFLECTIONPROBE", false);
-            VSyncCount = PlayerPrefs.GetInt("SETTINGSMANAGER_VSYNCCOUNT", 0);
+            PixelLightCount = PlayerPrefs.GetInt("SETTINGSMANAGER_PIXELLIGHTCOUNT", PixelLightCount);
+            TextureQuality = PlayerPrefsUtil.GetEnum("SETTINGSMANAGER_TEXTUREQUALITYTYPE", TextureQuality);
+            AnisotropicFiltering = PlayerPrefsUtil.GetBool("SETTINGSMANAGER_ANISOTROPICFILTERING", AnisotropicFiltering);
+            AntiAliasing = PlayerPrefsUtil.GetEnum("SETTINGSMANAGER_ANTIALIASING", AntiAliasing);
+            SoftParticles = PlayerPrefsUtil.GetBool("SETTINGSMANAGER_SOFTPARTICLES", SoftParticles);
+            RealtimeReflectionProbe = PlayerPrefsUtil.GetBool("SETTINGSMANAGER_REALTIMEREFLECTIONPROBE", RealtimeReflectionProbe);
+            VSyncCount = PlayerPrefs.GetInt("SETTINGSMANAGER_VSYNCCOUNT", VSyncCount);
 
-            ShadowDistance = PlayerPrefsUtil.GetEnum<ShadowDistanceTypes>("SETTINGSMANAGER_SHADOWDISTANCE", ShadowDistanceTypes.Ultra);
-            ShadowmaskModeType = PlayerPrefsUtil.GetEnum<ShadowmaskMode>("SETTINGSMANAGER_SHADOWMASKMODE", ShadowmaskMode.Shadowmask);
-            ShadowResolutionType;
-            m_CurrentShadowQualityType;
-            m_CurrentShadowProjectionType;
-            m_CurrentShadowDistance;
-            m_CurrentShadowNearPlaneOffset;
-            m_CurrentShadowCascadeType;
-        }
+            ShadowQualityType = PlayerPrefsUtil.GetEnum("SETTINGSMANAGER_SHADOWQUALITYTYPE", ShadowQualityType);
+            ShadowResolutionType = PlayerPrefsUtil.GetEnum("SETTINGSMANAGER_SHADOWRESOLUTIONTYPE", ShadowResolutionType);
+            ShadowProjectionType = PlayerPrefsUtil.GetEnum("SETTINGSMANAGER_SHADOWPROJECTIONTYPE", ShadowProjectionType);
+            ShadowDistance = PlayerPrefsUtil.GetEnum("SETTINGSMANAGER_SHADOWDISTANCETYPE", ShadowDistance);
+            ShadowmaskModeType = PlayerPrefsUtil.GetEnum("SETTINGSMANAGER_SHADOWMASKMODE", ShadowmaskModeType);
+            ShadowNearPlaneOffset = PlayerPrefs.GetInt("SETTINGSMANAGER_SHADOWNEARPLANEOFFSET", ShadowNearPlaneOffset);
+            ShadowCascadeType = PlayerPrefsUtil.GetEnum("SETTINGSMANAGER_SHADOWCASCADETYPE", ShadowCascadeType);
+    }
 
         private void PopulateResolutionList()
         {
@@ -184,7 +320,7 @@ namespace Canty.Managers
                 return;
             }
 
-            m_ResolutionList = new Dictionary<AspectRatios, Vector2Int[]>();
+            m_ResolutionList = new Dictionary<UnityEditor.AspectRatio, Vector2Int[]>();
 
             Vector2Int[] ratio43 = new Vector2Int[]
             {
@@ -213,9 +349,9 @@ namespace Canty.Managers
                 new Vector2Int(2560, 1600)
             };
 
-            m_ResolutionList.Add(AspectRatios.AR43, ratio43);
-            m_ResolutionList.Add(AspectRatios.AR169, ratio169);
-            m_ResolutionList.Add(AspectRatios.AR1610, ratio1610);
+            m_ResolutionList.Add(UnityEditor.AspectRatio.Aspect4by3, ratio43);
+            m_ResolutionList.Add(UnityEditor.AspectRatio.Aspect16by9, ratio169);
+            m_ResolutionList.Add(UnityEditor.AspectRatio.Aspect16by10, ratio1610);
         }
 
         #endregion
@@ -223,6 +359,8 @@ namespace Canty.Managers
         private void Start()
         {
             PopulateResolutionList();
+            LoadValues();
+            ApplyChanges(true);
         }
     }
 }

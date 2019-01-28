@@ -191,7 +191,10 @@ namespace Canty.Editors
 
                     GUILayout.Box(" ", GUILayout.Width(135.0f), GUILayout.Height(135.0f));
 
-                    GUI.DrawTexture(m_Box, m_Result);
+                    if (m_Result != null)
+                    {
+                        GUI.DrawTexture(m_Box, m_Result);
+                    }
 
                     GUILayout.FlexibleSpace();
                 }

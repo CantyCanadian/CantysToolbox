@@ -12,7 +12,7 @@ namespace Canty.Editors
         [MenuItem("GameObject/Camera/Camera", false, 10)]
         public static void CreateDefaultCamera(MenuCommand command)
         {
-            GameObject obj = EditorUtil.CreateMenuItemGameObject(command, "Camera");
+            GameObject obj = EditorUtil.CreateGameObjectInWorld(command, "Camera");
 
             obj.AddComponent<Camera>();
             obj.AddComponent<FlareLayer>();
@@ -25,20 +25,22 @@ namespace Canty.Editors
         [MenuItem("GameObject/Camera/First-Person Camera", false, 10)]
         public static void CreateFirstPersonCamera(MenuCommand command)
         {
-            GameObject obj = EditorUtil.CreateMenuItemGameObject(command, "FirstPersonCamera");
+            GameObject obj = EditorUtil.CreateGameObjectInWorld(command, "First Person Camera");
 
             obj.AddComponent<Camera>();
 
             GameObject localCamera = new GameObject("LocalCamera");
 
             localCamera.transform.SetParent(obj.transform);
+            localCamera.transform.position = obj.transform.position;
+            localCamera.transform.rotation = obj.transform.rotation;
 
             Camera camera = localCamera.AddComponent<Camera>();
 
             camera.clearFlags = CameraClearFlags.Depth;
             camera.cullingMask = 0;
 
-            Debug.Log("First-Person Camera : To finish creating camera, set Parent Camera's Culling Mask to remove your player, while setting the Child's Culling Mask to only render the player.");
+            Debug.Log("First-Person Camera : To finish creating the camera, set [First Person Camera]'s Culling Mask to remove your player, while setting the [Local Camera]'s Culling Mask to only render the player.");
         }
     }
 }
