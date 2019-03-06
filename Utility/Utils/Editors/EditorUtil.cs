@@ -64,6 +64,15 @@ namespace Canty
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
         }
+
+        /// <summary>
+        /// Shortcut method to obtain an icon object with built-in tooltip.
+        /// </summary>
+        public static GUIContent IconContent(string name, string tooltip)
+        {
+            GUIContent builtinIcon = EditorGUIUtility.IconContent(name);
+            return new GUIContent(builtinIcon.image, tooltip);
+        }
     }
 }
 

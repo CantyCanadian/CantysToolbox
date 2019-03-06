@@ -5,15 +5,6 @@ using Canty.Managers;
 
 public class SettingsPreset : ScriptableObject
 {
-    [Space(20)]
-
-    // Screen
-    public UnityEditor.AspectRatio AspectRatio = UnityEditor.AspectRatio.Aspect16by9;
-    public int ResolutionIndex = 0;
-    public bool Fullscreen = true;
-    public int RefreshRate = 60;
-    [Space(20)]
-
     // Graphics
     public int PixelLightCount = 4;
     public SettingsManager.TextureQualityTypes TextureQuality = SettingsManager.TextureQualityTypes.FullRes;

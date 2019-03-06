@@ -23,14 +23,13 @@ namespace Canty.Serializable
         const string ValuesFieldName = "m_Values";
         protected const float IndentWidth = 15f;
 
-        static GUIContent s_IconPlus = IconContent("Toolbar Plus", "Add entry");
-        static GUIContent s_IconMinus = IconContent("Toolbar Minus", "Remove entry");
+        static GUIContent s_IconPlus = EditorUtil.IconContent("Toolbar Plus", "Add entry");
+        static GUIContent s_IconMinus = EditorUtil.IconContent("Toolbar Minus", "Remove entry");
 
-        static GUIContent s_WarningIconConflict =
-            IconContent("console.warnicon.sml", "Conflicting key, this entry will be lost");
+        static GUIContent s_WarningIconConflict = EditorUtil.IconContent("console.warnicon.sml", "Conflicting key, this entry will be lost");
 
-        static GUIContent s_WarningIconOther = IconContent("console.infoicon.sml", "Conflicting key");
-        static GUIContent s_WarningIconNull = IconContent("console.warnicon.sml", "Null key, this entry will be lost");
+        static GUIContent s_WarningIconOther = EditorUtil.IconContent("console.infoicon.sml", "Conflicting key");
+        static GUIContent s_WarningIconNull = EditorUtil.IconContent("console.warnicon.sml", "Null key, this entry will be lost");
         static GUIStyle s_ButtonStyle = GUIStyle.none;
         static GUIContent s_TempContent = new GUIContent();
 
@@ -58,8 +57,7 @@ namespace Canty.Serializable
             public string PropertyPath;
         }
 
-        static Dictionary<PropertyIdentity, ConflictState> s_ConflictStateDict =
-            new Dictionary<PropertyIdentity, ConflictState>();
+        static Dictionary<PropertyIdentity, ConflictState> s_ConflictStateDict = new Dictionary<PropertyIdentity, ConflictState>();
 
         enum Action
         {
@@ -88,8 +86,7 @@ namespace Canty.Serializable
                 keyProperty.isExpanded = conflictState.ConflictKeyPropertyExpanded;
 
                 valueArrayProperty.InsertArrayElementAtIndex(conflictState.ConflictIndex);
-                SerializedProperty valueProperty =
-                    valueArrayProperty.GetArrayElementAtIndex(conflictState.ConflictIndex);
+                SerializedProperty valueProperty = valueArrayProperty.GetArrayElementAtIndex(conflictState.ConflictIndex);
                 SetPropertyValue(valueProperty, conflictState.ConflictValue);
                 valueProperty.isExpanded = conflictState.ConflictValuePropertyExpanded;
             }
@@ -105,8 +102,7 @@ namespace Canty.Serializable
             }
 
             EditorGUI.PropertyField(labelPosition, property, label, false);
-
-            // property.isExpanded = EditorGUI.Foldout(labelPosition, property.isExpanded, label);
+            
             if (property.isExpanded)
             {
                 Rect buttonPosition = position;
@@ -231,8 +227,7 @@ namespace Canty.Serializable
             EditorGUI.EndProperty();
         }
 
-        static float DrawKeyValueLine(SerializedProperty keyProperty, SerializedProperty valueProperty,
-            Rect linePosition, int index)
+        static float DrawKeyValueLine(SerializedProperty keyProperty, SerializedProperty valueProperty, Rect linePosition, int index)
         {
             bool keyCanBeExpanded = CanPropertyBeExpanded(keyProperty);
             bool valueCanBeExpanded = CanPropertyBeExpanded(valueProperty);
@@ -250,8 +245,7 @@ namespace Canty.Serializable
             }
         }
 
-        static float DrawKeyValueLineSimple(SerializedProperty keyProperty, SerializedProperty valueProperty,
-            string keyLabel, string valueLabel, Rect linePosition)
+        static float DrawKeyValueLineSimple(SerializedProperty keyProperty, SerializedProperty valueProperty, string keyLabel, string valueLabel, Rect linePosition)
         {
             float labelWidth = EditorGUIUtility.labelWidth;
             float labelWidthRelative = labelWidth / linePosition.width;
@@ -277,8 +271,7 @@ namespace Canty.Serializable
             return Mathf.Max(keyPropertyHeight, valuePropertyHeight);
         }
 
-        static float DrawKeyValueLineExpand(SerializedProperty keyProperty, SerializedProperty valueProperty,
-            Rect linePosition)
+        static float DrawKeyValueLineExpand(SerializedProperty keyProperty, SerializedProperty valueProperty, Rect linePosition)
         {
             float labelWidth = EditorGUIUtility.labelWidth;
 
@@ -311,8 +304,7 @@ namespace Canty.Serializable
             }
         }
 
-        static void SaveProperty(SerializedProperty keyProperty, SerializedProperty valueProperty, int index,
-            int otherIndex, ConflictState conflictState)
+        static void SaveProperty(SerializedProperty keyProperty, SerializedProperty valueProperty, int index, int otherIndex, ConflictState conflictState)
         {
             conflictState.ConflictKey = GetPropertyValue(keyProperty);
             conflictState.ConflictValue = GetPropertyValue(valueProperty);
@@ -409,12 +401,6 @@ namespace Canty.Serializable
             }
         }
 
-        static GUIContent IconContent(string name, string tooltip)
-        {
-            GUIContent builtinIcon = EditorGUIUtility.IconContent(name);
-            return new GUIContent(builtinIcon.image, tooltip);
-        }
-
         static GUIContent TempContent(string text)
         {
             s_TempContent.text = text;
@@ -424,8 +410,7 @@ namespace Canty.Serializable
         static void DeleteArrayElementAtIndex(SerializedProperty arrayProperty, int index)
         {
             SerializedProperty property = arrayProperty.GetArrayElementAtIndex(index);
-
-            // if(arrayProperty.arrayElementType.StartsWith("PPtr<$"))
+            
             if (property.propertyType == SerializedPropertyType.ObjectReference)
             {
                 property.objectReferenceValue = null;
@@ -579,8 +564,7 @@ namespace Canty.Serializable
             }
         }
 
-        static IEnumerable<EnumerationEntry> EnumerateEntries(SerializedProperty keyArrayProperty,
-            SerializedProperty valueArrayProperty, int startIndex = 0)
+        static IEnumerable<EnumerationEntry> EnumerateEntries(SerializedProperty keyArrayProperty, SerializedProperty valueArrayProperty, int startIndex = 0)
         {
             if (keyArrayProperty.arraySize > startIndex)
             {

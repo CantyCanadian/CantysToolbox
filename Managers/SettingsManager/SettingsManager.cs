@@ -5,12 +5,10 @@
 ///
 ///====================================================================================================
 
-using System.Collections;
+using System;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.Rendering;
-using UnityEngine.UI;
 
 namespace Canty.Managers
 {
@@ -18,37 +16,38 @@ namespace Canty.Managers
     {
         #region Public Properties
 
-        public Dictionary<string, SettingsPreset> Presets;
+        public PresetDictionary Presets;
 
         public bool UsePresetAsDefault = false;
-        public int PresetUsedAsDefault = 0;
+        [Space(10)]
+        [ConditionalField("UsePresetAsDefault")] public string PresetUsedAsDefault;
 
         // Screen
-        public UnityEditor.AspectRatio AspectRatio = AspectRatio.Aspect16by9;
-        public int ResolutionIndex = -1;
-        public bool Fullscreen = true;
-        public int RefreshRate = 60;
+        [ConditionalField("UsePresetAsDefault", true)] public AspectRatio AspectRatio = AspectRatio.Aspect16by9;
+        [ConditionalField("UsePresetAsDefault", true)] public int ResolutionIndex = -1;
+        [ConditionalField("UsePresetAsDefault", true)] public bool Fullscreen = true;
+        [ConditionalField("UsePresetAsDefault", true)] public int RefreshRate = 60;
 
         // Graphics
-        public int PixelLightCount = 4;
-        public TextureQualityTypes TextureQuality = TextureQualityTypes.FullRes;
-        public bool AnisotropicFiltering = true;
-        public AntiAliasingTypes AntiAliasing = AntiAliasingTypes.MSAAx8;
-        public bool SoftParticles = true;
-        public bool RealtimeReflectionProbe = true;
-        public int VSyncCount = 1;
+        [ConditionalField("UsePresetAsDefault", true)] public int PixelLightCount = 4;
+        [ConditionalField("UsePresetAsDefault", true)] public TextureQualityTypes TextureQuality = TextureQualityTypes.FullRes;
+        [ConditionalField("UsePresetAsDefault", true)] public bool AnisotropicFiltering = true;
+        [ConditionalField("UsePresetAsDefault", true)] public AntiAliasingTypes AntiAliasing = AntiAliasingTypes.MSAAx8;
+        [ConditionalField("UsePresetAsDefault", true)] public bool SoftParticles = true;
+        [ConditionalField("UsePresetAsDefault", true)] public bool RealtimeReflectionProbe = true;
+        [ConditionalField("UsePresetAsDefault", true)] public int VSyncCount = 1;
 
         // Shadows
-        public ShadowQuality ShadowQualityType = ShadowQuality.All;
-        public ShadowResolution ShadowResolutionType = ShadowResolution.VeryHigh;
-        public ShadowProjection ShadowProjectionType = ShadowProjection.StableFit;
-        public ShadowDistanceTypes ShadowDistance = ShadowDistanceTypes.Ultra;
-        public ShadowmaskMode ShadowmaskModeType = ShadowmaskMode.DistanceShadowmask;
-        public int ShadowNearPlaneOffset = 3;
-        public ShadowCascadeTypes ShadowCascadeType = ShadowCascadeTypes.FourCascade;
+        [ConditionalField("UsePresetAsDefault", true)] public ShadowQuality ShadowQualityType = ShadowQuality.All;
+        [ConditionalField("UsePresetAsDefault", true)] public ShadowResolution ShadowResolutionType = ShadowResolution.VeryHigh;
+        [ConditionalField("UsePresetAsDefault", true)] public ShadowProjection ShadowProjectionType = ShadowProjection.StableFit;
+        [ConditionalField("UsePresetAsDefault", true)] public ShadowDistanceTypes ShadowDistance = ShadowDistanceTypes.Ultra;
+        [ConditionalField("UsePresetAsDefault", true)] public ShadowmaskMode ShadowmaskModeType = ShadowmaskMode.DistanceShadowmask;
+        [ConditionalField("UsePresetAsDefault", true)] public int ShadowNearPlaneOffset = 3;
+        [ConditionalField("UsePresetAsDefault", true)] public ShadowCascadeTypes ShadowCascadeType = ShadowCascadeTypes.FourCascade;
 
         // Other
-        public Dictionary<UnityEditor.AspectRatio, Vector2Int[]> ResolutionData { get { return m_ResolutionList; } }
+        public Dictionary<AspectRatio, Vector2Int[]> ResolutionData { get { return m_ResolutionList; } }
 
         #endregion
 
@@ -253,6 +252,88 @@ namespace Canty.Managers
             }
         }
 
+        public void LoadValues(SettingsPreset preset)
+        {
+            PixelLightCount = preset.PixelLightCount;
+            TextureQuality = preset.TextureQuality;
+            AnisotropicFiltering = preset.AnisotropicFiltering;
+            AntiAliasing = preset.AntiAliasing;
+            SoftParticles = preset.SoftParticles;
+            RealtimeReflectionProbe = preset.RealtimeReflectionProbe;
+            VSyncCount = preset.VSyncCount;
+
+            ShadowQualityType = preset.ShadowQualityType;
+            ShadowResolutionType = preset.ShadowResolutionType;
+            ShadowProjectionType = preset.ShadowProjectionType;
+            ShadowDistance = preset.ShadowDistance;
+            ShadowmaskModeType = preset.ShadowmaskModeType;
+            ShadowNearPlaneOffset = preset.ShadowNearPlaneOffset;
+            ShadowCascadeType = preset.ShadowCascadeType;
+        }
+
+        public void LoadValues(SettingsPreset preset, bool loadResolution)
+        {
+            if (loadResolution)
+            {
+                ResolutionIndex = PlayerPrefs.GetInt("SETTINGSMANAGER_RESOLUTIONINDEX", ResolutionIndex);
+
+                if (ResolutionIndex <= -1)
+                {
+                    Vector2Int currentResolution = new Vector2Int(Screen.currentResolution.width, Screen.currentResolution.height);
+
+                    bool exit = false;
+                    foreach (KeyValuePair<AspectRatio, Vector2Int[]> aspectRatio in m_ResolutionList)
+                    {
+                        for (int i = 0; i < aspectRatio.Value.Length; i++)
+                        {
+                            if (currentResolution == aspectRatio.Value[i])
+                            {
+                                ResolutionIndex = i;
+                                AspectRatio = aspectRatio.Key;
+                                exit = true;
+                                break;
+                            }
+                        }
+
+                        if (exit)
+                        {
+                            break;
+                        }
+                    }
+
+                    if (ResolutionIndex == -1)
+                    {
+                        // Standard 1080p
+                        ResolutionIndex = 2;
+                        AspectRatio = AspectRatio.Aspect16by9;
+                    }
+                }
+                else
+                {
+                    AspectRatio = PlayerPrefsUtil.GetEnum("SETTINGSMANAGER_ASPECTRATIO", AspectRatio);
+                }
+
+                Fullscreen = PlayerPrefsUtil.GetBool("SETTINGSMANAGER_FULLSCREEN", Fullscreen);
+                RefreshRate = PlayerPrefs.GetInt("SETTINGSMANAGER_REFRESHRATE", RefreshRate);
+            }
+
+            PixelLightCount = preset.PixelLightCount;
+            TextureQuality = preset.TextureQuality;
+            AnisotropicFiltering = preset.AnisotropicFiltering;
+            AntiAliasing = preset.AntiAliasing;
+            SoftParticles = preset.SoftParticles;
+            RealtimeReflectionProbe = preset.RealtimeReflectionProbe;
+            VSyncCount = preset.VSyncCount;
+
+            ShadowQualityType = preset.ShadowQualityType;
+            ShadowResolutionType = preset.ShadowResolutionType;
+            ShadowProjectionType = preset.ShadowProjectionType;
+            ShadowDistance = preset.ShadowDistance;
+            ShadowmaskModeType = preset.ShadowmaskModeType;
+            ShadowNearPlaneOffset = preset.ShadowNearPlaneOffset;
+            ShadowCascadeType = preset.ShadowCascadeType;
+        }
+
         private void LoadValues()
         {
             ResolutionIndex = PlayerPrefs.GetInt("SETTINGSMANAGER_RESOLUTIONINDEX", ResolutionIndex);
@@ -262,7 +343,7 @@ namespace Canty.Managers
                 Vector2Int currentResolution = new Vector2Int(Screen.currentResolution.width, Screen.currentResolution.height);
 
                 bool exit = false;
-                foreach (KeyValuePair<UnityEditor.AspectRatio, Vector2Int[]> aspectRatio in m_ResolutionList)
+                foreach (KeyValuePair<AspectRatio, Vector2Int[]> aspectRatio in m_ResolutionList)
                 {
                     for (int i = 0; i < aspectRatio.Value.Length; i++)
                     {
@@ -285,7 +366,7 @@ namespace Canty.Managers
                 {
                     // Standard 1080p
                     ResolutionIndex = 2;
-                    AspectRatio = UnityEditor.AspectRatio.Aspect16by9;
+                    AspectRatio = AspectRatio.Aspect16by9;
                 }
             }
             else
@@ -311,7 +392,7 @@ namespace Canty.Managers
             ShadowmaskModeType = PlayerPrefsUtil.GetEnum("SETTINGSMANAGER_SHADOWMASKMODE", ShadowmaskModeType);
             ShadowNearPlaneOffset = PlayerPrefs.GetInt("SETTINGSMANAGER_SHADOWNEARPLANEOFFSET", ShadowNearPlaneOffset);
             ShadowCascadeType = PlayerPrefsUtil.GetEnum("SETTINGSMANAGER_SHADOWCASCADETYPE", ShadowCascadeType);
-    }
+        }
 
         private void PopulateResolutionList()
         {
@@ -320,9 +401,9 @@ namespace Canty.Managers
                 return;
             }
 
-            m_ResolutionList = new Dictionary<UnityEditor.AspectRatio, Vector2Int[]>();
+            m_ResolutionList = new Dictionary<AspectRatio, Vector2Int[]>();
 
-            Vector2Int[] ratio43 = new Vector2Int[]
+            Vector2Int[] ratio43 =
             {
                 new Vector2Int(1024, 768),
                 new Vector2Int(1280, 960),
@@ -331,7 +412,7 @@ namespace Canty.Managers
                 new Vector2Int(1920, 1440)
             };
 
-            Vector2Int[] ratio169 = new Vector2Int[]
+            Vector2Int[] ratio169 =
             {
                 new Vector2Int(1280, 720),
                 new Vector2Int(1600, 900),
@@ -340,7 +421,7 @@ namespace Canty.Managers
                 new Vector2Int(3840, 2160)
             };
 
-            Vector2Int[] ratio1610 = new Vector2Int[]
+            Vector2Int[] ratio1610 =
             {
                 new Vector2Int(1280, 800),
                 new Vector2Int(1440, 900),
@@ -359,8 +440,19 @@ namespace Canty.Managers
         private void Start()
         {
             PopulateResolutionList();
-            LoadValues();
+
+            if (UsePresetAsDefault)
+            {
+                LoadValues(Presets[PresetUsedAsDefault], true);
+            }
+            else
+            {
+                LoadValues();
+            }
+
             ApplyChanges(true);
         }
+
+        [Serializable] public class PresetDictionary : SerializableDictionary<string, SettingsPreset> { }
     }
 }

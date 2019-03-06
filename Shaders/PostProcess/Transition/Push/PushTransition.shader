@@ -2,7 +2,6 @@
 ///
 ///     PushTransition by
 ///     - CantyCanadian
-///		- ellioman
 ///
 ///		Make sure to use the TransitionPostProcessShader script instead of the regular PostProcessShader script.
 ///
@@ -83,7 +82,7 @@ Shader "Custom/PostProcess/Transition/Push"
 
 				float2 unitVector = UnitVector(_Angle);
 				float2 direction = unitVector / 2.0f;
-				float2 pushUV = i.uv + (_TransitionValue * SquareLength(_Angle)) * (AngleBetween(unitVector, newUV) < 0.0f ? direction : -direction);
+				float2 pushUV = i.uv + (_TransitionValue * SquareLength(_Angle)) * (AngleBetween(unitVector, newUV) > 90.0f ? direction : -direction);
 
 				float4 tex = tex2D(_MainTex, _SplitImage ? pushUV : i.uv);
 				float4 transitionTex = tex2D(_TransitionTex, i.uv);
