@@ -188,7 +188,7 @@ namespace Canty
                 {
                     for (int v = y - radius; v <= y + radius; v++)
                     {
-                        if (Mathf.Abs(u) + Mathf.Abs(v) <= diameter)
+                        if (Mathf.Abs(x - u) + Mathf.Abs(y - v) <= diameter)
                         {
                             Cell<T> cell = TryGetCell(u, v);
 
@@ -208,7 +208,7 @@ namespace Canty
                 {
                     for (int v = y - radius; v < y + radius; v++)
                     {
-                        if (Mathf.Abs(u) + Mathf.Abs(v) <= diameter)
+                        if (Mathf.Abs(x - u) + Mathf.Abs(y - v) <= diameter)
                         {
                             Cell<T> cell = TryGetCell(u, v);
 
@@ -236,7 +236,7 @@ namespace Canty
                 {
                     for (int v = y - radius; v <= y + radius; v++)
                     {
-                        if (Mathf.Abs(u) + Mathf.Abs(v) <= diameter)
+                        if (Mathf.Abs(x - u) + Mathf.Abs(y - v) <= diameter)
                         {
                             Cell<T> cell = TryGetCell(u, v);
 
@@ -251,7 +251,7 @@ namespace Canty
 
                     for (int v = y + radius; v >= y - radius; v--)
                     {
-                        if (Mathf.Abs(u) + Mathf.Abs(v) <= diameter)
+                        if (Mathf.Abs(x - u) + Mathf.Abs(y - v) <= diameter)
                         {
                             Cell<T> cell = TryGetCell(u, v);
 
