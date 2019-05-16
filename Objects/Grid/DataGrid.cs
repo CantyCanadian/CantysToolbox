@@ -15,6 +15,9 @@ namespace Canty
         public CellGroup<T> Cells { get { return m_Grid; } }
         private CellGroup<T> m_Grid = null;
 
+		/// <summary>
+		/// Generate a grid using each pixels of a texture. Data is set using a dictionary where each possible pixel color equals premade data.
+		/// </summary>
         public void GenerateGridFromTexture(Texture2D texture, Dictionary<Color, T> data)
         {
             Dictionary<Vector2Int, Cell<T>> cells = new Dictionary<Vector2Int, Cell<T>>();
@@ -40,6 +43,9 @@ namespace Canty
             m_Grid = new CellGroup<T>(cells);
         }
 
+		/// <summary>
+		/// Generates a grid and sets the data to a given default value.
+		/// </summary>
         public void GenerateGrid(int width, int height, T commonData)
         {
             Dictionary<Vector2Int, Cell<T>> cells = new Dictionary<Vector2Int, Cell<T>>();
@@ -55,6 +61,9 @@ namespace Canty
             m_Grid = new CellGroup<T>(cells);
         }
 
+		/// <summary>
+		/// Generates a grid and sets the data to a default value.
+		/// </summary>
         public void GenerateGrid(int width, int height)
         {
             GenerateGrid(width, height, default(T));

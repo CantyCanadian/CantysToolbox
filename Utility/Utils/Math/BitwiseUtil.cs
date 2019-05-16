@@ -54,10 +54,9 @@ namespace Canty
         }
 
         /// <summary>
-        /// Separates an int
+        /// Separates an int.
         /// </summary>
-        /// <param name="value"></param>
-        /// <returns></returns>
+        /// <returns>All 32 bits of the integer as bools.</returns>
         public static bool[] SplitIntIntoBools(int value)
         {
             bool[] result = new bool[32];
@@ -70,21 +69,33 @@ namespace Canty
             return result;
         }
 
+		/// <summary>
+		/// Gets the value of a bit at a specific position inside an int as a bool.
+		/// </summary>
         public static bool GetBitAtPosition(int value, int position)
         {
             return ((value >> position) & 1) == 1;
         }
 
+		/// <summary>
+		/// Sets the value of a bit at a specific position inside an int to 1.
+		/// </summary>
         public static void SetBitAtPosition(ref int value, int position)
         {
             value |= 1 << position;
         }
 
+		/// <summary>
+		/// Sets the value of a bit at a specific position inside an int to 0.
+		/// </summary>
         public static void ClearBitAtPosition(ref int value, int position)
         {
             value &= ~(1 << position);
         }
 
+		/// <summary>
+		/// Flips the value of a bit at a specific position inside an int.
+		/// </summary>
         public static void ToggleBitAtPosition(ref int value, int position)
         {
             value ^= 1 << position;

@@ -42,6 +42,9 @@ namespace Canty
         private bool m_Loop = false;
         private bool m_Flip = false;
 
+		/// <summary>
+		/// Play the timer with given settings.
+		/// </summary>
         public void Play(bool loop = false, bool backwards = false)
         {
             if (m_Initialized == false)
@@ -57,6 +60,9 @@ namespace Canty
             m_Loop = loop;
         }
 
+		/// <summary>
+		/// Stops the timer. If stopAtTarget, it will reset to the next target time (1.0f or 0.0f).
+		/// </summary>
         public void Stop(bool stopAtTarget = true)
         {
             m_Play = false;
@@ -67,6 +73,9 @@ namespace Canty
             }
         }
 
+		/// <summary>
+		/// Sets a different time scale for the timer. Ex : 1.5f makes the timer 50% faster.
+		/// </summary>
         public void SetTimeScale(float scale)
         {
             m_TimeScale = scale;

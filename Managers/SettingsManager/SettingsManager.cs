@@ -119,6 +119,9 @@ namespace Canty.Managers
             FourCascade = 4
         }
 
+		/// <summary>
+		/// Apply changes done to the manager towards the actual game. If overwrite, it will force save all settings, not just the changed ones.
+		/// </summary>
         public void ApplyChanges(bool overwrite = false)
         {
             // Screen
@@ -252,6 +255,9 @@ namespace Canty.Managers
             }
         }
 
+		/// <summary>
+		/// Load values from a SettingPreset object minus resolution.
+		/// </summary>
         public void LoadValues(SettingsPreset preset)
         {
             PixelLightCount = preset.PixelLightCount;
@@ -271,6 +277,9 @@ namespace Canty.Managers
             ShadowCascadeType = preset.ShadowCascadeType;
         }
 
+		/// <summary>
+		/// Load values from a SettingPreset object including resolution.
+		/// </summary>
         public void LoadValues(SettingsPreset preset, bool loadResolution)
         {
             if (loadResolution)
@@ -334,6 +343,9 @@ namespace Canty.Managers
             ShadowCascadeType = preset.ShadowCascadeType;
         }
 
+		/// <summary>
+		/// Load values found inside PlayerPrefs.
+		/// </summary>
         private void LoadValues()
         {
             ResolutionIndex = PlayerPrefs.GetInt("SETTINGSMANAGER_RESOLUTIONINDEX", ResolutionIndex);
@@ -394,6 +406,9 @@ namespace Canty.Managers
             ShadowCascadeType = PlayerPrefsUtil.GetEnum("SETTINGSMANAGER_SHADOWCASCADETYPE", ShadowCascadeType);
         }
 
+		/// <summary>
+		/// Prepare the list of possible resolutions.
+		/// </summary>
         private void PopulateResolutionList()
         {
             if (m_ResolutionList != null)

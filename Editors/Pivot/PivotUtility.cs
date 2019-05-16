@@ -15,6 +15,9 @@ namespace Canty.Editors
 {
     public static class PivotUtilities
     {
+		/// <summary>
+		/// Creates a pivot game object and attaches the selected game object to it.
+		/// </summary>
         [MenuItem("GameObject/Pivot/Create Pivot", false, 0)]
         private static void CreatePivotObjectMenuItem()
         {
@@ -25,6 +28,9 @@ namespace Canty.Editors
             }
         }
 
+		/// <summary>
+		/// Creates a pivot game object, sets its local transform to 0 and attaches the selected game object to it.
+		/// </summary>
         [MenuItem("GameObject/Pivot/Create Pivot (Parent Zero)", false, 0)]
         private static void CreatePivotObjectParentZeroMenuItem()
         {
@@ -35,6 +41,9 @@ namespace Canty.Editors
             }
         }
 
+		/// <summary>
+		/// Creates a pivot game object, sets its world transform to 0 and attaches the selected game object to it.
+		/// </summary>
         [MenuItem("GameObject/Pivot/Create Pivot (World Zero)", false, 0)]
         private static void CreatePivotObjectWorldZeroMenuItem()
         {
@@ -45,8 +54,11 @@ namespace Canty.Editors
             }
         }
 
+		/// <summary>
+		/// Deletes the selected object and reattaches its children to its parents.
+		/// </summary>
         [MenuItem("GameObject/Pivot/Delete Pivot", false, 0)]
-        static void DeletePivotObjectMenuItem()
+        private static void DeletePivotObjectMenuItem()
         {
             GameObject objSelectionAfter = null;
 
@@ -67,6 +79,9 @@ namespace Canty.Editors
             }
         }
 
+		/// <summary>
+		/// Function to create a pivot with the same transform as the parent.
+		/// </summary>
         private static GameObject CreatePivotObject(GameObject current)
         {
             if (current == null)
@@ -89,7 +104,10 @@ namespace Canty.Editors
 
             return newObject;
         }
-
+		
+		/// <summary>
+		/// Function to create a pivot with its local transform set to 0.
+		/// </summary>
         private static GameObject CreatePivotObjectParentZero(GameObject current)
         {
             if (current == null)
@@ -113,6 +131,9 @@ namespace Canty.Editors
             return newObject;
         }
 
+		/// <summary>
+		/// Function to create a pivot with its world transform set to 0.
+		/// </summary>
         private static GameObject CreatePivotObjectWorldZero(GameObject current)
         {
             if (current == null)
@@ -136,6 +157,9 @@ namespace Canty.Editors
             return newObject;
         }
 
+		/// <summary>
+		/// Function to create a pivot with its world transform set to 0.
+		/// </summary>
         private static GameObject DeletePivotObject(GameObject current)
         {
             Transform parent = current.transform.parent;

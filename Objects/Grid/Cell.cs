@@ -7,6 +7,9 @@
 
 namespace Canty
 {
+	/// <summary>
+	/// Simple data container for the Grid class.
+	/// </summary>
     public class Cell<T> where T : struct
     {
         private T m_Data;

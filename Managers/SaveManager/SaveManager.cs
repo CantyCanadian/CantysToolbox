@@ -14,11 +14,17 @@ namespace Canty.Managers
 {
     public class SaveManager : Singleton<SaveManager>
     {
+		/// <summary>
+		/// Location where the save file will be created.
+		/// </summary>
         public static string SaveLocation
         {
             get { return Application.persistentDataPath + "\\Saves\\"; }
         }
 
+		/// <summary>
+		/// Extension used for the save file.
+		/// </summary>
         public static string FileExtension
         {
             get { return ".sav"; }
@@ -30,11 +36,17 @@ namespace Canty.Managers
 
         private bool m_DefaultEncrypted = true;
 
+		/// <summary>
+		/// Set if save data should be encrypted by default. True by default.
+		/// </summary>
         public void SetDefaultIsEncrypted(bool encrypt)
         {
             m_DefaultEncrypted = encrypt;
         }
 
+		/// <summary>
+		/// Register a saveable object. Can only register a single object of each type. Heavily recommended to create a container if registering a collection of the same object.
+		/// </summary>
         public void RegisterSaveable(SaveableBase saveable, Type originalType)
         {
             if (m_RegisteredSaveables == null)
@@ -51,11 +63,17 @@ namespace Canty.Managers
             m_RegisteredSaveables.Add(originalType, saveable);
         }
 
+		/// <summary>
+		/// Loads the given save file. If it doesn't exist, create a new one then load it.
+		/// </summary>
         public bool LoadOrCreateSave(string saveName)
         {
             return LoadOrCreateSave(saveName, m_DefaultEncrypted);
         }
 
+		/// <summary>
+		/// Loads the given save file with specified encryption. If it doesn't exist, create a new one then load it.
+		/// </summary>
         public bool LoadOrCreateSave(string saveName, bool encrypt)
         {
             if (File.Exists(SaveLocation + saveName + FileExtension))
@@ -68,11 +86,17 @@ namespace Canty.Managers
             }
         }
 
+		/// <summary>
+		/// Creates a new save file. Returns false if a save file already exists.
+		/// </summary>
         public bool CreateNewSaveFile(string saveName)
         {
             return CreateNewSaveFile(saveName, m_DefaultEncrypted);
         }
 
+		/// <summary>
+		/// Creates a new save file with specified encryption. Returns false if a save file already exists.
+		/// </summary>
         public bool CreateNewSaveFile(string saveName, bool encrypt)
         {
             string fileLocation = SaveLocation + saveName + FileExtension;
@@ -93,11 +117,17 @@ namespace Canty.Managers
             return true;
         }
 
+		/// <summary>
+		/// Creates a new save file at given location. If it already exists, delete it first.
+		/// </summary>
         public bool CreateOrOverwriteNewSaveFile(string saveName)
         {
             return CreateOrOverwriteNewSaveFile(saveName, m_DefaultEncrypted);
         }
 
+		/// <summary>
+		/// Creates a new save file at given location with specific encryption. If it already exists, delete it first.
+		/// </summary>
         public bool CreateOrOverwriteNewSaveFile(string saveName, bool encrypt)
         {
             string fileLocation = SaveLocation + saveName + FileExtension;
@@ -117,11 +147,17 @@ namespace Canty.Managers
             return true;
         }
 
+		/// <summary>
+		/// Loads a save file. Returns false if the file doesn't exist.
+		/// </summary>
         public bool LoadSaveFile(string saveName)
         {
             return LoadSaveFile(saveName, m_DefaultEncrypted);
         }
 
+		/// <summary>
+		/// Loads a save file with specified encryption. Returns false if the file doesn't exist.
+		/// </summary>
         public bool LoadSaveFile(string saveName, bool encrypt)
         {
             string fileLocation = SaveLocation + saveName + FileExtension;
@@ -139,17 +175,26 @@ namespace Canty.Managers
             return true;
         }
 
+		/// <summary>
+		/// Saves data to loaded save file.
+		/// </summary>
         public void SaveData()
         {
             SaveData(m_DefaultEncrypted);
         }
 
+		/// <summary>
+		/// Saves data to loaded save file with specified encryption.
+		/// </summary>
         public void SaveData(bool encrypt)
         {
             DataSaveablesToCache();
             DataCacheToFile(encrypt);
         }
 
+		/// <summary>
+		/// Loads data from a file.
+		/// </summary>
         private void DataFileToCache(bool isEncrypted)
         {
             StreamReader reader = new StreamReader(m_LoadedSaveLocation);
@@ -182,6 +227,9 @@ namespace Canty.Managers
             }
         }
 
+		/// <summary>
+		/// Saves data to a file.
+		/// </summary>
         private void DataCacheToFile(bool encrypt)
         {
             List<string> dataSet = new List<string>();
@@ -222,6 +270,9 @@ namespace Canty.Managers
             writer.Close();
         }
 
+		/// <summary>
+		/// Loads data from all the saveable objects.
+		/// </summary>
         private void DataSaveablesToCache()
         {
             if (m_SavedData == null)
@@ -239,6 +290,9 @@ namespace Canty.Managers
             }
         }
 
+		/// <summary>
+		/// Loads data for all the saveables.
+		/// </summary>
         private void DataCacheToSaveables()
         {
             if (m_SavedData == null)
@@ -263,6 +317,9 @@ namespace Canty.Managers
             }
         }
 
+		/// <summary>
+		/// Loads every saveables' default data.
+		/// </summary>
         private void DataDefaultToSaveables()
         {
             foreach (KeyValuePair<Type, SaveableBase> saveablePair in m_RegisteredSaveables)
@@ -271,6 +328,9 @@ namespace Canty.Managers
             }
         }
 
+		/// <summary>
+		/// Encrypts given data.
+		/// </summary>
         private void EncryptData(ref string[] data)
         {
             for (int i = 0; i < data.Length; i++)
@@ -279,6 +339,9 @@ namespace Canty.Managers
             }
         }
 
+		/// <summary>
+		/// Decrypts given data.
+		/// </summary>
         private void DecryptData(ref string[] data)
         {
             for (int i = 0; i < data.Length; i++)

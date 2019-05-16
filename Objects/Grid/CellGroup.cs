@@ -15,11 +15,17 @@ namespace Canty
         public Dictionary<Vector2Int, Cell<T>> Cells { get { return m_Cells; } }
         private Dictionary<Vector2Int, Cell<T>> m_Cells;
 
+		/// <summary>
+		/// Create a cell group using a dictionary of cells.
+		/// </summary>
         public CellGroup(Dictionary<Vector2Int, Cell<T>> cells)
         {
             m_Cells = cells;
         }
 
+		/// <summary>
+		/// Gets a new CellGroup containing a single cell.
+		/// </summary>
         public CellGroup<T> GetCell(int x, int y)
         {
             Cell<T> cell = TryGetCell(x, y);
@@ -35,6 +41,9 @@ namespace Canty
             return new CellGroup<T>(newCell);
         }
 
+		/// <summary>
+		/// Gets a new CellGroup containing all given cell.
+		/// </summary>
         public CellGroup<T> GetCells(params int[] positions)
         {
             Dictionary<Vector2Int, Cell<T>> cells = new Dictionary<Vector2Int, Cell<T>>();
@@ -52,6 +61,9 @@ namespace Canty
             return new CellGroup<T>(cells);
         }
 
+		/// <summary>
+		/// Gets a new CellGroup containing a rectangle of cells.
+		/// </summary>
         public CellGroup<T> GetCellRectangle(int x, int y, int w, int h)
         {
             Dictionary<Vector2Int, Cell<T>> cells = new Dictionary<Vector2Int, Cell<T>>();
@@ -72,6 +84,9 @@ namespace Canty
             return new CellGroup<T>(cells);
         }
 
+		/// <summary>
+		/// Gets a new CellGroup containing the border of a cell rectangle.
+		/// </summary>
         public CellGroup<T> GetCellRectangleHollow(int x, int y, int w, int h)
         {
             Dictionary<Vector2Int, Cell<T>> cells = new Dictionary<Vector2Int, Cell<T>>();
@@ -113,6 +128,9 @@ namespace Canty
             return new CellGroup<T>(cells);
         }
 
+		/// <summary>
+		/// Gets a new CellGroup containing a circle of cells.
+		/// </summary>
         public CellGroup<T> GetCellCircle(int x, int y, int radius)
         {
             Dictionary<Vector2Int, Cell<T>> cells = new Dictionary<Vector2Int, Cell<T>>();
@@ -136,6 +154,9 @@ namespace Canty
             return new CellGroup<T>(cells);
         }
 
+		/// <summary>
+		/// Gets a new CellGroup containing the border of a cell circle.
+		/// </summary>
         public CellGroup<T> GetCellCircleHollow(int x, int y, int radius)
         {
             Dictionary<Vector2Int, Cell<T>> cells = new Dictionary<Vector2Int, Cell<T>>();
@@ -176,6 +197,9 @@ namespace Canty
             return new CellGroup<T>(cells);
         }
 
+		/// <summary>
+		/// Gets a new CellGroup containing a cell diamond.
+		/// </summary>
         public CellGroup<T> GetCellDiamond(int x, int y, int diameter)
         {
             Dictionary<Vector2Int, Cell<T>> cells = new Dictionary<Vector2Int, Cell<T>>();
@@ -224,6 +248,9 @@ namespace Canty
             return new CellGroup<T>(cells);
         }
 
+		/// <summary>
+		/// Gets a new CellGroup containing the border of a cell diamond.
+		/// </summary>
         public CellGroup<T> GetCellDiamondHollow(int x, int y, int diameter)
         {
             Dictionary<Vector2Int, Cell<T>> cells = new Dictionary<Vector2Int, Cell<T>>();
@@ -306,6 +333,9 @@ namespace Canty
             return new CellGroup<T>(cells);
         }
 
+		/// <summary>
+		/// Gets a new CellGroup containing cells obtained through recursion. If the cell group is large enough, it will simply return a diamond.
+		/// </summary>
         public CellGroup<T> GetCellsRecursive(int x, int y, int steps)
         {
             Dictionary<Vector2Int, Cell<T>> cells = new Dictionary<Vector2Int, Cell<T>>();
@@ -315,6 +345,9 @@ namespace Canty
             return new CellGroup<T>(cells);
         }
 
+		/// <summary>
+		/// Gets a new CellGroup containing every cells that fits the condition.
+		/// </summary>
         public CellGroup<T> GetCellsConditional(System.Func<T, bool> condition)
         {
             Dictionary<Vector2Int, Cell<T>> cells = new Dictionary<Vector2Int, Cell<T>>();
@@ -330,6 +363,9 @@ namespace Canty
             return new CellGroup<T>(cells);
         }
 
+		/// <summary>
+		/// Gets a new CellGroup containing cells obtained through recursion that fits given condition. Stops the recursion when hitting a cell not passing the condition.
+		/// </summary>
         public CellGroup<T> GetCellsConditionalRecursive(int x, int y, int steps, System.Func<T, bool> condition)
         {
             Dictionary<Vector2Int, Cell<T>> cells = new Dictionary<Vector2Int, Cell<T>>();
@@ -339,6 +375,9 @@ namespace Canty
             return new CellGroup<T>(cells);
         }
 
+		/// <summary>
+		/// Gets a new CellGroup containing all the cells found in this group and the given group.
+		/// </summary>
         public CellGroup<T> Plus(CellGroup<T> toAdd)
         {
             Dictionary<Vector2Int, Cell<T>> cells = new Dictionary<Vector2Int, Cell<T>>(m_Cells);
@@ -354,6 +393,9 @@ namespace Canty
             return new CellGroup<T>(cells);
         }
 
+		/// <summary>
+		/// Gets a new CellGroup containing the cells from this group minus the given cells.
+		/// </summary>
         public CellGroup<T> Minus(CellGroup<T> toRemove)
         {
             Dictionary<Vector2Int, Cell<T>> cells = new Dictionary<Vector2Int, Cell<T>>(m_Cells);
@@ -369,6 +411,9 @@ namespace Canty
             return new CellGroup<T>(cells);
         }
 
+		/// <summary>
+		/// Gets a new CellGroup containing the given cells minus this group (reversed minus).
+		/// </summary>
         public CellGroup<T> Invert(CellGroup<T> original)
         {
             Dictionary<Vector2Int, Cell<T>> cells = new Dictionary<Vector2Int, Cell<T>>(original.Cells);
@@ -379,6 +424,9 @@ namespace Canty
             return inverted;
         }
 
+		/// <summary>
+		/// Utility function to try and get a cell.
+		/// </summary>
         private Cell<T> TryGetCell(int x, int y)
         {
             Vector2Int position = new Vector2Int(x, y);
@@ -391,6 +439,9 @@ namespace Canty
             return null;
         }
 
+		/// <summary>
+		/// Utility function for recursivity.
+		/// </summary>
         private void RecursiveGet(ref Dictionary<Vector2Int, Cell<T>> list, int x, int y, int steps)
         {
             Cell<T> cell = TryGetCell(x, y);
@@ -411,6 +462,9 @@ namespace Canty
             }
         }
 
+		/// <summary>
+		/// Utility function for recursivity with condition.
+		/// </summary>
         private void RecursiveGet(ref Dictionary<Vector2Int, Cell<T>> list, int x, int y, int steps, System.Func<T, bool> condition)
         {
             Cell<T> cell = TryGetCell(x, y);

@@ -21,7 +21,7 @@ namespace Canty.Managers
 
         private Dictionary<GameObject, ShakeInformation> m_Shakes = null;
 
-        // This is a class instead of a struct because, for some reason, changing the delta from inside of the struct doesn't work.
+        // This is a class instead of a struct because its data has to be changed.
         private class ShakeInformation
         {
             public Vector3 OriginalPosition;
@@ -97,31 +97,49 @@ namespace Canty.Managers
             }
         }
 
+		/// <summary>
+		/// Shakes the given object until you stop it.
+		/// </summary>
         public void StartShake(GameObject target, float strength, float smoothness)
         {
             Shake(target, strength, smoothness, 0.0f, -1.0f, 0.0f);
         }
 
+		/// <summary>
+		/// Shakes the given object until you stop it. Starts with an ease in.
+		/// </summary>
         public void StartShake(GameObject target, float strength, float smoothness, float easeInTime)
         {
             Shake(target, strength, smoothness, easeInTime, -1.0f, 0.0f);
         }
 
+		/// <summary>
+		/// Shakes the given object for the given time.
+		/// </summary>
         public void ShakeOnce(GameObject target, float strength, float smoothness, float time)
         {
             Shake(target, strength, smoothness, 0.0f, time, 0.0f);
         }
 
+		/// <summary>
+		/// Shakes the given object for the given time. Will both ease in and out. Note, easing is added to total time.
+		/// </summary>
         public void ShakeOnce(GameObject target,  float strength, float smoothness, float easeInTime, float upTime, float easeOutTime)
         {
             Shake(target, strength, smoothness, easeInTime, upTime, easeOutTime);
         }
 
+		/// <summary>
+		/// Forces the given object to stop shaking.
+		/// </summary>
         public void EndShake(GameObject target)
         {
             EndShake(target, 0.0f);
         }
 
+		/// <summary>
+		/// Forces the given object to stop shaking with a given ease out.
+		/// </summary>
         public void EndShake(GameObject target, float easeOutTime)
         {
             if (m_Shakes == null)
@@ -144,6 +162,9 @@ namespace Canty.Managers
             }
         }
 
+		/// <summary>
+		/// Shake function used by all public shake functions.
+		/// </summary>
         private void Shake(GameObject target, float strength, float smoothness, float easeInTime, float upTime, float easeOutTime)
         {
             if (m_Shakes == null)
@@ -192,6 +213,9 @@ namespace Canty.Managers
             StartCoroutine(ShakeLoop());
         }
 
+		/// <summary>
+		/// Shaking coroutine.
+		/// </summary>
         private IEnumerator ShakeLoop()
         {
             List<GameObject> toRemove = new List<GameObject>();
