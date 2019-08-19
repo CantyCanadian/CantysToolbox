@@ -24,6 +24,9 @@ public class SettingsPreset : ScriptableObject
     public int ShadowNearPlaneOffset = 3;
     public SettingsManager.ShadowCascadeTypes ShadowCascadeType = SettingsManager.ShadowCascadeTypes.FourCascade;
 
+	/// <summary>
+	/// Create a SettingsPreset object.
+	/// </summary>
     [MenuItem("Assets/Create/Canty/Managers/Settings Preset")]
     public static void CreateAsset()
     {

@@ -15,6 +15,9 @@ namespace Canty.Managers
     {
         private List<UpdateableBase> m_Updateables;
 
+		/// <summary>
+		/// Register an UpdateableBase object to the list.
+		/// </summary>
         public void RegisterUpdateable(UpdateableBase updateable)
         {
             if (m_Updateables == null)
@@ -28,6 +31,9 @@ namespace Canty.Managers
             }
         }
 
+		/// <summary>
+		/// Call update on all updatables.
+		/// </summary>
         private void Update()
         {
             if (m_Updateables.Count > 0)

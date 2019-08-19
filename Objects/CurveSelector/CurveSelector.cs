@@ -38,6 +38,9 @@ namespace Canty
         public CurveTypes CurveType;
         public CurveProgressions CurveProgression;
 
+		/// <summary>
+		/// Invoke the function selected via the enums.
+		/// </summary>
         public float Invoke(float x1, float x2, float delta)
         {
             switch (CurveType)
