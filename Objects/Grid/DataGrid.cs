@@ -10,10 +10,10 @@ using UnityEngine;
 
 namespace Canty
 {
-    public class DataGrid<T> where T : struct
+    public class DataGrid<T> where T : new()
     {
-        public CellGroup<T> Cells { get { return m_Grid; } }
-        private CellGroup<T> m_Grid = null;
+        public CellGroup<T> MainCellGroup { get { return m_Group; } }
+        private CellGroup<T> m_Group = null;
 
         public void GenerateGridFromTexture(Texture2D texture, Dictionary<Color, T> data)
         {
@@ -37,10 +37,10 @@ namespace Canty
                 }
             }
 
-            m_Grid = new CellGroup<T>(cells);
+            m_Group = new CellGroup<T>(cells);
         }
 
-        public void GenerateGrid(int width, int height, T commonData)
+        public void GenerateGrid(int width, int height)
         {
             Dictionary<Vector2Int, Cell<T>> cells = new Dictionary<Vector2Int, Cell<T>>();
 
@@ -48,16 +48,11 @@ namespace Canty
             {
                 for (int y = 0; y < height; y++)
                 {
-                    cells.Add(new Vector2Int(x, y), new Cell<T>(commonData));
+                    cells.Add(new Vector2Int(x, y), new Cell<T>(new T()));
                 }
             }
 
-            m_Grid = new CellGroup<T>(cells);
-        }
-
-        public void GenerateGrid(int width, int height)
-        {
-            GenerateGrid(width, height, default(T));
-        }        
+            m_Group = new CellGroup<T>(cells);
+        }   
     }
 }

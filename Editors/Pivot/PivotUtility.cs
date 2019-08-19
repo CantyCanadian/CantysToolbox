@@ -46,7 +46,7 @@ namespace Canty.Editors
         }
 
         [MenuItem("GameObject/Pivot/Delete Pivot", false, 0)]
-        static void DeletePivotObjectMenuItem()
+        private static void DeletePivotObjectMenuItem()
         {
             GameObject objSelectionAfter = null;
 

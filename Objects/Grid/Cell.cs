@@ -7,7 +7,7 @@
 
 namespace Canty
 {
-    public class Cell<T> where T : struct
+    public class Cell<T> where T : new()
     {
         private T m_Data;
 

@@ -1,5 +1,4 @@
-﻿using Canty;
-using UnityEditor;
+﻿using UnityEditor;
 using UnityEngine;
 
 namespace Canty.Editors
