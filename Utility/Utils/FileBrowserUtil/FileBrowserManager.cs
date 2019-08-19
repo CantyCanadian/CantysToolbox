@@ -7,10 +7,11 @@
 ///====================================================================================================
 
 using System;
+using Canty.FileBrowser;
 
-namespace Canty.Managers
+namespace Canty
 {
-    public class FileBrowserManager : Singleton<FileBrowserManager>
+    public class FileBrowserUtil
     {
         private static IStandaloneFileBrowser m_PlatformWrapper = null;
 
