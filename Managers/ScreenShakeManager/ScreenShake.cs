@@ -198,18 +198,6 @@ namespace Canty.Managers
 
         private void Start()
         {
-            if (transform.localPosition != new Vector3(0.0f, 0.0f, 0.0f))
-            {
-                Debug.LogWarning("ScreenShake : Object local position not set to 0. Must be at 0 to use screen shake. Will force it to 0.");
-                transform.localPosition = new Vector3(0.0f, 0.0f, 0.0f);
-            }
-
-            if (transform.localEulerAngles != new Vector3(0.0f, 0.0f, 0.0f))
-            {
-                Debug.LogWarning("ScreenShake : Object local rotation not set to 0. Must be at 0 to use screen shake. Will force it to 0.");
-                transform.localEulerAngles = new Vector3(0.0f, 0.0f, 0.0f);
-            }
-
             StartCoroutine(ShakeLoop());
         }
 
@@ -219,9 +207,6 @@ namespace Canty.Managers
         private IEnumerator ShakeLoop()
         {
             List<GameObject> toRemove = new List<GameObject>();
-
-            Vector3 shakePosition;
-            Vector3 shakeRotation;
 
             while (true)
             {
@@ -260,8 +245,8 @@ namespace Canty.Managers
                         float mod = 100.0f / Mathf.Max(smoothness, 0.001f);
 
                         // Making sure to offset each perlin noise samples to prevent overlap.
-                        shakePosition = new Vector3(Mathf.PerlinNoise(time + 1 * mod, time + 1 * mod), Mathf.PerlinNoise(time + 2 * mod, time + 2 * mod), Mathf.PerlinNoise(time + 3 * mod, time + 3 * mod));
-                        shakeRotation = new Vector3(Mathf.PerlinNoise(time + 4 * mod, time + 4 * mod), Mathf.PerlinNoise(time + 5 * mod, time + 5 * mod), Mathf.PerlinNoise(time + 6 * mod, time + 6 * mod));
+                        Vector3 shakePosition = new Vector3(Mathf.PerlinNoise(time + 1 * mod, time + 1 * mod), Mathf.PerlinNoise(time + 2 * mod, time + 2 * mod), Mathf.PerlinNoise(time + 3 * mod, time + 3 * mod));
+                        Vector3 shakeRotation = new Vector3(Mathf.PerlinNoise(time + 4 * mod, time + 4 * mod), Mathf.PerlinNoise(time + 5 * mod, time + 5 * mod), Mathf.PerlinNoise(time + 6 * mod, time + 6 * mod));
                         
                         // Centering the shaking from (0,1) to (-1,1)
                         shakePosition = (shakePosition * 2).MinusScalar(1);
@@ -291,6 +276,11 @@ namespace Canty.Managers
                             shake.Key.transform.eulerAngles = shake.Value.OriginalRotation + shakeRotation;
                         }
                     }
+                }
+
+                foreach (GameObject removed in toRemove)
+                {
+                    m_Shakes.Remove(removed);
                 }
 
                 yield return null;

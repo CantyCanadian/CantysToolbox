@@ -10,14 +10,11 @@ using UnityEngine;
 
 namespace Canty
 {
-    public class DataGrid<T> where T : struct
+    public class DataGrid<T> where T : new()
     {
-        public CellGroup<T> Cells { get { return m_Grid; } }
-        private CellGroup<T> m_Grid = null;
+        public CellGroup<T> MainCellGroup { get { return m_Group; } }
+        private CellGroup<T> m_Group = null;
 
-		/// <summary>
-		/// Generate a grid using each pixels of a texture. Data is set using a dictionary where each possible pixel color equals premade data.
-		/// </summary>
         public void GenerateGridFromTexture(Texture2D texture, Dictionary<Color, T> data)
         {
             Dictionary<Vector2Int, Cell<T>> cells = new Dictionary<Vector2Int, Cell<T>>();
@@ -40,13 +37,10 @@ namespace Canty
                 }
             }
 
-            m_Grid = new CellGroup<T>(cells);
+            m_Group = new CellGroup<T>(cells);
         }
 
-		/// <summary>
-		/// Generates a grid and sets the data to a given default value.
-		/// </summary>
-        public void GenerateGrid(int width, int height, T commonData)
+        public void GenerateGrid(int width, int height)
         {
             Dictionary<Vector2Int, Cell<T>> cells = new Dictionary<Vector2Int, Cell<T>>();
 
@@ -54,19 +48,11 @@ namespace Canty
             {
                 for (int y = 0; y < height; y++)
                 {
-                    cells.Add(new Vector2Int(x, y), new Cell<T>(commonData));
+                    cells.Add(new Vector2Int(x, y), new Cell<T>(new T()));
                 }
             }
 
-            m_Grid = new CellGroup<T>(cells);
-        }
-
-		/// <summary>
-		/// Generates a grid and sets the data to a default value.
-		/// </summary>
-        public void GenerateGrid(int width, int height)
-        {
-            GenerateGrid(width, height, default(T));
-        }        
+            m_Group = new CellGroup<T>(cells);
+        }   
     }
 }

@@ -15,7 +15,7 @@ using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using Ookii.Dialogs;
 
-namespace Canty.Managers
+namespace Canty.FileBrowser
 { 
     public class WindowWrapper : IWin32Window 
     {

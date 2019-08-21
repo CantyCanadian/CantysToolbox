@@ -8,7 +8,7 @@
 
 using System;
 
-namespace Canty.Managers
+namespace Canty.FileBrowser
 {
     public interface IStandaloneFileBrowser
     {

@@ -11,7 +11,7 @@
 using System;
 using UnityEditor;
 
-namespace Canty.Managers
+namespace Canty.FileBrowser
 { 
     public class StandaloneFileBrowserEditor : IStandaloneFileBrowser  
     {

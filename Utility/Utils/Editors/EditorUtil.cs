@@ -73,6 +73,32 @@ namespace Canty
             GUIContent builtinIcon = EditorGUIUtility.IconContent(name);
             return new GUIContent(builtinIcon.image, tooltip);
         }
+
+        /// <summary>
+        /// Checks whether or not a given absolute path points towards a location inside the project.
+        /// </summary>
+        public static bool IsAbsolutePathARelativePath(string absolutePath)
+        {
+            absolutePath = absolutePath.Replace('\\', '/');
+
+            return absolutePath.StartsWith(Application.dataPath);
+        }
+
+        /// <summary>
+        /// Converts an absolute path (starting from C:// or equivalent) to relative path (starting with Assets/).
+        /// </summary>
+        public static string AbsoluteToRelativePath(string absolutePath)
+        {
+            absolutePath = absolutePath.Replace('\\', '/');
+
+            if (IsAbsolutePathARelativePath(absolutePath))
+            {
+                return "Assets" + absolutePath.Substring(Application.dataPath.Length);
+            }
+
+            Debug.LogError("EditorUtil : Absolute path not pointing towards a path from inside the project. Returning empty string.");
+            return "";
+        }
     }
 }
 

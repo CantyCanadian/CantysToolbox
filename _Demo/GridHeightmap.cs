@@ -19,7 +19,7 @@ public class GridHeightmap : MonoBehaviour
 
         m_Grid.GenerateGrid(HeightmapSize.x, HeightmapSize.y);
 
-        foreach (KeyValuePair<Vector2Int, Cell<Vector2Int>> cell in m_Grid.Cells.Cells)
+        foreach (KeyValuePair<Vector2Int, Cell<Vector2Int>> cell in m_Grid.MainCellGroup.Cells)
         {
             cell.Value.SetData(cell.Key);
             GameObject cube = Instantiate(CubePrefab, transform);
@@ -30,7 +30,7 @@ public class GridHeightmap : MonoBehaviour
 
     void Update()
     {
-        foreach (KeyValuePair<Vector2Int, Cell<Vector2Int>> cell in m_Grid.Cells.Cells)
+        foreach (KeyValuePair<Vector2Int, Cell<Vector2Int>> cell in m_Grid.MainCellGroup.Cells)
         {
             m_Cubes[cell.Value].transform.localScale = new Vector3(1.0f, Mathf.PerlinNoise(Time.time + cell.Key.x, Time.time + cell.Key.y) * HeightmapHeight + 0.1f, 1.0f);
         }
