@@ -11,24 +11,20 @@ using Canty.Managers;
 
 namespace Canty.Editors
 {
-    /// <summary>
-    /// Opens a tool that allows the user to merge three grayscale textures into one RGB textures, reducing the amount of textures needed to be loaded in a shader since all the info can be compressed without loss this way.
-    /// </summary>
-    public class TextureMerger : EditorWindow
+    public class TextureLayerer : EditorWindow
     {
         private Vector2Int m_ResultSize = new Vector2Int(512, 512);
 
-        private Texture2D m_Red;
-        private Texture2D m_Green;
-        private Texture2D m_Blue;
+        private Texture2D m_Base;
+        private Texture2D m_Overlay;
         private Texture2D m_Result;
 
-        private Rect m_Box;
+        private Rect m_Box = new Rect(90.0f, 185.0f, 125.0f, 125.0f);
 
-        [MenuItem("Tool/Texture Merger")]
+        [MenuItem("Tool/Texture Generation/Layerer")]
         public static void ShowWindow()
         {
-            EditorWindow mergerWindow = GetWindow<TextureMerger>();
+            EditorWindow mergerWindow = GetWindow<TextureLayerer>();
             mergerWindow.maxSize = new Vector2(300.0f, 360.0f);
             mergerWindow.minSize = mergerWindow.maxSize;
         }
@@ -42,7 +38,7 @@ namespace Canty.Editors
                 {
                     GUILayout.Space(50.0f);
                     GUILayout.Label("Grayscale to RGB Texture Merger", GUILayout.ExpandWidth(true));
-                    
+
                     GUILayout.Box(EditorUtil.IconContent("_Help", "Compress your textures using this tool. Instead of loading 3 grayscale textures in memory for your shader, merge them into a single image. Each color of the new image represents one of your old grayscale texture. If the result and your 3 sources are of the same size, there will be no data loss in the conversion. \n\nNote : \n-Each textures must have read/write enabled to be used by this tool. \n-Make sure that the sizes don't differ by much since there is no resizing algorithm at play here. Any size change will probably look like crap. \n-Limit of 4096x4096, and even then, the tool will take a long time to generate a result. Use large sizes at your own risk. \n-To remove a texture, click on the texture's square and press delete. An empty square will simply set that color to 0."));
                 }
                 GUILayout.EndHorizontal();
@@ -92,59 +88,26 @@ namespace Canty.Editors
                         GUILayout.BeginHorizontal(GUILayout.Width(70.0f));
                         {
                             GUILayout.FlexibleSpace();
-                            GUILayout.Label("Red", GUILayout.ExpandWidth(true));
+                            GUILayout.Label("Base", GUILayout.ExpandWidth(true));
                             GUILayout.FlexibleSpace();
                         }
                         GUILayout.EndHorizontal();
 
-                        m_Red = (Texture2D)EditorGUILayout.ObjectField(m_Red, typeof(Texture2D), false, GUILayout.Width(70), GUILayout.Height(70), GUILayout.ExpandWidth(true));
+                        m_Base = (Texture2D)EditorGUILayout.ObjectField(m_Base, typeof(Texture2D), false, GUILayout.Width(70), GUILayout.Height(70), GUILayout.ExpandWidth(true));
 
                         try
                         {
-                            if (m_Red != null)
+                            if (m_Base != null)
                             {
-                                m_Red.GetPixel(0, 0);
+                                m_Base.GetPixel(0, 0);
                             }
                         }
                         catch (UnityException e)
                         {
-                            if (e.Message.StartsWith("Texture '" + m_Red.name + "' is not readable"))
+                            if (e.Message.StartsWith("Texture '" + m_Base.name + "' is not readable"))
                             {
-                                Debug.LogError("Please enable read/write on texture [" + m_Red.name + "]");
-                                m_Red = null;
-                            }
-                        }
-                    }
-                    GUILayout.EndVertical();
-
-                    GUILayout.FlexibleSpace();
-
-                    GUILayout.BeginVertical();
-                    {
-                        // GREEN TEXTURE INPUT BOX
-                        GUILayout.BeginHorizontal(GUILayout.Width(70.0f));
-                        {
-                            GUILayout.FlexibleSpace();
-                            GUILayout.Label("Green", GUILayout.ExpandWidth(true));
-                            GUILayout.FlexibleSpace();
-                        }
-                        GUILayout.EndHorizontal();
-
-                        m_Green = (Texture2D)EditorGUILayout.ObjectField(m_Green, typeof(Texture2D), false, GUILayout.Width(70), GUILayout.Height(70), GUILayout.ExpandWidth(true));
-
-                        try
-                        {
-                            if (m_Green != null)
-                            {
-                                m_Green.GetPixel(0, 0);
-                            }
-                        }
-                        catch (UnityException e)
-                        {
-                            if (e.Message.StartsWith("Texture '" + m_Green.name + "' is not readable"))
-                            {
-                                Debug.LogError("Please enable read/write on texture [" + m_Green.name + "]");
-                                m_Green = null;
+                                Debug.LogError("Please enable read/write on texture [" + m_Base.name + "]");
+                                m_Base = null;
                             }
                         }
                     }
@@ -158,26 +121,26 @@ namespace Canty.Editors
                         GUILayout.BeginHorizontal(GUILayout.Width(70.0f));
                         {
                             GUILayout.FlexibleSpace();
-                            GUILayout.Label("Blue", GUILayout.ExpandWidth(true));
+                            GUILayout.Label("Overlay", GUILayout.ExpandWidth(true));
                             GUILayout.FlexibleSpace();
                         }
                         GUILayout.EndHorizontal();
 
-                        m_Blue = (Texture2D)EditorGUILayout.ObjectField(m_Blue, typeof(Texture2D), false, GUILayout.Width(70), GUILayout.Height(70), GUILayout.ExpandWidth(true));
+                        m_Overlay = (Texture2D)EditorGUILayout.ObjectField(m_Overlay, typeof(Texture2D), false, GUILayout.Width(70), GUILayout.Height(70), GUILayout.ExpandWidth(true));
 
                         try
                         {
-                            if (m_Blue != null)
+                            if (m_Overlay != null)
                             {
-                                m_Blue.GetPixel(0, 0);
+                                m_Overlay.GetPixel(0, 0);
                             }
                         }
                         catch (UnityException e)
                         {
-                            if (e.Message.StartsWith("Texture '" + m_Blue.name + "' is not readable"))
+                            if (e.Message.StartsWith("Texture '" + m_Overlay.name + "' is not readable"))
                             {
-                                Debug.LogError("Please enable read/write on texture [" + m_Blue.name + "]");
-                                m_Blue = null;
+                                Debug.LogError("Please enable read/write on texture [" + m_Overlay.name + "]");
+                                m_Overlay = null;
                             }
                         }
                     }
@@ -261,34 +224,27 @@ namespace Canty.Editors
                             {
                                 Color result = new Color(0.0f, 0.0f, 0.0f, 1.0f);
 
-                                if (m_Red != null)
+                                if (m_Base != null)
                                 {
-                                    int pixelX = (int)(((float)m_Red.width / m_ResultSize.x) * x);
-                                    int pixelY = (int)(((float)m_Red.height / m_ResultSize.y) * y);
+                                    int pixelX = (int)(((float)m_Base.width / m_ResultSize.x) * x);
+                                    int pixelY = (int)(((float)m_Base.height / m_ResultSize.y) * y);
 
-                                    Color pixel = m_Red.GetPixel(pixelX, pixelY);
+                                    Color pixel = m_Base.GetPixel(pixelX, pixelY);
 
-                                    result.r = pixel.r * pixel.a;
+                                    result = pixel;
                                 }
 
-                                if (m_Green != null)
+                                if (m_Overlay != null)
                                 {
-                                    int pixelX = (int)(((float)m_Green.width / m_ResultSize.x) * x);
-                                    int pixelY = (int)(((float)m_Green.height / m_ResultSize.y) * y);
+                                    int pixelX = (int)(((float)m_Overlay.width / m_ResultSize.x) * x);
+                                    int pixelY = (int)(((float)m_Overlay.height / m_ResultSize.y) * y);
 
-                                    Color pixel = m_Green.GetPixel(pixelX, pixelY);
+                                    Color pixel = m_Overlay.GetPixel(pixelX, pixelY);
 
-                                    result.g = pixel.g * pixel.a;
-                                }
-
-                                if (m_Blue != null)
-                                {
-                                    int pixelX = (int)(((float)m_Blue.width / m_ResultSize.x) * x);
-                                    int pixelY = (int)(((float)m_Blue.height / m_ResultSize.y) * y);
-
-                                    Color pixel = m_Blue.GetPixel(pixelX, pixelY);
-
-                                    result.b = pixel.b * pixel.a;
+                                    if (pixel.a > 0.0f)
+                                    {
+                                        result = pixel;
+                                    }
                                 }
 
                                 m_Result.SetPixel(x, y, result);
@@ -301,32 +257,39 @@ namespace Canty.Editors
                     // SAVE RESULT BUTTON
                     if (GUILayout.Button("Save Result", GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true)))
                     {
-                        string path = FileBrowserUtil.SaveFilePanel("Save RGB Texture", Application.dataPath, "RGBTexture", ExtensionFilter.GetImageFileFilter());
-
-                        byte[] file;
-
-                        if (path.EndsWith("png"))
+                        if (m_Result != null)
                         {
-                            file = m_Result.EncodeToPNG();
-                        }
-                        else if (path.EndsWith("jpg"))
-                        {
-                            file = m_Result.EncodeToJPG();
-                        }
-                        else
-                        {
-                            Debug.LogError("TextureMerger : Unknown extension provided.");
-                            return;
-                        }
+                            string path = FileBrowserUtil.SaveFilePanel("Save RGB Texture", Application.dataPath, "RGBTexture", ExtensionFilter.GetExtensionFilters("png", "jpg"));
 
-                        System.IO.File.WriteAllBytes(path, file);
+                            if (path.Length > 0)
+                            {
+                                byte[] file;
 
-                        if (EditorUtil.IsAbsolutePathARelativePath(path))
-                        {
-                            string relativePath = EditorUtil.AbsoluteToRelativePath(path);
-                            AssetDatabase.ImportAsset(relativePath);
-                            AssetDatabase.Refresh();
-                            Selection.activeObject = AssetDatabase.LoadAssetAtPath(relativePath, typeof(object));
+                                if (path.EndsWith("png"))
+                                {
+                                    file = m_Result.EncodeToPNG();
+                                }
+                                else if (path.EndsWith("jpg"))
+                                {
+                                    file = m_Result.EncodeToJPG();
+                                }
+                                else
+                                {
+                                    Debug.LogError("TextureMerger : Unknown extension provided.");
+                                    return;
+                                }
+
+                                System.IO.File.WriteAllBytes(path, file);
+
+                                if (EditorUtil.IsAbsolutePathARelativePath(path))
+                                {
+                                    string relativePath = EditorUtil.AbsoluteToRelativePath(path);
+                                    AssetDatabase.ImportAsset(relativePath);
+                                    AssetDatabase.Refresh();
+                                    EditorApplication.ExecuteMenuItem("Window/Project");
+                                    Selection.activeObject = AssetDatabase.LoadAssetAtPath(relativePath, typeof(object));
+                                }
+                            }
                         }
                     }
 
@@ -339,52 +302,29 @@ namespace Canty.Editors
 
         private void Awake()
         {
-            // Allows data to be kept over multiple sessions.
-            m_ResultSize = new Vector2Int(PlayerPrefs.GetInt("TEXTUREMERGER_RESULTSIZE_X", 512), PlayerPrefs.GetInt("TEXTUREMERGER_RESULTSIZE_Y", 512));
+            m_ResultSize = new Vector2Int(PlayerPrefs.GetInt("TEXTURELAYERER_RESULTSIZE_X", 512), PlayerPrefs.GetInt("TEXTURELAYERER_RESULTSIZE_Y", 512));
 
-            string redPath = PlayerPrefs.GetString("TEXTUREMERGER_REDTEXPATH", string.Empty);
-            string greenPath = PlayerPrefs.GetString("TEXTUREMERGER_GREENTEXPATH", string.Empty);
-            string bluePath = PlayerPrefs.GetString("TEXTUREMERGER_BLUETEXPATH", string.Empty);
+            string basePath = PlayerPrefs.GetString("TEXTURELAYERER_BASETEXPATH", string.Empty);
+            string overlayPath = PlayerPrefs.GetString("TEXTURELAYERER_OVERLAYTEXPATH", string.Empty);
 
-            if (redPath != string.Empty)
+            if (basePath != string.Empty)
             {
-                Texture2D red = AssetDatabase.LoadAssetAtPath<Texture2D>(redPath);
-
-                if (red != null)
-                {
-                    m_Red = red;
-                }
+                m_Base = AssetDatabase.LoadAssetAtPath<Texture2D>(basePath);
             }
 
-            if (greenPath != string.Empty)
+            if (overlayPath != string.Empty)
             {
-                Texture2D green = AssetDatabase.LoadAssetAtPath<Texture2D>(greenPath);
-
-                if (green != null)
-                {
-                    m_Green = green;
-                }
-            }
-
-            if (bluePath != string.Empty)
-            {
-                Texture2D blue = AssetDatabase.LoadAssetAtPath<Texture2D>(bluePath);
-
-                if (blue != null)
-                {
-                    m_Blue = blue;
-                }
+                m_Overlay = AssetDatabase.LoadAssetAtPath<Texture2D>(overlayPath);
             }
         }
 
         private void OnDestroy()
         {
-            PlayerPrefs.SetInt("TEXTUREMERGER_RESULTSIZE_X", m_ResultSize.x);
-            PlayerPrefs.SetInt("TEXTUREMERGER_RESULTSIZE_Y", m_ResultSize.y);
+            PlayerPrefs.SetInt("TEXTURELAYERER_RESULTSIZE_X", m_ResultSize.x);
+            PlayerPrefs.SetInt("TEXTURELAYERER_RESULTSIZE_Y", m_ResultSize.y);
 
-            PlayerPrefs.SetString("TEXTUREMERGER_REDTEXPATH", AssetDatabase.GetAssetPath(m_Red));
-            PlayerPrefs.SetString("TEXTUREMERGER_GREENTEXPATH", AssetDatabase.GetAssetPath(m_Green));
-            PlayerPrefs.SetString("TEXTUREMERGER_BLUETEXPATH", AssetDatabase.GetAssetPath(m_Blue));
+            PlayerPrefs.SetString("TEXTURELAYERER_BASETEXPATH", AssetDatabase.GetAssetPath(m_Base));
+            PlayerPrefs.SetString("TEXTURELAYERER_OVERLAYTEXPATH", AssetDatabase.GetAssetPath(m_Overlay));
         }
     }
 }

@@ -7,6 +7,7 @@
 ///====================================================================================================
 
 using System;
+using System.Collections.Generic;
 using Canty.FileBrowser;
 
 namespace Canty
@@ -21,8 +22,8 @@ namespace Canty
         /// <param name="title">Dialog title</param>
         /// <param name="directory">Root directory</param>
         /// <param name="extension">Allowed extension</param>
-        /// <param name="multiselect">Allow multiple file selection</param>
-        /// <returns>Returns array of chosen paths. Zero length array when cancelled</returns>
+        /// <param name="multiselect">Allow selection of multiple files.</param>
+        /// <returns>Returns array of chosen paths or zero length array when cancelled.</returns>
         public static string[] OpenFilePanel(string title, string directory, string extension, bool multiselect)
         {
             ExtensionFilter[] extensions = string.IsNullOrEmpty(extension) ? null : new ExtensionFilter[] { new ExtensionFilter("", extension) };
@@ -34,9 +35,9 @@ namespace Canty
         /// </summary>
         /// <param name="title">Dialog title</param>
         /// <param name="directory">Root directory</param>
-        /// <param name="extensions">List of extension filters. Filter Example: new ExtensionFilter("Image Files", "jpg", "png")</param>
-        /// <param name="multiselect">Allow multiple file selection</param>
-        /// <returns>Returns array of chosen paths. Zero length array when cancelled</returns>
+        /// <param name="extensions">List of extension filters. Filter Example: new ExtensionFilter("Image Files", "jpg", "png").</param>
+        /// <param name="multiselect">Allow selection of multiple files.</param>
+        /// <returns>Returns array of chosen paths or zero length array when cancelled.</returns>
         public static string[] OpenFilePanel(string title, string directory, ExtensionFilter[] extensions, bool multiselect)
         {
             if (m_PlatformWrapper == null)
@@ -53,12 +54,12 @@ namespace Canty
         /// <param name="title">Dialog title</param>
         /// <param name="directory">Root directory</param>
         /// <param name="extension">Allowed extension</param>
-        /// <param name="multiselect">Allow multiple file selection</param>
-        /// <param name="cb">Callback")</param>
-        public static void OpenFilePanelAsync(string title, string directory, string extension, bool multiselect, Action<string[]> cb)
+        /// <param name="multiselect">Allow selection of multiple files.</param>
+        /// <param name="callback">Callback for when the window closes.</param>
+        public static void OpenFilePanelAsync(string title, string directory, string extension, bool multiselect, Action<string[]> callback)
         {
             ExtensionFilter[] extensions = string.IsNullOrEmpty(extension) ? null : new[] { new ExtensionFilter("", extension) };
-            OpenFilePanelAsync(title, directory, extensions, multiselect, cb);
+            OpenFilePanelAsync(title, directory, extensions, multiselect, callback);
         }
 
         /// <summary>
@@ -67,16 +68,16 @@ namespace Canty
         /// <param name="title">Dialog title</param>
         /// <param name="directory">Root directory</param>
         /// <param name="extensions">List of extension filters. Filter Example: new ExtensionFilter("Image Files", "jpg", "png")</param>
-        /// <param name="multiselect">Allow multiple file selection</param>
-        /// <param name="cb">Callback")</param>
-        public static void OpenFilePanelAsync(string title, string directory, ExtensionFilter[] extensions, bool multiselect, Action<string[]> cb)
+        /// <param name="multiselect">Allow selection of multiple files.</param>
+        /// <param name="callback">Callback for when the window closes.</param>
+        public static void OpenFilePanelAsync(string title, string directory, ExtensionFilter[] extensions, bool multiselect, Action<string[]> callback)
         {
             if (m_PlatformWrapper == null)
             {
                 Initalize();
             }
 
-            m_PlatformWrapper.OpenFilePanelAsync(title, directory, extensions, multiselect, cb);
+            m_PlatformWrapper.OpenFilePanelAsync(title, directory, extensions, multiselect, callback);
         }
 
         /// <summary>
@@ -85,8 +86,8 @@ namespace Canty
         /// </summary>
         /// <param name="title"></param>
         /// <param name="directory">Root directory</param>
-        /// <param name="multiselect"></param>
-        /// <returns>Returns array of chosen paths. Zero length array when cancelled</returns>
+        /// <param name="multiselect">Allow selection of multiple folders.</param>
+        /// <returns>Returns array of chosen paths or zero length array when cancelled.</returns>
         public static string[] OpenFolderPanel(string title, string directory, bool multiselect)
         {
             if (m_PlatformWrapper == null)
@@ -103,11 +104,11 @@ namespace Canty
         /// </summary>
         /// <param name="title"></param>
         /// <param name="directory">Root directory</param>
-        /// <param name="multiselect"></param>
-        /// <param name="cb">Callback")</param>
-        public static void OpenFolderPanelAsync(string title, string directory, bool multiselect, Action<string[]> cb)
+        /// <param name="multiselect">Allow selection of multiple folders.</param>
+        /// <param name="callback">Callback for when the window closes.</param>
+        public static void OpenFolderPanelAsync(string title, string directory, bool multiselect, Action<string[]> callback)
         {
-            m_PlatformWrapper.OpenFolderPanelAsync(title, directory, multiselect, cb);
+            m_PlatformWrapper.OpenFolderPanelAsync(title, directory, multiselect, callback);
         }
 
         /// <summary>
@@ -117,10 +118,10 @@ namespace Canty
         /// <param name="directory">Root directory</param>
         /// <param name="defaultName">Default file name</param>
         /// <param name="extension">File extension</param>
-        /// <returns>Returns chosen path. Empty string when cancelled</returns>
+        /// <returns>Returns chosen path or empty string when cancelled.</returns>
         public static string SaveFilePanel(string title, string directory, string defaultName, string extension)
         {
-            ExtensionFilter[] extensions = string.IsNullOrEmpty(extension) ? null : new ExtensionFilter[] { new ExtensionFilter("", extension) };
+            ExtensionFilter[] extensions = string.IsNullOrEmpty(extension) ? null : new[] { new ExtensionFilter("", extension) };
 
             return SaveFilePanel(title, directory, defaultName, extensions);
         }
@@ -132,7 +133,7 @@ namespace Canty
         /// <param name="directory">Root directory</param>
         /// <param name="defaultName">Default file name</param>
         /// <param name="extensions">List of extension filters. Filter Example: new ExtensionFilter("Image Files", "jpg", "png")</param>
-        /// <returns>Returns chosen path. Empty string when canceled.</returns>
+        /// <returns>Returns chosen path or empty string when cancelled.</returns>
         public static string SaveFilePanel(string title, string directory, string defaultName, ExtensionFilter[] extensions)
         {
             if (m_PlatformWrapper == null)
@@ -150,11 +151,11 @@ namespace Canty
         /// <param name="directory">Root directory</param>
         /// <param name="defaultName">Default file name</param>
         /// <param name="extension">File extension</param>
-        /// <param name="cb">Callback")</param>
-        public static void SaveFilePanelAsync(string title, string directory, string defaultName, string extension, Action<string> cb)
+        /// <param name="callback">Callback for when the window closes.</param>
+        public static void SaveFilePanelAsync(string title, string directory, string defaultName, string extension, Action<string> callback)
         {
             ExtensionFilter[] extensions = string.IsNullOrEmpty(extension) ? null : new[] { new ExtensionFilter("", extension) };
-            SaveFilePanelAsync(title, directory, defaultName, extensions, cb);
+            SaveFilePanelAsync(title, directory, defaultName, extensions, callback);
         }
 
         /// <summary>
@@ -163,16 +164,16 @@ namespace Canty
         /// <param name="title">Dialog title</param>
         /// <param name="directory">Root directory</param>
         /// <param name="defaultName">Default file name</param>
-        /// <param name="extensions">List of extension filters. Filter Example: new ExtensionFilter("Image Files", "jpg", "png")</param>
-        /// <param name="cb">Callback")</param>
-        public static void SaveFilePanelAsync(string title, string directory, string defaultName, ExtensionFilter[] extensions, Action<string> cb)
+        /// <param name="extensions">List of extension filters. Filter Example: new ExtensionFilter("Image Files", "jpg", "png").</param>
+        /// <param name="callback">Callback for when the window closes.</param>
+        public static void SaveFilePanelAsync(string title, string directory, string defaultName, ExtensionFilter[] extensions, Action<string> callback)
         {
             if (m_PlatformWrapper == null)
             {
                 Initalize();
             }
 
-            m_PlatformWrapper.SaveFilePanelAsync(title, directory, defaultName, extensions, cb);
+            m_PlatformWrapper.SaveFilePanelAsync(title, directory, defaultName, extensions, callback);
         }
 
         /// <summary>
@@ -192,6 +193,9 @@ namespace Canty
         }
     }
 
+    /// <summary>
+    /// Simple utility struct in order to store file filters and quickly obtain presets of filters.
+    /// </summary>
     public struct ExtensionFilter
     {
         public string Name;
@@ -203,12 +207,19 @@ namespace Canty
             Extensions = filterExtensions;
         }
 
-        public static ExtensionFilter[] GetImageFileFilter()
+        /// <summary>
+        /// Returns the given filter strings as filter objects for the FileBrowser. Ex. "png" will filter for '*.png' files.
+        /// </summary>
+        public static ExtensionFilter[] GetExtensionFilters(params string[] filters)
         {
-            ExtensionFilter png = new ExtensionFilter("png", "png");
-            ExtensionFilter jpg = new ExtensionFilter("jpg", "jpg");
+            List<ExtensionFilter> filterList = new List<ExtensionFilter>();
 
-            return new ExtensionFilter[] { png, jpg };
+            foreach (string filter in filters)
+            {
+                filterList.Add(new ExtensionFilter(filter, filter));
+            }
+
+            return filterList.ToArray();
         }
     }
 }
