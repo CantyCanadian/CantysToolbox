@@ -9,14 +9,14 @@ namespace Canty.Managers
 {
     public abstract class UpdateableBase
     {
-		/// <summary>
-		/// Register itself to the updatable list.
-		/// </summary>
-        public void Initialize()
+        /// <summary>
+        /// Register itself to the updateable list.
+        /// </summary>
+        public UpdateableBase()
         {
             NonMonoUpdateManager.Instance.RegisterUpdateable(this);
         }
-
+        
         public abstract void Update();
     }
 }

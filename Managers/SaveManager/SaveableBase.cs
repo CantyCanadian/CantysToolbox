@@ -9,18 +9,19 @@ using UnityEngine;
 
 namespace Canty.Managers
 {
+    /// <summary>
+    /// Base class the object must inherit from to be used by the SaveManager. 
+    /// Inherits from MonoBehaviour since a child class can't inherit from two parent classes.
+    /// </summary>
     public abstract class SaveableBase : MonoBehaviour
-    {
-        public abstract string[] SaveData();
-        public abstract void LoadDefaultData();
-        public abstract void LoadData(string[] data);
-    }
-
-    public abstract class SaveableBase<I> : SaveableBase
     {
         protected void Start()
         {
-            SaveManager.Instance.RegisterSaveable(this, typeof(I));
+            SaveManager.Instance.RegisterSaveable(this, this.GetType());
         }
+
+        public abstract string[] SaveData();
+        public abstract void LoadDefaultData();
+        public abstract void LoadData(string[] data);
     }
 }
