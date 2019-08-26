@@ -80,7 +80,7 @@ namespace Canty
         /// </summary>
         public static void SetEnum(string key, Enum value)
         {
-            PlayerPrefs.SetString(key, value.ToString());
+            PlayerPrefs.SetInt(key, Convert.ToInt32(value));
         }
 
         #endregion
@@ -361,8 +361,7 @@ namespace Canty
         /// </summary>
         public static void SetColorArray(string key, Color[] values)
         {
-            SetVector4Array(key,
-                values.ConvertUsing<Color, Vector4, List<Vector4>>((obj) => { return obj; }).ToArray());
+            SetVector4Array(key, values.ConvertUsing<Color, Vector4, List<Vector4>>((obj) => { return obj; }).ToArray());
         }
 
         /// <summary>
@@ -370,8 +369,7 @@ namespace Canty
         /// </summary>
         public static void SetEnumArray(string key, Enum[] values)
         {
-            SetStringArray(key,
-                values.ConvertUsing<Enum, string, List<string>>((obj) => { return obj.ToString(); }).ToArray());
+            SetIntArray(key, values.ConvertUsing<Enum, int, List<int>>((obj) => { return Convert.ToInt32(obj); }).ToArray());
         }
 
         #endregion
@@ -669,12 +667,12 @@ namespace Canty
         /// </summary>
         public static T GetEnum<T>(string key, T defaultValue = default(T)) where T : struct, IConvertible
         {
-            string stringValue = PlayerPrefs.GetString(key);
+            int intValue = PlayerPrefs.GetInt(key, int.MaxValue);
 
-            if (!string.IsNullOrEmpty(stringValue))
+            if (intValue != int.MaxValue)
             {
                 // Existing value, so parse it using the supplied generic type and cast before returning it
-                return (T) Enum.Parse(typeof(T), stringValue);
+                return (T)Enum.ToObject(typeof(T), intValue);
             }
             else
             {

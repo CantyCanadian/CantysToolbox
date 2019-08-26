@@ -5,6 +5,8 @@
 ///
 ///====================================================================================================
 
+using UnityEngine;
+
 namespace Canty
 {
     public static class MathUtil
@@ -70,6 +72,16 @@ namespace Canty
             }
 
             return result / values.Length;
+        }
+
+        /// <summary>
+        /// Returns the unit circle position of the given angle (in degree).
+        /// </summary>
+        /// <param name="angle">Angle in degree.</param>
+        /// <returns>The result vector.</returns>
+        public static Vector2 UnitVector(float angle)
+        {
+            return new Vector2(Mathf.Cos(angle * Mathf.Deg2Rad), Mathf.Sin(angle * Mathf.Deg2Rad));
         }
     }
 }

@@ -34,8 +34,6 @@ namespace Canty
         private float m_Delta = 0.0f;
         private float m_TimeScale = 1.0f;
 
-        private bool m_Initialized = false;
-
         private bool m_Play = false;
         private bool m_LastRead = false;
         private bool m_Backwards = false;
@@ -47,7 +45,7 @@ namespace Canty
 		/// </summary>
         public void Play(bool loop = false, bool backwards = false)
         {
-            if (m_Initialized == false)
+            if (!m_Initialized)
             {
                 Initialize();
                 m_Initialized = true;

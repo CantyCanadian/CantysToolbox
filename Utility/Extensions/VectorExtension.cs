@@ -1011,5 +1011,28 @@ namespace Canty
         }
 
         #endregion
+
+        #region Rotate
+
+        /// <summary>
+        /// Rotate a 2D vector around 0,0.
+        /// </summary>
+        /// <param name="degrees">Angle in degrees.</param>
+        /// <returns>The result vector.</returns>
+        public static Vector2 Rotate(this Vector2 target, float degrees)
+        {
+            float sin = Mathf.Sin(degrees * Mathf.Deg2Rad);
+            float cos = Mathf.Cos(degrees * Mathf.Deg2Rad);
+
+            float tx = target.x;
+            float ty = target.y;
+
+            target.x = (cos * tx) - (sin * ty);
+            target.y = (sin * tx) + (cos * ty);
+            
+            return target;
+        }
+
+        #endregion
     }
 }

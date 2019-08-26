@@ -14,12 +14,11 @@ using UnityEngine;
 
 public abstract class TextureGeneratorBase<T> : EditorWindow where T : EditorWindow
 {
-    private Vector2Int m_ResultSize = new Vector2Int(512, 512);
+    protected Vector2Int m_ResultSize = new Vector2Int(512, 512);
+    protected Dictionary<string, TextureColorContainer> m_ComponentBoxes = new Dictionary<string, TextureColorContainer>();
 
     private Texture2D m_Result;
     private Rect m_Box;
-
-    private Dictionary<string, TextureColorContainer> m_ImageBoxes = new Dictionary<string, TextureColorContainer>();
 
     protected struct ComponentBoxData
     {
@@ -31,18 +30,19 @@ public abstract class TextureGeneratorBase<T> : EditorWindow where T : EditorWin
             Custom
         }
 
-        public ComponentBoxData(string name, ComponentBoxType type, System.Action<Dictionary<string, TextureColorContainer>> boxCreationCallback = null)
+        public ComponentBoxData(string name, ComponentBoxType type, System.Func<float, TextureColorContainer> boxCreationCallback = null)
         {
             BoxName = name;
             BoxType = type;
+            BoxCreationCallback = boxCreationCallback;
         }
 
         public string BoxName;
         public ComponentBoxType BoxType;
-        public System.Action<Dictionary<string, TextureColorContainer>> BoxCreationCallback;
+        public System.Func<float, TextureColorContainer> BoxCreationCallback;
     }
 
-    private struct TextureColorContainer
+    public class TextureColorContainer
     {
         public TextureColorContainer(bool isColor, Texture2D texture, Color color)
         {
@@ -51,27 +51,24 @@ public abstract class TextureGeneratorBase<T> : EditorWindow where T : EditorWin
             Color = color;
         }
 
-        public void SetTexture(Texture2D newTexture)
-        {
-            Texture = newTexture;
-        }
-
         public bool IsColor;
         public Texture2D Texture;
         public Color Color;
     }
 
-    protected static void SetDefaultTextureGeneratorWindowData()
+    protected static void SetDefaultTextureGeneratorWindowData(string tabName)
     {
-        EditorWindow mergerWindow = GetWindow<T>();
-        mergerWindow.maxSize = new Vector2(300.0f, 360.0f);
+        EditorWindow mergerWindow = GetWindow<T>(true, tabName);
+        mergerWindow.maxSize = new Vector2(300.0f, 400.0f);
         mergerWindow.minSize = mergerWindow.maxSize;
     }
 
     protected abstract string GetTopName();
     protected abstract string GetHelpTooltipText();
     protected abstract ComponentBoxData[] GetTextureBoxesData();
-    protected abstract Color ApplyMath(int x, int y, Dictionary<string, TextureColorContainer> containers);
+    protected abstract Color ApplyMath(int x, int y);
+    protected virtual float[] GetSaveableValues() { return new float[0]; }
+    protected virtual void SetSaveableValues(float[] values) { }
 
     private void OnGUI()
     {
@@ -83,10 +80,14 @@ public abstract class TextureGeneratorBase<T> : EditorWindow where T : EditorWin
                 GUILayout.FlexibleSpace();
                 GUILayout.Label(GetTopName(), GUIUtil.CenterStyle);
                 GUILayout.FlexibleSpace();
-
-                GUILayout.Box(EditorUtil.IconContent("_Help", GetHelpTooltipText()));
             }
             GUILayout.EndHorizontal();
+
+            GUILayout.BeginArea(new Rect(280.0f, 0.0f, 20.0f, 20.0f));
+            {
+                GUILayout.Box(EditorUtil.IconContent("_Help", GetHelpTooltipText()));
+            }
+            GUILayout.EndArea();
 
             GUILayout.BeginHorizontal(GUILayout.Height(10.0f));
             {
@@ -125,109 +126,50 @@ public abstract class TextureGeneratorBase<T> : EditorWindow where T : EditorWin
 
             GUILayout.BeginHorizontal(GUILayout.Width(300.0f));
             {
-                GUILayout.FlexibleSpace();
+                GUILayout.Space(17.0f);
 
-                // Creating some local functions to prevent repeating the code.
-                void PrepareTextureArea()
-                {
-                    // TEXTURE INPUT BOX
-                    GUILayout.BeginHorizontal(GUILayout.Width(70.0f));
-                    {
-                        GUILayout.FlexibleSpace();
-                        GUILayout.Label(boxName, GUILayout.ExpandWidth(true));
-                        GUILayout.FlexibleSpace();
-                    }
-                    GUILayout.EndHorizontal();
+                int count = GetTextureBoxesData().Length;
 
-                    container.Texture = (Texture2D)EditorGUILayout.ObjectField(container.Texture, typeof(Texture2D), false, GUILayout.Width(70), GUILayout.Height(70));
-
-                    try
-                    {
-                        if (container.Texture != null)
-                        {
-                            container.Texture.GetPixel(0, 0);
-                        }
-                    }
-                    catch (UnityException e)
-                    {
-                        if (e.Message.StartsWith("Texture '" + container.Texture.name + "' is not readable"))
-                        {
-                            Debug.LogError("Please enable read/write on texture [" + container.Texture.name + "]");
-                            container.Texture = null;
-                        }
-                    }
-
-                    GUILayout.BeginHorizontal(GUILayout.Width(70.0f), GUILayout.Height(15.0f));
-                    if (GUILayout.Button("^", GUILayout.Width(15.0f)))
-                    {
-                        container.Texture = m_Result;
-                    }
-                    GUILayout.EndHorizontal();
-                }
-
-                void PrepareColorArea()
-                {
-                    // COLOR BOX
-                    GUILayout.BeginHorizontal(GUILayout.Width(70.0f));
-                    {
-                        GUILayout.FlexibleSpace();
-                        GUILayout.Label(boxName, GUILayout.ExpandWidth(true));
-                        GUILayout.FlexibleSpace();
-                    }
-                    GUILayout.EndHorizontal();
-
-                    container.Color = EditorGUILayout.ColorField(container.Color, GUILayout.Width(70), GUILayout.Height(70));
-                }
-
+                float boxWidth = (300.0f - (10.0f * (count + 1))) / count;
                 foreach (ComponentBoxData boxInfo in GetTextureBoxesData())
                 {
-                    if (!m_ImageBoxes.ContainsKey(boxInfo.BoxName))
+                    if (!m_ComponentBoxes.ContainsKey(boxInfo.BoxName))
                     {
-                        m_ImageBoxes.Add(boxInfo.BoxName, new TextureColorContainer(false, null, Color.black));
+                        m_ComponentBoxes.Add(boxInfo.BoxName, new TextureColorContainer(false, null, Color.black));
                     }
 
-                    TextureColorContainer container = m_ImageBoxes[boxInfo.BoxName];
+                    TextureColorContainer container = m_ComponentBoxes[boxInfo.BoxName];
 
-                    GUILayout.BeginVertical();
+                    GUILayout.BeginVertical(GUILayout.Width(boxWidth), GUILayout.Height(120.0f));
                     {
                         switch (boxInfo.BoxType)
                         {
                             case ComponentBoxData.ComponentBoxType.TextureColor:
-                                if (GUILayout.Toggle(container.IsColor, "Use Color"))
-                                {
-                                    PrepareColorArea();
-                                }
-                                else
-                                {
-                                    PrepareTextureArea();
-                                }
+                                container.IsColor = GUILayout.Toggle(container.IsColor, "Use Color");
+                                container = container.IsColor ? PrepareColorArea(boxInfo.BoxName, boxWidth, container) : PrepareTextureArea(boxInfo.BoxName, boxWidth, container);
                                 break;
 
                             case ComponentBoxData.ComponentBoxType.Texture:
-                                PrepareTextureArea();
+                                GUILayout.Space(18.0f);
+                                container = PrepareTextureArea(boxInfo.BoxName, boxWidth, container);
+                                
                                 break;
 
                             case ComponentBoxData.ComponentBoxType.Color:
-                                PrepareColorArea();
+                                GUILayout.Space(18.0f);
+                                container = PrepareColorArea(boxInfo.BoxName, boxWidth, container);
+                                GUILayout.Space(2.0f);
                                 break;
 
                             case ComponentBoxData.ComponentBoxType.Custom:
-                                boxInfo.BoxCreationCallback(m_ImageBoxes);
+                                container = boxInfo.BoxCreationCallback(boxWidth);
                                 break;
                         }
                     }
                     GUILayout.EndVertical();
 
-                    GUILayout.FlexibleSpace();
-
-                    m_ImageBoxes[boxInfo.BoxName] = container;
+                    m_ComponentBoxes[boxInfo.BoxName] = container;
                 }
-            }
-            GUILayout.EndHorizontal();
-
-            GUILayout.BeginHorizontal(GUILayout.Height(5.0f));
-            {
-                GUILayout.FlexibleSpace();
             }
             GUILayout.EndHorizontal();
 
@@ -279,25 +221,25 @@ public abstract class TextureGeneratorBase<T> : EditorWindow where T : EditorWin
                         float difference = (float)m_ResultSize.y / m_ResultSize.x;
 
                         float value = 125.0f * difference;
-                        m_Box = new Rect(90.0f, 189.0f + ((125.0f - value) / 2.0f), 125.0f, value);
+                        m_Box = new Rect(91.0f, 227.0f + ((125.0f - value) / 2.0f), 125.0f, value);
                     }
                     else if (m_ResultSize.x < m_ResultSize.y)
                     {
                         float difference = (float)m_ResultSize.x / m_ResultSize.y;
 
                         float value = 125.0f * difference;
-                        m_Box = new Rect(90.0f + ((125.0f - value) / 2.0f), 189.0f, value, 125.0f);
+                        m_Box = new Rect(91.0f + ((125.0f - value) / 2.0f), 227.0f, value, 125.0f);
                     }
                     else
                     {
-                        m_Box = new Rect(90.0f, 189.0f, 125.0f, 125.0f);
+                        m_Box = new Rect(91.0f, 227.0f, 125.0f, 125.0f);
                     }
 
                     for (int x = 0; x < m_ResultSize.x; x++)
                     {
                         for (int y = 0; y < m_ResultSize.y; y++)
                         {
-                            m_Result.SetPixel(x, y, ApplyMath(x, y, m_ImageBoxes));
+                            m_Result.SetPixel(x, y, ApplyMath(x, y));
                         }
                     }
 
@@ -350,6 +292,78 @@ public abstract class TextureGeneratorBase<T> : EditorWindow where T : EditorWin
         GUILayout.EndVertical();
     }
 
+    private TextureColorContainer PrepareTextureArea(string boxName, float boxWidth, TextureColorContainer container)
+    {
+        GUILayout.BeginHorizontal(GUILayout.Width(boxWidth));
+        {
+            GUILayout.FlexibleSpace();
+            GUILayout.Label(boxName);
+            GUILayout.FlexibleSpace();
+        }
+        GUILayout.EndHorizontal();
+
+        GUILayout.BeginHorizontal(GUILayout.Width(boxWidth));
+        {
+            GUILayout.FlexibleSpace();
+            container.Texture = (Texture2D) EditorGUILayout.ObjectField(container.Texture, typeof(Texture2D), false, GUILayout.Width(Mathf.Min(boxWidth, 70.0f)), GUILayout.Height(Mathf.Min(boxWidth, 70.0f)));
+            GUILayout.FlexibleSpace();
+        }
+        GUILayout.EndHorizontal();
+
+        try
+        {
+            if (container.Texture != null)
+            {
+                container.Texture.GetPixel(0, 0);
+            }
+        }
+        catch (UnityException e)
+        {
+            if (e.Message.StartsWith("Texture '" + container.Texture.name + "' is not readable"))
+            {
+                Debug.LogError("Please enable read/write on texture [" + container.Texture.name + "]");
+                container.Texture = null;
+            }
+        }
+
+        GUILayout.BeginHorizontal(GUILayout.Width(boxWidth), GUILayout.Height(15.0f));
+        {
+            GUILayout.FlexibleSpace();
+            if (GUILayout.Button("^", GUILayout.Width(15.0f)))
+            {
+                container.Texture = m_Result;
+            }
+
+            GUILayout.FlexibleSpace();
+        }
+        GUILayout.EndHorizontal();
+
+        GUILayout.Space(2.0f);
+
+        return container;
+    }
+
+    private TextureColorContainer PrepareColorArea(string boxName, float boxWidth, TextureColorContainer container)
+    {
+        GUILayout.BeginHorizontal(GUILayout.Width(boxWidth));
+        {
+            GUILayout.FlexibleSpace();
+            GUILayout.Label(boxName);
+            GUILayout.FlexibleSpace();
+        }
+        GUILayout.EndHorizontal();
+
+        GUILayout.BeginHorizontal(GUILayout.Width(boxWidth), GUILayout.Height(100.0f));
+        {
+            GUILayout.FlexibleSpace();
+            container.Color = EditorGUILayout.ColorField(container.Color, GUILayout.Width(Mathf.Min(boxWidth, 70.0f)));
+            GUILayout.FlexibleSpace();
+        }
+        GUILayout.EndHorizontal();
+
+        return container;
+    }
+
     private void Awake()
     {
         string type = typeof(T).ToString();
@@ -379,8 +393,10 @@ public abstract class TextureGeneratorBase<T> : EditorWindow where T : EditorWin
                 texture,
                 PlayerPrefsUtil.GetColor(type + "_COLOR_" + box, Color.black));
 
-            m_ImageBoxes.Add(box, container);
+            m_ComponentBoxes.Add(box, container);
         }
+
+        SetSaveableValues(PlayerPrefsUtil.GetFloatArray(type + "_SAVEABLES"));
     }
 
     private void OnDestroy()
@@ -390,15 +406,15 @@ public abstract class TextureGeneratorBase<T> : EditorWindow where T : EditorWin
         PlayerPrefs.SetInt(type + "_RESULTSIZE_X", m_ResultSize.x);
         PlayerPrefs.SetInt(type + "_RESULTSIZE_Y", m_ResultSize.y);
 
-        PlayerPrefsUtil.SetStringArray(type + "_BOXKEYS", m_ImageBoxes.ExtractKeys());
+        PlayerPrefsUtil.SetStringArray(type + "_BOXKEYS", m_ComponentBoxes.ExtractKeys().ToArray());
         
-        foreach (KeyValuePair<string, TextureColorContainer> tcc in m_ImageBoxes)
+        foreach (KeyValuePair<string, TextureColorContainer> tcc in m_ComponentBoxes)
         {
             PlayerPrefsUtil.SetBool(type + "_ISCOLOR_" + tcc.Key, tcc.Value.IsColor);
             PlayerPrefs.SetString(type + "_TEXPATH_" + tcc.Key, AssetDatabase.GetAssetPath(tcc.Value.Texture));
             PlayerPrefsUtil.SetColor(type + "_COLOR_" + tcc.Key, tcc.Value.Color);
-
-            boxIndex++;
         }
+
+        PlayerPrefsUtil.SetFloatArray(type + "_SAVEABLES", GetSaveableValues());
     }
 }

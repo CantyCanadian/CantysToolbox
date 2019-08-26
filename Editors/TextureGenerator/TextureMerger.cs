@@ -8,6 +8,8 @@
 using UnityEditor;
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
+using Component = System.ComponentModel.Component;
 
 namespace Canty.Editors
 {
@@ -19,15 +21,15 @@ namespace Canty.Editors
         [MenuItem("Tool/Texture Generation/Merger")]
         public static void ShowWindow()
         {
-            SetDefaultTextureGeneratorWindowData();
+            SetDefaultTextureGeneratorWindowData("RGB to Greyscale Texture Merger");
         }
 
-        override protected string GetTopName()
+        protected override string GetTopName()
         {
-            return "RGB to Greyscale Merger";
+            return "RGB to Greyscale Texture Merger";
         }
 
-        override protected string GetHelpTooltipText()
+        protected override string GetHelpTooltipText()
         {
             return "Compress your textures using this tool. " +
                 "Instead of loading 3 grayscale textures in memory for your shader, merge them into a single image. " +
@@ -41,48 +43,48 @@ namespace Canty.Editors
                 "\n-To remove a texture, click on the texture's square and press delete. An empty square will simply set that color to 0.";
         }
 
-        override protected TextureBoxData[] GetTextureBoxesData()
+        protected override ComponentBoxData[] GetTextureBoxesData()
         {
-            return new[] { new TextureBoxData("Red", ComponentBoxData.ComponentBoxType.TextureColor), new TextureBoxData("Green", ComponentBoxData.ComponentBoxType.TextureColor), new TextureBoxData("Blue", ComponentBoxData.ComponentBoxType.TextureColor) };
+            return new[] { new ComponentBoxData("Red", ComponentBoxData.ComponentBoxType.TextureColor), new ComponentBoxData("Green", ComponentBoxData.ComponentBoxType.TextureColor), new ComponentBoxData("Blue", ComponentBoxData.ComponentBoxType.TextureColor) };
         }
 
-        override protected Color ApplyMath(int x, int y, Dictionary<string, TextureColorContainer> containers)
+        protected override Color ApplyMath(int x, int y)
         {
             Color result = Color.black;
 
-            if (containers["Red"].IsColor)
+            if (m_ComponentBoxes["Red"].IsColor)
             {
-                result.r = containers["Red"].Color;
+                result.r = m_ComponentBoxes["Red"].Color.r;
             }
             else
             {
-                if (containers["Red"].Texture != null)
+                if (m_ComponentBoxes["Red"].Texture != null)
                 {
-                    result.r = containers["Red"].Texture.GetPixel(x, y);
+                    result.r = m_ComponentBoxes["Red"].Texture.GetPixel(x, y).r;
                 }
             }
 
-            if (containers["Green"].IsColor)
+            if (m_ComponentBoxes["Green"].IsColor)
             {
-                result.g = containers["Green"].Color;
+                result.g = m_ComponentBoxes["Green"].Color.g;
             }
             else
             {
-                if (containers["Green"].Texture != null)
+                if (m_ComponentBoxes["Green"].Texture != null)
                 {
-                    result.g = containers["Green"].Texture.GetPixel(x, y);
+                    result.g = m_ComponentBoxes["Green"].Texture.GetPixel(x, y).g;
                 }
             }
 
-            if (containers["Blue"].IsColor)
+            if (m_ComponentBoxes["Blue"].IsColor)
             {
-                result.b = containers["Blue"].Color;
+                result.b = m_ComponentBoxes["Blue"].Color.b;
             }
             else
             {
-                if (containers["Blue"].Texture != null)
+                if (m_ComponentBoxes["Blue"].Texture != null)
                 {
-                    result.b = containers["Blue"].Texture.GetPixel(x, y);
+                    result.b = m_ComponentBoxes["Blue"].Texture.GetPixel(x, y).b;
                 }
             }
 

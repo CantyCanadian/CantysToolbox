@@ -13,18 +13,13 @@ namespace Canty.Managers
 {
     public class NonMonoUpdateManager : Singleton<NonMonoUpdateManager>
     {
-        private List<UpdateableBase> m_Updateables;
+        private List<UpdateableBase> m_Updateables = new List<UpdateableBase>();
 
 		/// <summary>
 		/// Register an UpdateableBase object to the list.
 		/// </summary>
         public void RegisterUpdateable(UpdateableBase updateable)
         {
-            if (m_Updateables == null)
-            {
-                m_Updateables = new List<UpdateableBase>();
-            }
-
             if (!m_Updateables.AddOnce(updateable))
             {
                 Debug.LogWarning("NonMonoUpdateManager : Trying to add the same object to the manager multiple time.");

@@ -5,7 +5,11 @@
 ///
 ///====================================================================================================
 
+using System;
+using System.Collections.Generic;
+using Canty.Managers;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Canty
 {
@@ -26,7 +30,7 @@ namespace Canty
 
                 lock (s_ThreadSafety)
                 {
-                    if (s_Instance == null)
+                    if (!s_Instance)
                     {
                         T find = FindObjectOfType<T>();
 
@@ -53,9 +57,14 @@ namespace Canty
         private static Object s_ThreadSafety = new Object();
         private static bool s_ApplicationIsQuitting = false;
 
-        // Adding a check to OnApplicationQuit in order to prevent a weird Unity racing bug. 
+        // Adding a check to OnApplicationQuit and OnDestroy in order to prevent a weird Unity racing bug. 
         // Slight chance the singleton will be destroyed, then recreated as the game is quitting.
         public void OnApplicationQuit()
+        {
+            s_ApplicationIsQuitting = true;
+        }
+
+        public void OnDestroy()
         {
             s_ApplicationIsQuitting = true;
         }

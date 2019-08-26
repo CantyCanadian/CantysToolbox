@@ -5,6 +5,8 @@
 ///
 ///====================================================================================================
 
+using System;
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using Canty.Managers;
@@ -24,74 +26,143 @@ namespace Canty.Editors
 
         private TextureGradientTypes m_CurrentType = TextureGradientTypes.Linear;
         private float m_RotationAngle = 0.0f;
-        private float m_Offset = 0.0f;
         private float m_Radius = 0.5f;
-        private float m_Pinch = 0.0f;
+        private float m_Spread = 1.0f;
 
         [MenuItem("Tool/Texture Generation/Gradient")]
         public static void ShowWindow()
         {
-            SetDefaultTextureGeneratorWindowData();
+            SetDefaultTextureGeneratorWindowData("Gradient Texture Generator");
         }
 
-        override protected string GetTopName()
+        protected override string GetTopName()
         {
             return "Gradient Texture Generator";
         }
 
-        override protected string GetHelpTooltipText()
+        protected override string GetHelpTooltipText()
         {
-            return "";
+            return "Generate a simple gradient texture using this tool. " +
+                   "You get to select whether you want it radial or linear. " +
+                   "There isn't much to explain here, minus a warning that your textures both in and out should match in size for the best results.";
         }
 
-        override protected TextureBoxData[] GetTextureBoxesData()
+        protected override ComponentBoxData[] GetTextureBoxesData()
         {
-            return new[] { new TextureBoxData("Color 1", ComponentBoxData.ComponentBoxType.Color), new TextureBoxData("Color 2", ComponentBoxData.ComponentBoxType.Color), new TextureBoxData("Options", ComponentBoxData.ComponentBoxType.Custom, CustomEditorOptions) };
+            return new[] { new ComponentBoxData("Grad 1", ComponentBoxData.ComponentBoxType.TextureColor), new ComponentBoxData("Grad 2", ComponentBoxData.ComponentBoxType.TextureColor), new ComponentBoxData("Options", ComponentBoxData.ComponentBoxType.Custom, CustomEditorOptions) };
         }
 
-        override protected Color ApplyMath(int x, int y, Dictionary<string, TextureColorContainer> containers)
+        protected override Color ApplyMath(int x, int y)
         {
-            Color result = containers["Base"].IsColor ? containers["Base"].Color : containers["Base"].Texture.GetPixel(x, y);
+            Color result = Color.black;
 
-            Color overlay = containers["Overlay"].Texture.GetPixel(x, y);
-            overlay.a *= containers["Mask"].IsColor ? containers["Mask"].Color : containers["Mask"].Texture.GetPixel(x, y);
+            Color box1 = m_ComponentBoxes["Grad 1"].IsColor ? m_ComponentBoxes["Grad 1"].Color : m_ComponentBoxes["Grad 1"].Texture ? m_ComponentBoxes["Grad 1"].Texture.GetPixel(x, y) : Color.black;
+            Color box2 = m_ComponentBoxes["Grad 2"].IsColor ? m_ComponentBoxes["Grad 2"].Color : m_ComponentBoxes["Grad 2"].Texture ? m_ComponentBoxes["Grad 2"].Texture.GetPixel(x, y) : Color.black;
+
+            float largest = m_ResultSize.x > m_ResultSize.y ? m_ResultSize.x : m_ResultSize.y;
+            largest /= 2.0f;
+
+            Vector2 pos = new Vector2(x, y);
+
+            switch (m_CurrentType)
+            {
+                case TextureGradientTypes.Linear:
+                    Vector2 newPosAt0 = pos.MinusScalar(largest).Rotate(-m_RotationAngle).AddScalar(largest);
+                    float spreaded = largest * m_Spread;
+
+                    if (newPosAt0.x <= largest - spreaded)
+                    {
+                        result = box1;
+                    }
+                    else if (newPosAt0.x <= largest + spreaded)
+                    {
+                        result = Color.Lerp(box1, box2, (newPosAt0.x - (largest - spreaded)) / (spreaded * 2.0f));
+                    }
+                    else
+                    {
+                        result = box2;
+                    }
+                    break;
+
+                case TextureGradientTypes.Radial:
+                {
+                    float dist = Vector2.Distance(pos.MinusScalar(largest), Vector2.zero);
+
+                    if (dist <= largest * m_Radius)
+                    {
+                        result = box1;
+                    }
+                    else if (dist - (largest * m_Radius) <=  (largest * m_Spread))
+                    {
+                        result = Color.Lerp(box1, box2, (dist - (largest * m_Radius)) / (largest * m_Spread));
+                    }
+                    else
+                    {
+                        result = box2;
+                    }
+                }
+                break;
+            }
 
             return result;
         }
 
-        private void CustomEditorOptions(System.Action<Dictionary<string, TextureColorContainer>> containers)
+        private TextureColorContainer CustomEditorOptions(float boxWidth)
         {
-            m_CurrentType = EditorGUILayout.EnumPopup("Type : ", m_CurrentType);
+            if (GUILayout.Button("Swap Tex", GUILayout.Width(boxWidth), GUILayout.Height(20.0f)))
+            {
+                Texture2D temp = m_ComponentBoxes["Grad 1"].Texture;
+                m_ComponentBoxes["Grad 1"].Texture = m_ComponentBoxes["Grad 2"].Texture;
+                m_ComponentBoxes["Grad 2"].Texture = temp;
+            }
+
+            GUILayout.Label("Type", GUILayout.Width(boxWidth));
+            m_CurrentType = (TextureGradientTypes)EditorGUILayout.EnumPopup("", m_CurrentType, GUILayout.Width(boxWidth));
+
+            GUILayout.Space(3.0f);
 
             if (m_CurrentType == TextureGradientTypes.Linear)
             {
-                m_RotationAngle = EditorGUILayout.FloatField("Angle : ", m_RotationAngle);
-                m_RotationAngle = Mathf.Clamp(m_RotationAngle, -360.0f, 360.0f);
+                GUILayout.Label("Angle", GUILayout.Width(boxWidth));
+                m_RotationAngle = EditorGUILayout.FloatField("", m_RotationAngle, GUILayout.Width(boxWidth));
+                m_RotationAngle = Mathf.Clamp(m_RotationAngle, 0.0f, 180.0f);
 
-                m_Pinch = EditorGUILayout.FloatField("Pinch : ", m_RotationAngle);
-                m_Pinch = Mathf.Clamp(m_Pinch, 0.0f, 1.0f);
+                GUILayout.Space(3.0f);
+
+                GUILayout.Label("Spread", GUILayout.Width(boxWidth));
+                m_Spread = EditorGUILayout.FloatField("", m_Spread, GUILayout.Width(boxWidth));
+                m_Spread = Mathf.Clamp(m_Spread, 0.0f, 2.0f);
             }
             else
             {
-                m_Radius = EditorGUILayout.FloatField("Radius : ", m_Radius);
+                GUILayout.Label("Radius", GUILayout.Width(boxWidth));
+                m_Radius = EditorGUILayout.FloatField("", m_Radius, GUILayout.Width(boxWidth));
                 m_Radius = Mathf.Clamp(m_Radius, 0.0f, 1.0f);
 
-                m_Pinch = EditorGUILayout.FloatField("Pinch : ", m_Pinch);
-                m_Pinch = Mathf.Clamp(m_Pinch, 0.0f, 1.0f);
+                GUILayout.Space(3.0f);
+
+                GUILayout.Label("Spread", GUILayout.Width(boxWidth));
+                m_Spread = EditorGUILayout.FloatField("", m_Spread, GUILayout.Width(boxWidth));
+                m_Spread = Mathf.Clamp(m_Spread, 0.0f, 5.0f);
             }
 
+            return new TextureColorContainer(false, null, Color.black);
+        }
 
+        protected override float[] GetSaveableValues()
+        {
+            return new [] { (float)m_CurrentType, m_RotationAngle, m_Spread, m_Radius };
+        }
 
-            // COLOR BOX
-            GUILayout.BeginHorizontal(GUILayout.Width(70.0f));
+        protected override void SetSaveableValues(float[] values)
+        {
+            if (values.Length == 4)
             {
-                GUILayout.FlexibleSpace();
-                GUILayout.Label(boxName, GUILayout.ExpandWidth(true));
-                GUILayout.FlexibleSpace();
+                m_CurrentType = (TextureGradientTypes)values[0];
+                m_RotationAngle = values[1];
+                m_Spread = values[2];
+                m_Radius = values[3];
             }
-            GUILayout.EndHorizontal();
-
-            container.Color = EditorGUILayout.ColorField(container.Color, GUILayout.Width(70), GUILayout.Height(70));
         }
     }
 }
