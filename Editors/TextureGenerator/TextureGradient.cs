@@ -29,7 +29,7 @@ namespace Canty.Editors
         private float m_Radius = 0.5f;
         private float m_Spread = 1.0f;
 
-        [MenuItem("Tool/Texture Generation/Gradient")]
+        [MenuItem("Tool/Texture Generation/Gradient", false, 1)]
         public static void ShowWindow()
         {
             SetDefaultTextureGeneratorWindowData("Gradient Texture Generator");
@@ -44,7 +44,7 @@ namespace Canty.Editors
         {
             return "Generate a simple gradient texture using this tool. " +
                    "You get to select whether you want it radial or linear. " +
-                   "There isn't much to explain here, minus a warning that your textures both in and out should match in size for the best results.";
+                   "There isn't much to explain here, minus a warning that your textures both in and out should match in size for the best results and that the textures should be set to read/write.";
         }
 
         protected override ComponentBoxData[] GetTextureBoxesData()
@@ -107,7 +107,7 @@ namespace Canty.Editors
             return result;
         }
 
-        private TextureColorContainer CustomEditorOptions(float boxWidth)
+        private void CustomEditorOptions(float boxWidth)
         {
             if (GUILayout.Button("Swap Tex", GUILayout.Width(boxWidth), GUILayout.Height(20.0f)))
             {
@@ -145,8 +145,6 @@ namespace Canty.Editors
                 m_Spread = EditorGUILayout.FloatField("", m_Spread, GUILayout.Width(boxWidth));
                 m_Spread = Mathf.Clamp(m_Spread, 0.0f, 5.0f);
             }
-
-            return new TextureColorContainer(false, null, Color.black);
         }
 
         protected override float[] GetSaveableValues()
