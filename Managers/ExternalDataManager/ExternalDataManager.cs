@@ -16,8 +16,7 @@ namespace Canty.Managers
         /// <summary>
         /// Path for external data files. Cannot be changed at runtime.
         /// </summary>
-        public string ExternalDataPath = "Assets/Data/";
-        private string m_ExternalDataPath;
+        public static string ExternalDataPath { get { return "Assets/Data/"; } }
 
         private struct PreparedFileContainer
         {
@@ -40,6 +39,22 @@ namespace Canty.Managers
         public bool HasData(string fileKey, string itemKey)
         {
             return m_Data[fileKey].ContainsKey(itemKey);
+        }
+
+        /// <summary>
+        /// Gets all the keys associated to the file key.
+        /// </summary>
+        public string[] GetKeys(string fileKey)
+        {
+            return m_Data[fileKey].ExtractKeys().ToArray();
+        }
+
+        /// <summary>
+        /// Returns how many values there are for a given file and item.
+        /// </summary>
+        public int GetValueCount(string fileKey, string itemKey)
+        {
+            return m_Data[fileKey][itemKey].Length;
         }
 
         /// <summary>
@@ -88,6 +103,14 @@ namespace Canty.Managers
         public T[] GetValues<T>(string fileKey, string itemKey) where T : IConvertible
         {
             return m_Data[fileKey][itemKey].ConvertUsing<string, T, List<T>>((obj) => { return obj.ConvertTo<T>(); }).ToArray();
+        }
+
+        /// <summary>
+        /// Gets all the items and their strings from a file.
+        /// </summary>
+        public Dictionary<string, string[]> GetAllValues(string fileKey)
+        {
+            return m_Data[fileKey];
         }
 
         /// <summary>
@@ -150,28 +173,23 @@ namespace Canty.Managers
                 {
                     if (file.Value.Columns[0] == -1)
                     {
-                        Dictionary<string, List<string>> loadedData = CSVUtil.LoadAllColumns(m_ExternalDataPath, file.Key);
+                        Dictionary<string, List<string>> loadedData = CSVUtil.LoadAllColumns(ExternalDataPath, file.Key);
                         m_Data.Add(file.Value.FileKey, loadedData.ConvertUsing((obj) => { return obj.ToArray(); }));
                     }
                     else
                     {
-                        Dictionary<string, string> loadedData = CSVUtil.LoadSingleColumn(m_ExternalDataPath, file.Key, file.Value.Columns[0]);
+                        Dictionary<string, string> loadedData = CSVUtil.LoadSingleColumn(ExternalDataPath, file.Key, file.Value.Columns[0]);
                         m_Data.Add(file.Value.FileKey, loadedData.ConvertUsing((obj) => { return new string[] { obj }; }));
                     }
                 }
                 else
                 {
-                    Dictionary<string, List<string>> loadedData = CSVUtil.LoadMultipleColumns(m_ExternalDataPath, file.Key, file.Value.Columns);
+                    Dictionary<string, List<string>> loadedData = CSVUtil.LoadMultipleColumns(ExternalDataPath, file.Key, file.Value.Columns);
                     m_Data.Add(file.Value.FileKey, loadedData.ConvertUsing((obj) => { return obj.ToArray(); }));
                 }
             }
 
             m_PreparedFiles.Clear();
-        }
-
-        private void Awake()
-        {
-            m_ExternalDataPath = ExternalDataPath;
         }
     }
 }
