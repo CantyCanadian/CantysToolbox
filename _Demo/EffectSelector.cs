@@ -109,6 +109,8 @@ public class EffectSelector : MonoBehaviour
             m_ContentChanged = true;
         }
 
+
+
         if (m_ContentChanged)
         {
             Objects.SetAllActive(false);

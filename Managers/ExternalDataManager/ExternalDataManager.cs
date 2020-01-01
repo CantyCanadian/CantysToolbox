@@ -14,81 +14,94 @@ namespace Canty.Managers
     public class ExternalDataManager : Singleton<ExternalDataManager>
     {
         /// <summary>
-        /// Default path for external data files.
+        /// Path for external data files. Cannot be changed at runtime.
         /// </summary>
-        public static string ExternalDataPath { get { return "Assets/Assets/External/"; } }
+        public string ExternalDataPath = "Assets/Data/";
+        private string m_ExternalDataPath;
 
-        private Dictionary<string, int[]> m_PreparedFiles = null;
-        private Dictionary<string, string[]> m_Data = null;
+        private struct PreparedFileContainer
+        {
+            public PreparedFileContainer(string fileKey, int[] columns)
+            {
+                FileKey = fileKey;
+                Columns = columns;
+            }
+
+            public string FileKey;
+            public int[] Columns;
+        }
+
+        private Dictionary<string, PreparedFileContainer> m_PreparedFiles = null;
+        private Dictionary<string, Dictionary<string, string[]>> m_Data = null;
 
         /// <summary>
         /// Checks if the passed-in key exists.
         /// </summary>
-        public bool HasData(string key)
+        public bool HasData(string fileKey, string itemKey)
         {
-            return m_Data.ContainsKey(key);
+            return m_Data[fileKey].ContainsKey(itemKey);
         }
 
         /// <summary>
         /// Gets the first string associated to the key from cache.
         /// </summary>
-        public string GetValue(string key)
+        public string GetValue(string fileKey, string itemKey)
         {
-            return m_Data[key][0];
+            return m_Data[fileKey][itemKey][0];
         }
 
         /// <summary>
         /// Gets a specific string associated to the key from cache.
         /// </summary>
-        public string GetValue(string key, int index)
+        public string GetValue(string fileKey, string itemKey, int index)
         {
-            return m_Data[key][index];
+            return m_Data[fileKey][itemKey][index];
         }
 
         /// <summary>
         /// Gets the first string associated to the key from cache, converted in the desired type.
         /// </summary>
-        public T GetValue<T>(string key) where T : IConvertible
+        public T GetValue<T>(string fileKey, string itemKey) where T : IConvertible
         {
-            return m_Data[key][0].ConvertTo<T>();
+            return m_Data[fileKey][itemKey][0].ConvertTo<T>();
         }
 
         /// <summary>
         /// Gets a specific string associated to the key from cache, converted in the desired type.
         /// </summary>
-        public T GetValue<T>(string key, int index) where T : IConvertible
+        public T GetValue<T>(string fileKey, string itemKey, int index) where T : IConvertible
         {
-            return m_Data[key][index].ConvertTo<T>();
+            return m_Data[fileKey][itemKey][index].ConvertTo<T>();
         }
 
         /// <summary>
         /// Gets all the strings associated to the key from cache.
         /// </summary>
-        public string[] GetValues(string key)
+        public string[] GetValues(string fileKey, string itemKey)
         {
-            return m_Data[key];
+            return m_Data[fileKey][itemKey];
         }
 
         /// <summary>
         /// Gets all the strings associated to the key from cache, converted in the desired type.
         /// </summary>
-        public T[] GetValues<T>(string key) where T : IConvertible
+        public T[] GetValues<T>(string fileKey, string itemKey) where T : IConvertible
         {
-            return m_Data[key].ConvertUsing<string, T, List<T>>((obj) => { return obj.ConvertTo<T>(); }).ToArray();
+            return m_Data[fileKey][itemKey].ConvertUsing<string, T, List<T>>((obj) => { return obj.ConvertTo<T>(); }).ToArray();
         }
 
         /// <summary>
         /// Sets the file as ready to be loaded. Will load all its columns.
         /// </summary>
-        public void PrepareFile(string fileName)
+        public void PrepareFile(string fileName, string fileKey)
         {
-            PrepareFile(fileName, new int[] { -1 });
+            PrepareFile(fileName, fileKey, new int[] { -1 });
         }
 
         /// <summary>
         /// Sets the file as ready to be loaded. Will load only the specified column.
         /// </summary>
-        public void PrepareFile(string fileName, int column)
+        public void PrepareFile(string fileName, string fileKey, int column)
         {
             if (column <= 0)
             {
@@ -96,20 +109,20 @@ namespace Canty.Managers
                 return;
             }
 
-            PrepareFile(fileName, new int[] { column });
+            PrepareFile(fileName, fileKey, new int[] { column });
         }
 
         /// <summary>
         /// Sets the file as ready to be loaded. Will load only the specified columns.
         /// </summary>
-        public void PrepareFile(string fileName, int[] column)
+        public void PrepareFile(string fileName, string fileKey, int[] column)
         {
             if (m_PreparedFiles == null)
             {
-                m_PreparedFiles = new Dictionary<string, int[]>();
+                m_PreparedFiles = new Dictionary<string, PreparedFileContainer>();
             }
 
-            m_PreparedFiles.Add(fileName, column);
+            m_PreparedFiles.Add(fileName, new PreparedFileContainer(fileKey, column));
         }
 
         /// <summary>
@@ -117,33 +130,48 @@ namespace Canty.Managers
         /// </summary>
         public void LoadPreparedFiles()
         {
-            m_Data = new Dictionary<string, string[]>();
-
-            foreach (KeyValuePair<string, int[]> file in m_PreparedFiles)
+            if (m_PreparedFiles == null)
             {
-                if (file.Value.Length == 0)
+                return;
+            }
+
+            if (m_Data == null)
+            {
+                m_Data = new Dictionary<string, Dictionary<string, string[]>>();
+            }
+
+            foreach (KeyValuePair<string, PreparedFileContainer> file in m_PreparedFiles)
+            {
+                if (file.Value.Columns.Length == 0)
                 {
                     Debug.Log("ExternalDataManager : Trying to load file " + file.Key + " but it has no specified column.");
                 }
-                else if (file.Value.Length == 1)
+                else if (file.Value.Columns.Length == 1)
                 {
-                    if (file.Value[0] == -1)
+                    if (file.Value.Columns[0] == -1)
                     {
-                        Dictionary<string, List<string>> loadedData = CSVUtil.LoadAllColumns(ExternalDataPath, file.Key);
-                        m_Data.Append(loadedData.ConvertUsing((obj) => { return obj.ToArray(); }));
+                        Dictionary<string, List<string>> loadedData = CSVUtil.LoadAllColumns(m_ExternalDataPath, file.Key);
+                        m_Data.Add(file.Value.FileKey, loadedData.ConvertUsing((obj) => { return obj.ToArray(); }));
                     }
                     else
                     {
-                        Dictionary<string, string> loadedData = CSVUtil.LoadSingleColumn(ExternalDataPath, file.Key, file.Value[0]);
-                        m_Data.Append(loadedData.ConvertUsing((obj) => { return new string[] { obj }; }));
+                        Dictionary<string, string> loadedData = CSVUtil.LoadSingleColumn(m_ExternalDataPath, file.Key, file.Value.Columns[0]);
+                        m_Data.Add(file.Value.FileKey, loadedData.ConvertUsing((obj) => { return new string[] { obj }; }));
                     }
                 }
                 else
                 {
-                    Dictionary<string, List<string>> loadedData = CSVUtil.LoadMultipleColumns(ExternalDataPath, file.Key, file.Value);
-                    m_Data.Append(loadedData.ConvertUsing((obj) => { return obj.ToArray(); }));
+                    Dictionary<string, List<string>> loadedData = CSVUtil.LoadMultipleColumns(m_ExternalDataPath, file.Key, file.Value.Columns);
+                    m_Data.Add(file.Value.FileKey, loadedData.ConvertUsing((obj) => { return obj.ToArray(); }));
                 }
             }
+
+            m_PreparedFiles.Clear();
+        }
+
+        private void Awake()
+        {
+            m_ExternalDataPath = ExternalDataPath;
         }
     }
 }

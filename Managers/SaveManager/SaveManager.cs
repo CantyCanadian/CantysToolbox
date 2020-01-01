@@ -15,20 +15,17 @@ namespace Canty.Managers
     public class SaveManager : Singleton<SaveManager>
     {
 		/// <summary>
-		/// Location where the save file will be created.
+		/// Location where the save file will be created. Cannot be changed at runtime.
 		/// </summary>
-        public static string SaveLocation
-        {
-            get { return Application.persistentDataPath + "\\Saves\\"; }
-        }
+        public string SaveLocation = Application.persistentDataPath + "\\Saves\\";
+        private string m_SaveLocation;
 
-		/// <summary>
-		/// Extension used for the save file.
-		/// </summary>
-        public static string FileExtension
-        {
-            get { return ".sav"; }
-        }
+        /// <summary>
+        /// Extension used for the save file. Cannot be changed at runtime.
+        /// </summary>
+        public string FileExtension = ".sav";
+        private string m_FileExtension;
+
 
         private Dictionary<Type, SaveableBase> m_RegisteredSaveables = null;
         private Dictionary<string, string[]> m_SavedData;
@@ -236,8 +233,7 @@ namespace Canty.Managers
 
             if (m_SavedData == null)
             {
-                Debug.LogError(
-                    "SaveManager : Trying to write data to file while there is no data in the save cache. Write to cache first.");
+                Debug.LogError("SaveManager : Trying to write data to file while there is no data in the save cache. Write to cache first.");
                 return;
             }
 
@@ -348,6 +344,12 @@ namespace Canty.Managers
             {
                 data[i] = EncryptionUtil.DecryptString(data[i]);
             }
+        }
+
+        private void Awake()
+        {
+            m_SaveLocation = SaveLocation;
+            m_FileExtension = FileExtension;
         }
     }
 }

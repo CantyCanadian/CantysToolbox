@@ -11,7 +11,7 @@ using Canty.Managers;
 namespace Canty
 {
     [System.Serializable]
-    public class CurveTimer : UpdateableBase
+    public class CurveTimer
     {
         public CurveSelector TimerCurve;
         public float CurveTime = 1.0f;
@@ -33,7 +33,7 @@ namespace Canty
         private float m_Value = 0.0f;
         private float m_Delta = 0.0f;
         private float m_TimeScale = 1.0f;
-
+        
         private bool m_Play = false;
         private bool m_LastRead = false;
         private bool m_Backwards = false;
@@ -45,12 +45,6 @@ namespace Canty
 		/// </summary>
         public void Play(bool loop = false, bool backwards = false)
         {
-            if (!m_Initialized)
-            {
-                Initialize();
-                m_Initialized = true;
-            }
-
             m_Play = true;
             m_LastRead = false;
             m_Backwards = backwards;
@@ -79,7 +73,7 @@ namespace Canty
             m_TimeScale = scale;
         }
 
-        public override void Update()
+        public void Update()
         {
             if (m_Flip)
             {

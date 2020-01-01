@@ -17,7 +17,7 @@ namespace Canty.Managers
     {
         protected void Start()
         {
-            SaveManager.Instance.RegisterSaveable(this, this.GetType());
+            SaveManager.Instance.RegisterSaveable(this, GetType());
         }
 
         public abstract string[] SaveData();
