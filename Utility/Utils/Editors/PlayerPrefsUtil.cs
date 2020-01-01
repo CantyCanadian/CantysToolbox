@@ -12,6 +12,9 @@ using UnityEngine;
 
 namespace Canty
 {
+    /// <summary>
+    /// Replacement for Unity's PlayerPrefs utility class. Contains all the original functions.
+    /// </summary>
     public static class PlayerPrefsUtil
     {
         // Prefix to know if the string is a key.
@@ -20,11 +23,35 @@ namespace Canty
         #region Set
 
         /// <summary>
+        /// Store a float as a player pref.
+        /// </summary>
+        public static void SetFloat(string key, float value)
+        {
+            PlayerPrefs.SetFloat(key, value);
+        }
+
+        /// <summary>
+        /// Store a int as a player pref.
+        /// </summary>
+        public static void SetInt(string key, int value)
+        {
+            PlayerPrefs.SetInt(key, value);
+        }
+
+        /// <summary>
+        /// Store a string as a player pref.
+        /// </summary>
+        public static void SetString(string key, string value)
+        {
+            PlayerPrefs.SetString(key, value);
+        }
+
+        /// <summary>
         /// Store a bool as a player pref (as an int).
         /// </summary>
         public static void SetBool(string key, bool value)
         {
-            PlayerPrefs.SetInt(key, value ? 1 : 0);
+            SetInt(key, value ? 1 : 0);
         }
 
         /// <summary>
@@ -80,7 +107,7 @@ namespace Canty
         /// </summary>
         public static void SetEnum(string key, Enum value)
         {
-            PlayerPrefs.SetInt(key, Convert.ToInt32(value));
+            SetInt(key, Convert.ToInt32(value));
         }
 
         #endregion
@@ -92,7 +119,7 @@ namespace Canty
         /// </summary>
         public static void SetEncryptedFloat(string key, float value)
         {
-            PlayerPrefs.SetString(KEY_PREFIX + EncryptionUtil.EncryptString(key), EncryptionUtil.EncryptFloat(value));
+            SetString(KEY_PREFIX + EncryptionUtil.EncryptString(key), EncryptionUtil.EncryptFloat(value));
         }
 
         /// <summary>
@@ -100,7 +127,7 @@ namespace Canty
         /// </summary>
         public static void SetEncryptedInt(string key, int value)
         {
-            PlayerPrefs.SetString(KEY_PREFIX + EncryptionUtil.EncryptString(key), EncryptionUtil.EncryptFloat(value));
+            SetString(KEY_PREFIX + EncryptionUtil.EncryptString(key), EncryptionUtil.EncryptFloat(value));
         }
 
         /// <summary>
@@ -108,7 +135,7 @@ namespace Canty
         /// </summary>
         public static void SetEncryptedString(string key, string value)
         {
-            PlayerPrefs.SetString(KEY_PREFIX + EncryptionUtil.EncryptString(key), EncryptionUtil.EncryptString(value));
+            SetString(KEY_PREFIX + EncryptionUtil.EncryptString(key), EncryptionUtil.EncryptString(value));
         }
 
         /// <summary>
@@ -116,8 +143,7 @@ namespace Canty
         /// </summary>
         public static void SetEncryptedBool(string key, bool value)
         {
-            PlayerPrefs.SetString(KEY_PREFIX + EncryptionUtil.EncryptString(key),
-                EncryptionUtil.EncryptInt(value ? 1 : 0));
+            SetString(KEY_PREFIX + EncryptionUtil.EncryptString(key), EncryptionUtil.EncryptInt(value ? 1 : 0));
         }
 
         /// <summary>
@@ -190,7 +216,7 @@ namespace Canty
 
             for (int i = 0; i < values.Length; i++)
             {
-                PlayerPrefs.SetFloat(key + i.ToString(), values[i]);
+                SetFloat(key + i.ToString(), values[i]);
             }
         }
 
@@ -200,11 +226,11 @@ namespace Canty
         public static void SetIntArray(string key, int[] values)
         {
             // The key itself points at the data quantity.
-            PlayerPrefs.SetInt(key, values.Length);
+            SetInt(key, values.Length);
 
             for (int i = 0; i < values.Length; i++)
             {
-                PlayerPrefs.SetInt(key + i.ToString(), values[i]);
+                SetInt(key + i.ToString(), values[i]);
             }
         }
 
@@ -214,11 +240,11 @@ namespace Canty
         public static void SetStringArray(string key, string[] values)
         {
             // The key itself points at the data quantity.
-            PlayerPrefs.SetInt(key, values.Length);
+            SetInt(key, values.Length);
 
             for (int i = 0; i < values.Length; i++)
             {
-                PlayerPrefs.SetString(key + i.ToString(), values[i]);
+                SetString(key + i.ToString(), values[i]);
             }
         }
 
@@ -230,11 +256,11 @@ namespace Canty
             int[] ints = BitwiseUtil.MergeBoolsToInt(values);
 
             // The key itself points at the bool quantity, not ints.
-            PlayerPrefs.SetInt(key, values.Length);
+            SetInt(key, values.Length);
 
             for (int i = 0; i < ints.Length; i++)
             {
-                PlayerPrefs.SetInt(key + i.ToString(), (int) ints[i]);
+                SetInt(key + i.ToString(), (int) ints[i]);
             }
         }
 
@@ -572,11 +598,35 @@ namespace Canty
         #region Get
 
         /// <summary>
+        /// A key is passed, returning a float.
+        /// </summary>
+        public static float GetFloat(string key, float defaultValue = 0.0f)
+        {
+            return PlayerPrefs.GetFloat(key, defaultValue);
+        }
+
+        /// <summary>
+        /// A key is passed, returning a int.
+        /// </summary>
+        public static int GetInt(string key, int defaultValue = 0)
+        {
+            return PlayerPrefs.GetInt(key, defaultValue);
+        }
+
+        /// <summary>
+        /// A key is passed, returning a string.
+        /// </summary>
+        public static string GetString(string key, string defaultValue = "")
+        {
+            return PlayerPrefs.GetString(key, defaultValue);
+        }
+
+        /// <summary>
         /// A key is passed, returning a bool.
         /// </summary>
         public static bool GetBool(string key, bool defaultValue = false)
         {
-            return PlayerPrefs.GetInt(key, defaultValue ? 1 : 0) == 1;
+            return GetInt(key, defaultValue ? 1 : 0) == 1;
         }
 
         /// <summary>
@@ -667,7 +717,7 @@ namespace Canty
         /// </summary>
         public static T GetEnum<T>(string key, T defaultValue = default(T)) where T : struct, IConvertible
         {
-            int intValue = PlayerPrefs.GetInt(key, int.MaxValue);
+            int intValue = GetInt(key, int.MaxValue);
 
             if (intValue != int.MaxValue)
             {
@@ -864,13 +914,13 @@ namespace Canty
         /// </summary>
         public static float[] GetFloatArray(string key, float defaultValue = 0.0f)
         {
-            int count = PlayerPrefs.GetInt(key, 0);
+            int count = GetInt(key, 0);
 
             float[] result = new float[count];
 
             for (int i = 0; i < count; i++)
             {
-                result[i] = PlayerPrefs.GetFloat(key + i.ToString(), defaultValue);
+                result[i] = GetFloat(key + i.ToString(), defaultValue);
             }
 
             return result;
@@ -881,13 +931,13 @@ namespace Canty
         /// </summary>
         public static int[] GetIntArray(string key, int defaultValue = 0)
         {
-            int count = PlayerPrefs.GetInt(key, 0);
+            int count = GetInt(key, 0);
 
             int[] result = new int[count];
 
             for (int i = 0; i < count; i++)
             {
-                result[i] = PlayerPrefs.GetInt(key + i.ToString(), defaultValue);
+                result[i] = GetInt(key + i.ToString(), defaultValue);
             }
 
             return result;
@@ -898,13 +948,13 @@ namespace Canty
         /// </summary>
         public static string[] GetStringArray(string key, string defaultValue = "")
         {
-            int count = PlayerPrefs.GetInt(key, 0);
+            int count = GetInt(key, 0);
 
             string[] result = new string[count];
 
             for (int i = 0; i < count; i++)
             {
-                result[i] = PlayerPrefs.GetString(key + i.ToString(), defaultValue);
+                result[i] = GetString(key + i.ToString(), defaultValue);
             }
 
             return result;
@@ -915,13 +965,13 @@ namespace Canty
         /// </summary>
         public static bool[] GetBoolArray(string key, bool defaultValue = false)
         {
-            int count = PlayerPrefs.GetInt(key, 0);
+            int count = GetInt(key, 0);
 
             bool[] result = new bool[count];
 
             for (int i = 0; i < Mathf.FloorToInt(count / 32) + 1; i++)
             {
-                int flag = PlayerPrefs.GetInt(key + i.ToString(), defaultValue ? int.MaxValue : 0);
+                int flag = GetInt(key + i.ToString(), defaultValue ? int.MaxValue : 0);
                 bool[] flags = BitwiseUtil.SplitIntIntoBools(flag);
 
                 for (int j = 0; j < Mathf.Min(32, count - (32 * i)); j++)
@@ -938,7 +988,7 @@ namespace Canty
         /// </summary>
         public static Vector2[] GetVector2Array(string key, Vector2 defaultValue = new Vector2())
         {
-            int count = PlayerPrefs.GetInt(key, 0);
+            int count = GetInt(key, 0);
 
             if (count <= 0 || count % 2 != 0)
             {
@@ -952,11 +1002,11 @@ namespace Canty
                 switch (i % 2)
                 {
                     case 0:
-                        result[Mathf.FloorToInt(i / 2)].x = PlayerPrefs.GetFloat(key + i.ToString(), defaultValue.x);
+                        result[Mathf.FloorToInt(i / 2)].x = GetFloat(key + i.ToString(), defaultValue.x);
                         break;
 
                     case 1:
-                        result[Mathf.FloorToInt(i / 2)].y = PlayerPrefs.GetFloat(key + i.ToString(), defaultValue.y);
+                        result[Mathf.FloorToInt(i / 2)].y = GetFloat(key + i.ToString(), defaultValue.y);
                         break;
                 }
             }
@@ -969,7 +1019,7 @@ namespace Canty
         /// </summary>
         public static Vector2Int[] GetVector2Array(string key, Vector2Int defaultValue = new Vector2Int())
         {
-            int count = PlayerPrefs.GetInt(key, 0);
+            int count = GetInt(key, 0);
 
             if (count <= 0 || count % 2 != 0)
             {
@@ -983,11 +1033,11 @@ namespace Canty
                 switch (i % 2)
                 {
                     case 0:
-                        result[Mathf.FloorToInt(i / 2)].x = PlayerPrefs.GetInt(key + i.ToString(), defaultValue.x);
+                        result[Mathf.FloorToInt(i / 2)].x = GetInt(key + i.ToString(), defaultValue.x);
                         break;
 
                     case 1:
-                        result[Mathf.FloorToInt(i / 2)].y = PlayerPrefs.GetInt(key + i.ToString(), defaultValue.y);
+                        result[Mathf.FloorToInt(i / 2)].y = GetInt(key + i.ToString(), defaultValue.y);
                         break;
                 }
             }
@@ -1000,7 +1050,7 @@ namespace Canty
         /// </summary>
         public static Vector3[] GetVector3Array(string key, Vector3 defaultValue = new Vector3())
         {
-            int count = PlayerPrefs.GetInt(key, 0);
+            int count = GetInt(key, 0);
 
             if (count <= 0 || count % 3 != 0)
             {
@@ -1014,15 +1064,15 @@ namespace Canty
                 switch (i % 3)
                 {
                     case 0:
-                        result[Mathf.FloorToInt(i / 3)].x = PlayerPrefs.GetFloat(key + i.ToString(), defaultValue.x);
+                        result[Mathf.FloorToInt(i / 3)].x = GetFloat(key + i.ToString(), defaultValue.x);
                         break;
 
                     case 1:
-                        result[Mathf.FloorToInt(i / 3)].y = PlayerPrefs.GetFloat(key + i.ToString(), defaultValue.y);
+                        result[Mathf.FloorToInt(i / 3)].y = GetFloat(key + i.ToString(), defaultValue.y);
                         break;
 
                     case 2:
-                        result[Mathf.FloorToInt(i / 3)].z = PlayerPrefs.GetFloat(key + i.ToString(), defaultValue.z);
+                        result[Mathf.FloorToInt(i / 3)].z = GetFloat(key + i.ToString(), defaultValue.z);
                         break;
                 }
             }
@@ -1035,7 +1085,7 @@ namespace Canty
         /// </summary>
         public static Vector3Int[] GetVector3IntArray(string key, Vector3Int defaultValue = new Vector3Int())
         {
-            int count = PlayerPrefs.GetInt(key, 0);
+            int count = GetInt(key, 0);
 
             if (count <= 0 || count % 3 != 0)
             {
@@ -1049,15 +1099,15 @@ namespace Canty
                 switch (i % 3)
                 {
                     case 0:
-                        result[Mathf.FloorToInt(i / 3)].x = PlayerPrefs.GetInt(key + i.ToString(), defaultValue.x);
+                        result[Mathf.FloorToInt(i / 3)].x = GetInt(key + i.ToString(), defaultValue.x);
                         break;
 
                     case 1:
-                        result[Mathf.FloorToInt(i / 3)].y = PlayerPrefs.GetInt(key + i.ToString(), defaultValue.y);
+                        result[Mathf.FloorToInt(i / 3)].y = GetInt(key + i.ToString(), defaultValue.y);
                         break;
 
                     case 2:
-                        result[Mathf.FloorToInt(i / 3)].z = PlayerPrefs.GetInt(key + i.ToString(), defaultValue.z);
+                        result[Mathf.FloorToInt(i / 3)].z = GetInt(key + i.ToString(), defaultValue.z);
                         break;
                 }
             }
@@ -1070,7 +1120,7 @@ namespace Canty
         /// </summary>
         public static Vector4[] GetVector4Array(string key, Vector4 defaultValue = new Vector4())
         {
-            int count = PlayerPrefs.GetInt(key, 0);
+            int count = GetInt(key, 0);
 
             if (count <= 0 || count % 4 != 0)
             {
@@ -1084,19 +1134,19 @@ namespace Canty
                 switch (i % 4)
                 {
                     case 0:
-                        result[Mathf.FloorToInt(i / 4)].x = PlayerPrefs.GetFloat(key + i.ToString(), defaultValue.x);
+                        result[Mathf.FloorToInt(i / 4)].x = GetFloat(key + i.ToString(), defaultValue.x);
                         break;
 
                     case 1:
-                        result[Mathf.FloorToInt(i / 4)].y = PlayerPrefs.GetFloat(key + i.ToString(), defaultValue.y);
+                        result[Mathf.FloorToInt(i / 4)].y = GetFloat(key + i.ToString(), defaultValue.y);
                         break;
 
                     case 2:
-                        result[Mathf.FloorToInt(i / 4)].z = PlayerPrefs.GetFloat(key + i.ToString(), defaultValue.z);
+                        result[Mathf.FloorToInt(i / 4)].z = GetFloat(key + i.ToString(), defaultValue.z);
                         break;
 
                     case 3:
-                        result[Mathf.FloorToInt(i / 4)].w = PlayerPrefs.GetFloat(key + i.ToString(), defaultValue.w);
+                        result[Mathf.FloorToInt(i / 4)].w = GetFloat(key + i.ToString(), defaultValue.w);
                         break;
                 }
             }
@@ -1401,6 +1451,38 @@ namespace Canty
         #region Utility Functions
 
         /// <summary>
+        /// Deletes all the stored PlayerPrefs.
+        /// </summary>
+        public static void DeleteAll()
+        {
+            PlayerPrefs.DeleteAll();
+        }
+
+        /// <summary>
+        /// Deletes a specific PlayerPrefs.
+        /// </summary>
+        public static void DeleteKey(string key)
+        {
+            PlayerPrefs.DeleteKey(key);
+        }
+
+        /// <summary>
+        /// Returns whether or not the key exists.
+        /// </summary>
+        public static bool HasKey(string key)
+        {
+            return PlayerPrefs.HasKey(key);
+        }
+
+        /// <summary>
+        /// Saves the modified PlayerPrefs.
+        /// </summary>
+        public static void Save()
+        {
+            PlayerPrefs.Save();
+        }
+
+        /// <summary>
         /// Check if the string given is an encrypted key.
         /// </summary>
         private static bool IsEncryptedKey(string value)
@@ -1434,7 +1516,7 @@ namespace Canty
         private static bool Decrypt(string key, ref string result)
         {
             string encryptedKey = EncryptionUtil.EncryptString(key);
-            string fetchedString = PlayerPrefs.GetString(encryptedKey);
+            string fetchedString = GetString(encryptedKey);
 
             if (!string.IsNullOrEmpty(fetchedString))
             {
