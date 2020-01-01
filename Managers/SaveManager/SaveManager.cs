@@ -15,16 +15,16 @@ namespace Canty.Managers
     public class SaveManager : Singleton<SaveManager>
     {
 		/// <summary>
-		/// Location where the save file will be created. Cannot be changed at runtime.
+		/// Location where the save file will be created.
 		/// </summary>
-        public string SaveLocation = Application.persistentDataPath + "\\Saves\\";
-        private string m_SaveLocation;
+        public string SaveLocation { get { return m_SaveLocation; } }
+        private string m_SaveLocation = Application.persistentDataPath + "\\Saves\\";
 
         /// <summary>
-        /// Extension used for the save file. Cannot be changed at runtime.
+        /// Extension used for the save file.
         /// </summary>
-        public string FileExtension = ".sav";
-        private string m_FileExtension;
+        public string FileExtension { get { return m_FileExtension; } }
+        private string m_FileExtension = ".sav";
 
 
         private Dictionary<Type, SaveableBase> m_RegisteredSaveables = null;
@@ -348,7 +348,6 @@ namespace Canty.Managers
 
         private void Awake()
         {
-            m_SaveLocation = SaveLocation;
             m_FileExtension = FileExtension;
         }
     }
