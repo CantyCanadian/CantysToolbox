@@ -13,7 +13,7 @@ namespace Canty.Managers
     /// Base class the object must inherit from to be used by the SaveManager. 
     /// Inherits from MonoBehaviour since a child class can't inherit from two parent classes.
     /// </summary>
-    public abstract class SaveableBase : MonoBehaviour
+    public abstract class SaveableBase : MonoBehaviour, ISaveable
     {
         protected void Start()
         {
@@ -23,5 +23,12 @@ namespace Canty.Managers
         public abstract string[] SaveData();
         public abstract void LoadDefaultData();
         public abstract void LoadData(string[] data);
+    }
+
+    public interface ISaveable
+    {
+        string[] SaveData();
+        void LoadDefaultData();
+        void LoadData(string[] data);
     }
 }

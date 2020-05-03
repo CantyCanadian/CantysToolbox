@@ -17,17 +17,15 @@ namespace Canty.Managers
 		/// <summary>
 		/// Location where the save file will be created.
 		/// </summary>
-        public string SaveLocation { get { return m_SaveLocation; } }
-        private string m_SaveLocation = Application.persistentDataPath + "\\Saves\\";
+        public string SaveLocation { get { return Application.persistentDataPath + "\\Saves\\"; } }
 
         /// <summary>
         /// Extension used for the save file.
         /// </summary>
-        public string FileExtension { get { return m_FileExtension; } }
-        private string m_FileExtension = ".sav";
+        public string FileExtension { get { return ".sav"; } }
 
 
-        private Dictionary<Type, SaveableBase> m_RegisteredSaveables = null;
+        private Dictionary<Type, ISaveable> m_RegisteredSaveables = null;
         private Dictionary<string, string[]> m_SavedData;
         private string m_LoadedSaveLocation = "";
 
@@ -44,11 +42,11 @@ namespace Canty.Managers
 		/// <summary>
 		/// Register a saveable object. Can only register a single object of each type. Heavily recommended to create a container if registering a collection of the same object.
 		/// </summary>
-        public void RegisterSaveable(SaveableBase saveable, Type originalType)
+        public void RegisterSaveable(ISaveable saveable, Type originalType)
         {
             if (m_RegisteredSaveables == null)
             {
-                m_RegisteredSaveables = new Dictionary<Type, SaveableBase>();
+                m_RegisteredSaveables = new Dictionary<Type, ISaveable>();
             }
 
             if (m_RegisteredSaveables.ContainsKey(originalType))
@@ -280,7 +278,7 @@ namespace Canty.Managers
                 m_SavedData.Clear();
             }
 
-            foreach (KeyValuePair<Type, SaveableBase> saveablePair in m_RegisteredSaveables)
+            foreach (KeyValuePair<Type, ISaveable> saveablePair in m_RegisteredSaveables)
             {
                 m_SavedData[saveablePair.Key.ToString()] = saveablePair.Value.SaveData();
             }
@@ -298,7 +296,7 @@ namespace Canty.Managers
                 return;
             }
 
-            foreach (KeyValuePair<Type, SaveableBase> saveablePair in m_RegisteredSaveables)
+            foreach (KeyValuePair<Type, ISaveable> saveablePair in m_RegisteredSaveables)
             {
                 if (m_SavedData.ContainsKey(saveablePair.Key.ToString()))
                 {
@@ -318,7 +316,7 @@ namespace Canty.Managers
 		/// </summary>
         private void DataDefaultToSaveables()
         {
-            foreach (KeyValuePair<Type, SaveableBase> saveablePair in m_RegisteredSaveables)
+            foreach (KeyValuePair<Type, ISaveable> saveablePair in m_RegisteredSaveables)
             {
                 saveablePair.Value.LoadDefaultData();
             }
@@ -344,11 +342,6 @@ namespace Canty.Managers
             {
                 data[i] = EncryptionUtil.DecryptString(data[i]);
             }
-        }
-
-        private void Awake()
-        {
-            m_FileExtension = FileExtension;
         }
     }
 }

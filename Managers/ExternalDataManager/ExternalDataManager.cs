@@ -13,20 +13,15 @@ namespace Canty.Managers
 {
     public class ExternalDataManager : Singleton<ExternalDataManager>
     {
-        /// <summary>
-        /// Path for external data files. Cannot be changed at runtime.
-        /// </summary>
-        public static string ExternalDataPath { get { return "Assets/Data/"; } }
-
         private struct PreparedFileContainer
         {
-            public PreparedFileContainer(string fileKey, int[] columns)
+            public PreparedFileContainer(TextAsset file, int[] columns)
             {
-                FileKey = fileKey;
+                File = file;
                 Columns = columns;
             }
 
-            public string FileKey;
+            public TextAsset File;
             public int[] Columns;
         }
 
@@ -116,36 +111,36 @@ namespace Canty.Managers
         /// <summary>
         /// Sets the file as ready to be loaded. Will load all its columns.
         /// </summary>
-        public void PrepareFile(string fileName, string fileKey)
+        public void PrepareFile(TextAsset file, string fileKey)
         {
-            PrepareFile(fileName, fileKey, new int[] { -1 });
+            PrepareFile(file, fileKey, new int[] { -1 });
         }
 
         /// <summary>
         /// Sets the file as ready to be loaded. Will load only the specified column.
         /// </summary>
-        public void PrepareFile(string fileName, string fileKey, int column)
+        public void PrepareFile(TextAsset file, string fileKey, int column)
         {
             if (column <= 0)
             {
-                Debug.Log("ExternalDataManager : Column provided to prepare file " + fileName + " is invalid.");
+                Debug.Log("ExternalDataManager : Column provided to prepare file " + file.name + " is invalid.");
                 return;
             }
 
-            PrepareFile(fileName, fileKey, new int[] { column });
+            PrepareFile(file, fileKey, new int[] { column });
         }
 
         /// <summary>
         /// Sets the file as ready to be loaded. Will load only the specified columns.
         /// </summary>
-        public void PrepareFile(string fileName, string fileKey, int[] column)
+        public void PrepareFile(TextAsset file, string fileKey, int[] column)
         {
             if (m_PreparedFiles == null)
             {
                 m_PreparedFiles = new Dictionary<string, PreparedFileContainer>();
             }
 
-            m_PreparedFiles.Add(fileName, new PreparedFileContainer(fileKey, column));
+            m_PreparedFiles.Add(fileKey, new PreparedFileContainer(file, column));
         }
 
         /// <summary>
@@ -173,19 +168,19 @@ namespace Canty.Managers
                 {
                     if (file.Value.Columns[0] == -1)
                     {
-                        Dictionary<string, List<string>> loadedData = CSVUtil.LoadAllColumns(ExternalDataPath, file.Key);
-                        m_Data.Add(file.Value.FileKey, loadedData.ConvertUsing((obj) => { return obj.ToArray(); }));
+                        Dictionary<string, List<string>> loadedData = CSVUtil.LoadAllColumns(file.Value.File);
+                        m_Data.Add(file.Key, loadedData.ConvertUsing((obj) => { return obj.ToArray(); }));
                     }
                     else
                     {
-                        Dictionary<string, string> loadedData = CSVUtil.LoadSingleColumn(ExternalDataPath, file.Key, file.Value.Columns[0]);
-                        m_Data.Add(file.Value.FileKey, loadedData.ConvertUsing((obj) => { return new string[] { obj }; }));
+                        Dictionary<string, List<string>> loadedData = CSVUtil.LoadSingleColumn(file.Value.File, file.Value.Columns[0]);
+                        m_Data.Add(file.Key, loadedData.ConvertUsing((obj) => { return obj.ToArray(); }));
                     }
                 }
                 else
                 {
-                    Dictionary<string, List<string>> loadedData = CSVUtil.LoadMultipleColumns(ExternalDataPath, file.Key, file.Value.Columns);
-                    m_Data.Add(file.Value.FileKey, loadedData.ConvertUsing((obj) => { return obj.ToArray(); }));
+                    Dictionary<string, List<string>> loadedData = CSVUtil.LoadMultipleColumns(file.Value.File, file.Value.Columns);
+                    m_Data.Add(file.Key, loadedData.ConvertUsing((obj) => { return obj.ToArray(); }));
                 }
             }
 

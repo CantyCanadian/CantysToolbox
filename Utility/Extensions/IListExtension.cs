@@ -59,7 +59,7 @@ namespace Canty
                 Debug.LogError("Collection Subdivide : Start index under 0 (why did you do this?).");
             }
 
-            I[] result = new I[end - start + 1];
+            I[] result = new I[end - start];
 
             for (int i = start; i < end; i++)
             {
