@@ -17,19 +17,12 @@ namespace Canty
     public abstract class Singleton<T> : MonoBehaviour where T : Singleton<T>
     {
         /// <summary>
-        /// Gets the instance of the singleton. Note : This code cannot be used in a thread due to the restriction placed by Unity's FindObjectOfType. 
-        /// To use in a thread, get the instance and pass it to the thread as an argument. At that point, it becomes the object's job to be thread-safe.
+        /// Gets the instance of the singleton. If it doesn't exist, create one.
         /// </summary>
         public static T Instance
         {
             get
             {
-                if (Thread.CurrentThread != s_MainThreadReference)
-                {
-                    Debug.LogError("Singleton<" + typeof(T).ToString() + "> : Trying to access instance from a non-main thread. Please read the Instance function summary.");
-                    return null;
-                }
-
                 if (s_ApplicationIsQuitting)
                 {
                     return null;
@@ -37,19 +30,27 @@ namespace Canty
 
                 if (!s_Instance)
                 {
-                    T find = FindObjectOfType<T>();
-
-                    if (find != null)
+                    if (Thread.CurrentThread == s_MainThreadReference)
                     {
-                        s_Instance = find;
+                        T find = FindObjectOfType<T>();
+
+                        if (find != null)
+                        {
+                            s_Instance = find;
+                        }
+                        else
+                        {
+                            GameObject obj = new GameObject();
+                            obj.name = typeof(T).Name;
+                            DontDestroyOnLoad(obj);
+
+                            s_Instance = obj.AddComponent<T>();
+                        }
                     }
                     else
                     {
-                        GameObject obj = new GameObject();
-                        obj.name = typeof(T).Name;
-                        DontDestroyOnLoad(obj);
-
-                        s_Instance = obj.AddComponent<T>();
+                        Debug.LogError("Singleton<" + typeof(T).ToString() + "> : Trying to generate Singleton in non-main thread. Please create object in the world or call Instance in the main thread beforehand.");
+                        return null;
                     }
                 }
 
@@ -60,6 +61,19 @@ namespace Canty
         private static T s_Instance = null;
         private static bool s_ApplicationIsQuitting = false;
         private static Thread s_MainThreadReference = Thread.CurrentThread;
+
+        private void Start()
+        {
+            if (!s_Instance)
+            {
+                DontDestroyOnLoad(gameObject);
+                s_Instance = (T)this;
+            }
+            else
+            {
+                Destroy(gameObject);
+            }
+        }
 
         // Adding a check to OnApplicationQuit and OnDestroy in order to prevent a weird Unity racing bug. 
         // Slight chance the singleton will be destroyed, then recreated as the game is quitting.
