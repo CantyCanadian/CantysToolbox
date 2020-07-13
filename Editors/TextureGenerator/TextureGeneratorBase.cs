@@ -19,7 +19,7 @@ namespace Canty.Editors
         protected Vector2Int m_ResultSize = new Vector2Int(512, 512);
         protected Dictionary<string, TextureColorContainer> m_ComponentBoxes = new Dictionary<string, TextureColorContainer>();
 
-        private Texture2D m_Result;
+        protected Texture2D m_Result;
         private Rect m_Box;
 
         protected struct ComponentBoxData
@@ -69,6 +69,7 @@ namespace Canty.Editors
         protected abstract string GetHelpTooltipText();
         protected abstract ComponentBoxData[] GetTextureBoxesData();
         protected abstract Color ApplyMath(int x, int y);
+        protected virtual float GetResultBoxYPos() { return 232.0f; }
         protected virtual float[] GetSaveableValues() { return new float[0]; }
         protected virtual void SetSaveableValues(float[] values) { }
 
@@ -175,7 +176,7 @@ namespace Canty.Editors
                 }
                 GUILayout.EndHorizontal();
 
-                GUILayout.BeginHorizontal(GUILayout.Width(300.0f), GUILayout.Height(125.0f));
+                GUILayout.BeginHorizontal(GUILayout.Width(300.0f), GUILayout.Height(128.0f));
                 {
                     GUILayout.Space(86.0f);
 
@@ -223,18 +224,18 @@ namespace Canty.Editors
                             float difference = (float)m_ResultSize.y / m_ResultSize.x;
 
                             float value = 125.0f * difference;
-                            m_Box = new Rect(91.0f, 227.0f + ((125.0f - value) / 2.0f), 125.0f, value);
+                            m_Box = new Rect(91.0f, GetResultBoxYPos() + ((125.0f - value) / 2.0f), 125.0f, value);
                         }
                         else if (m_ResultSize.x < m_ResultSize.y)
                         {
                             float difference = (float)m_ResultSize.x / m_ResultSize.y;
 
                             float value = 125.0f * difference;
-                            m_Box = new Rect(91.0f + ((125.0f - value) / 2.0f), 227.0f, value, 125.0f);
+                            m_Box = new Rect(91.0f + ((125.0f - value) / 2.0f), GetResultBoxYPos(), value, 125.0f);
                         }
                         else
                         {
-                            m_Box = new Rect(91.0f, 227.0f, 125.0f, 125.0f);
+                            m_Box = new Rect(91.0f, GetResultBoxYPos(), 125.0f, 125.0f);
                         }
 
                         for (int x = 0; x < m_ResultSize.x; x++)

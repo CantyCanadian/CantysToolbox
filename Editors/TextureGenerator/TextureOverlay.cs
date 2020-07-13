@@ -17,15 +17,15 @@ namespace Canty.Editors
     /// </summary>
     public class TextureOverlay : TextureGeneratorBase<TextureOverlay>
     {
-        [MenuItem("Tool/Texture Generation/Overlay")]
+        [MenuItem("Tool/Texture Generation/Masking")]
         public static void ShowWindow()
         {
-            SetDefaultTextureGeneratorWindowData("Texture Overlay");
+            SetDefaultTextureGeneratorWindowData("Texture Masking");
         }
 
         protected override string GetTopName()
         {
-            return "Texture Overlay";
+            return "Texture Masking";
         }
 
         protected override string GetHelpTooltipText()

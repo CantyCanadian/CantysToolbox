@@ -8,7 +8,7 @@ namespace Canty.Editors
         /// <summary>
         /// Dual camera system made to render the player character above the world in a first person setting.
         /// </summary>
-        [MenuItem("GameObject/Custom Cameras/First-Person Camera", false, 10)]
+        [MenuItem("GameObject/Custom Cameras/First-Person Camera", false, 0)]
         public static void CreateFirstPersonCamera(MenuCommand command)
         {
             GameObject obj = EditorUtil.CreateGameObjectInWorld(command, "First Person Camera");
@@ -26,8 +26,8 @@ namespace Canty.Editors
             camera.clearFlags = CameraClearFlags.Depth;
             camera.cullingMask = 0;
 
-            Debug.Log("First-Person Camera : To finish creating the camera, set [First Person Camera]'s Culling Mask to remove your player, then set the [Local Camera]'s Culling Mask to only render the player.");
-            EditorUtility.DisplayDialog("Reminder", "To finish creating the camera, set [First Person Camera]'s Culling Mask to remove your player, then set the [Local Camera]'s Culling Mask to only render the player.", "OK");
+            Debug.Log("First-Person Camera : To finish creating the camera, set [First Person Camera]'s Culling Mask to remove your player layer, then set the [Local Camera]'s Culling Mask to only render the player layer.");
+            EditorUtility.DisplayDialog("Reminder", "To finish creating the camera, set [First Person Camera]'s Culling Mask to remove your player layer, then set the [Local Camera]'s Culling Mask to only render the player layer.", "OK");
         }
     }
 }

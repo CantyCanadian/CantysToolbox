@@ -147,6 +147,11 @@ namespace Canty.Editors
             }
         }
 
+        protected override float GetResultBoxYPos()
+        {
+            return 238.0f;
+        }
+
         protected override float[] GetSaveableValues()
         {
             return new [] { (float)m_CurrentType, m_RotationAngle, m_Spread, m_Radius };

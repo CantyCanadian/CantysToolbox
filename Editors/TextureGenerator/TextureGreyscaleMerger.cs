@@ -16,9 +16,9 @@ namespace Canty.Editors
     /// <summary>
     /// Opens a tool that allows the user to merge three grayscale textures into one RGB textures, reducing the amount of textures needed to be loaded in a shader since all the info can be compressed without loss this way.
     /// </summary>
-    public class TextureMerger : TextureGeneratorBase<TextureMerger>
+    public class TextureGreyscaleMerger : TextureGeneratorBase<TextureGreyscaleMerger>
     {
-        [MenuItem("Tool/Texture Generation/Merger")]
+        [MenuItem("Tool/Texture Generation/GS Merger")]
         public static void ShowWindow()
         {
             SetDefaultTextureGeneratorWindowData("RGB to Greyscale Texture Merger");

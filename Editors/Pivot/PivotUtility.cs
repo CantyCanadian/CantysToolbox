@@ -90,6 +90,7 @@ namespace Canty.Editors
             int siblingIndex = current.transform.GetSiblingIndex();
 
             GameObject newObject = new GameObject("Pivot");
+            Undo.RegisterCreatedObjectUndo(newObject, "Created pivot");
             newObject.transform.SetParent(current.transform.parent);
 
             newObject.transform.position = current.transform.position;
@@ -98,7 +99,7 @@ namespace Canty.Editors
 
             newObject.transform.SetSiblingIndex(siblingIndex);
 
-            current.transform.SetParent(newObject.transform);
+            Undo.SetTransformParent(current.transform, newObject.transform, "Set new parent");
 
             return newObject;
         }
@@ -116,6 +117,7 @@ namespace Canty.Editors
             int siblingIndex = current.transform.GetSiblingIndex();
 
             GameObject newObject = new GameObject("Pivot");
+            Undo.RegisterCreatedObjectUndo(newObject, "Created pivot");
             newObject.transform.SetParent(current.transform.parent);
 
             newObject.transform.localPosition = Vector3.zero;
@@ -123,8 +125,8 @@ namespace Canty.Editors
             newObject.transform.localRotation = Quaternion.identity;
 
             newObject.transform.SetSiblingIndex(siblingIndex);
-
-            current.transform.SetParent(newObject.transform);
+            
+            Undo.SetTransformParent(current.transform, newObject.transform, "Set new parent");
 
             return newObject;
         }
@@ -142,6 +144,7 @@ namespace Canty.Editors
             int siblingIndex = current.transform.GetSiblingIndex();
 
             GameObject newObject = new GameObject("Pivot");
+            Undo.RegisterCreatedObjectUndo(newObject, "Created pivot");
 
             newObject.transform.localPosition = Vector3.zero;
             newObject.transform.localScale = Vector3.one;
@@ -150,7 +153,7 @@ namespace Canty.Editors
             newObject.transform.SetParent(current.transform.parent);
             newObject.transform.SetSiblingIndex(siblingIndex);
 
-            current.transform.SetParent(newObject.transform);
+            Undo.SetTransformParent(current.transform, newObject.transform, "Set new parent");
 
             return newObject;
         }
@@ -172,18 +175,11 @@ namespace Canty.Editors
 
             for (int i = 0; i < childrenCount; i++)
             {
-                children[i].SetParent(parent);
+                Undo.SetTransformParent(children[i], parent, "Set new parent");
                 children[i].SetSiblingIndex(siblingIndex + i);
             }
 
-            if (Application.isPlaying)
-            {
-                GameObject.Destroy(current);
-            }
-            else
-            {
-                GameObject.DestroyImmediate(current);
-            }
+            Undo.DestroyObjectImmediate(current);
 
             if (children.Length > 0)
             {
