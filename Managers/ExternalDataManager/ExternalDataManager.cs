@@ -45,6 +45,28 @@ namespace Canty.Managers
         }
 
         /// <summary>
+        /// Gets how many items are loaded for the file key.
+        /// </summary>
+        public int GetItemCount(string fileKey)
+        {
+            return m_Data[fileKey].Count;
+        }
+
+        /// <summary>
+        /// Gets how many items in total are loaded.
+        /// </summary>
+        public int GetAllItemCount()
+        {
+            int result = 0;
+            foreach (KeyValuePair<string, Dictionary<string, string[]>> data in m_Data)
+            {
+                result += data.Value.Count;
+            }
+
+            return result;
+        }
+
+        /// <summary>
         /// Returns how many values there are for a given file and item.
         /// </summary>
         public int GetValueCount(string fileKey, string itemKey)

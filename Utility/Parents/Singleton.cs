@@ -28,7 +28,7 @@ namespace Canty
                     return null;
                 }
 
-                if (!s_Instance)
+                if (s_Instance == null)
                 {
                     if (Thread.CurrentThread == s_MainThreadReference)
                     {
@@ -62,14 +62,19 @@ namespace Canty
         private static bool s_ApplicationIsQuitting = false;
         private static Thread s_MainThreadReference = Thread.CurrentThread;
 
-        private void Start()
+        protected void Start()
         {
-            if (!s_Instance)
+            if (s_Instance == null)
             {
+                if (transform.parent != null)
+                {
+                    transform.SetParent(null);
+                }
+
                 DontDestroyOnLoad(gameObject);
                 s_Instance = (T)this;
             }
-            else
+            else if (s_Instance != this)
             {
                 Destroy(gameObject);
             }
@@ -77,12 +82,12 @@ namespace Canty
 
         // Adding a check to OnApplicationQuit and OnDestroy in order to prevent a weird Unity racing bug. 
         // Slight chance the singleton will be destroyed, then recreated as the game is quitting.
-        private void OnApplicationQuit()
+        protected void OnApplicationQuit()
         {
             s_ApplicationIsQuitting = true;
         }
 
-        private void OnDestroy()
+        protected void OnDestroy()
         {
             s_ApplicationIsQuitting = true;
         }

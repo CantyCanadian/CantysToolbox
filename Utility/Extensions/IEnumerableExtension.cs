@@ -28,21 +28,6 @@ namespace Canty
         }
 
         /// <summary>
-        /// Applies a passed function to every member of the 2D IEnumerable. Passed in function cannot change the item reference.
-        /// </summary>
-        /// <param name="action">Function with a single Item argument.</param>
-        public static void DoOnAll<I, J>(this IEnumerable<I> target, System.Func<J, J> action) where I : IEnumerable<J>
-        {
-            foreach (I itemX in target)
-            {
-                foreach (J itemY in itemX)
-                {
-                    action.Invoke(itemY);
-                }
-            }
-        }
-
-        /// <summary>
         /// Return a debug string containing every values, separated by commas.
         /// </summary>
         /// <returns>String containing every values.</returns>
@@ -52,7 +37,7 @@ namespace Canty
 
             foreach (I item in target)
             {
-                result += item.ToString() + ", ";
+                result += $"{item.ToString()}, ";
             }
 
             result = result.Remove(result.Length - 3, 2);
@@ -140,6 +125,31 @@ namespace Canty
                 if (kv.Value >= dupeCount)
                 {
                     result.Add(kv.Key);
+                }
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Resize an IEnumerable, adding or removing content if needed.
+        /// </summary>
+        public static IEnumerable<I> Resize<I>(this IEnumerable<I> target, int newLength)
+        {
+            I[] result = new I[newLength];
+
+            int index = 0;
+            foreach (I var in target)
+            {
+                result[index] = var;
+                ++index;
+            }
+
+            if (index < newLength)
+            {
+                for (; index < newLength; index++)
+                {
+                    result[index] = default(I);
                 }
             }
 

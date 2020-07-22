@@ -24,6 +24,7 @@ namespace Canty.Managers
         /// </summary>
         public string FileExtension { get { return ".sav"; } }
 
+        [SerializeField] private string m_CurrentSaveVersion = null;
 
         private Dictionary<Type, ISaveable> m_RegisteredSaveables = null;
         private Dictionary<string, string[]> m_SavedData;
@@ -277,6 +278,8 @@ namespace Canty.Managers
             {
                 m_SavedData.Clear();
             }
+            
+            m_SavedData.Add("Version", new[] { m_CurrentSaveVersion } );
 
             foreach (KeyValuePair<Type, ISaveable> saveablePair in m_RegisteredSaveables)
             {
@@ -291,21 +294,21 @@ namespace Canty.Managers
         {
             if (m_SavedData == null)
             {
-                Debug.LogError(
-                    "SaveManager : Trying to move data to saveables while there is no data in the save cache. Write to cache first.");
+                Debug.LogError("SaveManager : Trying to move data to saveables while there is no data in the save cache. Write to cache first.");
                 return;
             }
+
+            string version = m_SavedData["Version"][0];
 
             foreach (KeyValuePair<Type, ISaveable> saveablePair in m_RegisteredSaveables)
             {
                 if (m_SavedData.ContainsKey(saveablePair.Key.ToString()))
                 {
-                    saveablePair.Value.LoadData(m_SavedData[saveablePair.Key.ToString()]);
+                    saveablePair.Value.LoadData(m_SavedData[saveablePair.Key.ToString()], version);
                 }
                 else
                 {
-                    Debug.Log("SaveManager : Data from file type " + saveablePair.Key.ToString() +
-                              " not found. Setting default values.");
+                    Debug.Log("SaveManager : Data from file type " + saveablePair.Key.ToString() + " not found. Setting default values.");
                     saveablePair.Value.LoadDefaultData();
                 }
             }

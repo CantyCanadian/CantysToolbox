@@ -17,8 +17,8 @@ namespace Canty
     /// </summary>
     public static class PlayerPrefsUtil
     {
-        // Prefix to know if the string is a key.
-        public const string KEY_PREFIX = "ENC-";
+        // Prefix to know if the string is encrypted.
+        private const string ENCRYPTED_KEY_PREFIX = "ENC-";
 
         #region Set
 
@@ -119,7 +119,7 @@ namespace Canty
         /// </summary>
         public static void SetEncryptedFloat(string key, float value)
         {
-            SetString(KEY_PREFIX + EncryptionUtil.EncryptString(key), EncryptionUtil.EncryptFloat(value));
+            SetString(ENCRYPTED_KEY_PREFIX + EncryptionUtil.EncryptString(key), EncryptionUtil.EncryptFloat(value));
         }
 
         /// <summary>
@@ -127,7 +127,7 @@ namespace Canty
         /// </summary>
         public static void SetEncryptedInt(string key, int value)
         {
-            SetString(KEY_PREFIX + EncryptionUtil.EncryptString(key), EncryptionUtil.EncryptFloat(value));
+            SetString(ENCRYPTED_KEY_PREFIX + EncryptionUtil.EncryptString(key), EncryptionUtil.EncryptFloat(value));
         }
 
         /// <summary>
@@ -135,7 +135,7 @@ namespace Canty
         /// </summary>
         public static void SetEncryptedString(string key, string value)
         {
-            SetString(KEY_PREFIX + EncryptionUtil.EncryptString(key), EncryptionUtil.EncryptString(value));
+            SetString(ENCRYPTED_KEY_PREFIX + EncryptionUtil.EncryptString(key), EncryptionUtil.EncryptString(value));
         }
 
         /// <summary>
@@ -143,7 +143,7 @@ namespace Canty
         /// </summary>
         public static void SetEncryptedBool(string key, bool value)
         {
-            SetString(KEY_PREFIX + EncryptionUtil.EncryptString(key), EncryptionUtil.EncryptInt(value ? 1 : 0));
+            SetString(ENCRYPTED_KEY_PREFIX + EncryptionUtil.EncryptString(key), EncryptionUtil.EncryptInt(value ? 1 : 0));
         }
 
         /// <summary>
@@ -1487,7 +1487,7 @@ namespace Canty
         /// </summary>
         private static bool IsEncryptedKey(string value)
         {
-            return value.StartsWith(KEY_PREFIX);
+            return value.StartsWith(ENCRYPTED_KEY_PREFIX);
         }
 
         /// <summary>
@@ -1495,10 +1495,10 @@ namespace Canty
         /// </summary>
         private static string DecryptKey(string encryptedKey)
         {
-            if (encryptedKey.StartsWith(KEY_PREFIX))
+            if (encryptedKey.StartsWith(ENCRYPTED_KEY_PREFIX))
             {
                 // Remove the prefix.
-                string strippedKey = encryptedKey.Substring(KEY_PREFIX.Length);
+                string strippedKey = encryptedKey.Substring(ENCRYPTED_KEY_PREFIX.Length);
 
                 return EncryptionUtil.DecryptString(strippedKey);
             }

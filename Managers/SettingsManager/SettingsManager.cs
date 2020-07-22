@@ -452,8 +452,10 @@ namespace Canty.Managers
 
         #endregion
 
-        private void Start()
+        private new void Start()
         {
+            base.Start();
+
             PopulateResolutionList();
 
             if (UsePresetAsDefault)
