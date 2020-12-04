@@ -196,10 +196,8 @@ namespace Canty.Managers
             m_Shakes.Add(target, newShake);
         }
 
-        private new void Start()
+        private void Start()
         {
-            base.Start();
-
             StartCoroutine(ShakeLoop());
         }
 
