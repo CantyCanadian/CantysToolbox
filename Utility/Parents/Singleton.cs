@@ -62,7 +62,7 @@ namespace Canty
         private static bool s_ApplicationIsQuitting = false;
         private static Thread s_MainThreadReference = Thread.CurrentThread;
 
-        protected void Start()
+        protected virtual void Start()
         {
             if (s_Instance == null)
             {
