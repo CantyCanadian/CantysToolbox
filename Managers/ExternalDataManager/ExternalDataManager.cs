@@ -19,10 +19,31 @@ namespace Canty.Managers
             {
                 File = file;
                 Columns = columns;
+
+                Path = "";
+                FileName = "";
+
+                UseAsset = true;
+            }
+
+            public PreparedFileContainer(string path, string fileName, int[] columns)
+            {
+                Path = path;
+                FileName = fileName;
+                Columns = columns;
+
+                File = null;
+
+                UseAsset = false;
             }
 
             public TextAsset File;
+            public string Path;
+            public string FileName;
+
             public int[] Columns;
+
+            public bool UseAsset;
         }
 
         private Dictionary<string, PreparedFileContainer> m_PreparedFiles = null;
@@ -109,25 +130,25 @@ namespace Canty.Managers
         /// <summary>
         /// Gets all the strings associated to the key from cache.
         /// </summary>
-        public string[] GetValues(string fileKey, string itemKey)
+        public void GetValues(ref string[] values, string fileKey, string itemKey)
         {
-            return m_Data[fileKey][itemKey];
+            values = m_Data[fileKey][itemKey];
         }
 
         /// <summary>
         /// Gets all the strings associated to the key from cache, converted in the desired type.
         /// </summary>
-        public T[] GetValues<T>(string fileKey, string itemKey) where T : IConvertible
+        public void GetValues<T>(ref T[] values, string fileKey, string itemKey) where T : IConvertible
         {
-            return m_Data[fileKey][itemKey].ConvertUsing<string, T, List<T>>((obj) => { return obj.ConvertTo<T>(); }).ToArray();
+            values = m_Data[fileKey][itemKey].ConvertUsing<string, T, List<T>>((obj) => obj.ConvertTo<T>()).ToArray();
         }
 
         /// <summary>
         /// Gets all the items and their strings from a file.
         /// </summary>
-        public Dictionary<string, string[]> GetAllValues(string fileKey)
+        public void GetAllValues(ref Dictionary<string, string[]> values, string fileKey)
         {
-            return m_Data[fileKey];
+            values = m_Data[fileKey];
         }
 
         /// <summary>
@@ -137,6 +158,15 @@ namespace Canty.Managers
         {
             PrepareFile(file, fileKey, new int[] { -1 });
         }
+
+        /// <summary>
+        /// Sets the file as ready to be loaded. Will load all its columns.
+        /// </summary>
+        public void PrepareFile(string path, string fileName, string fileKey)
+        {
+            PrepareFile(path, fileName, fileKey, new int[] { -1 });
+        }
+
 
         /// <summary>
         /// Sets the file as ready to be loaded. Will load only the specified column.
@@ -153,6 +183,20 @@ namespace Canty.Managers
         }
 
         /// <summary>
+        /// Sets the file as ready to be loaded. Will load only the specified column.
+        /// </summary>
+        public void PrepareFile(string path, string fileName, string fileKey, int column)
+        {
+            if (column <= 0)
+            {
+                Debug.Log("ExternalDataManager : Column provided to prepare file " + name + " is invalid.");
+                return;
+            }
+
+            PrepareFile(path, fileName, fileKey, new int[] { column });
+        }
+
+        /// <summary>
         /// Sets the file as ready to be loaded. Will load only the specified columns.
         /// </summary>
         public void PrepareFile(TextAsset file, string fileKey, int[] column)
@@ -163,6 +207,19 @@ namespace Canty.Managers
             }
 
             m_PreparedFiles.Add(fileKey, new PreparedFileContainer(file, column));
+        }
+
+        /// <summary>
+        /// Sets the file as ready to be loaded. Will load only the specified columns.
+        /// </summary>
+        public void PrepareFile(string path, string fileName, string fileKey, int[] column)
+        {
+            if (m_PreparedFiles == null)
+            {
+                m_PreparedFiles = new Dictionary<string, PreparedFileContainer>();
+            }
+
+            m_PreparedFiles.Add(fileKey, new PreparedFileContainer(path, fileName, column));
         }
 
         /// <summary>
@@ -190,19 +247,19 @@ namespace Canty.Managers
                 {
                     if (file.Value.Columns[0] == -1)
                     {
-                        Dictionary<string, List<string>> loadedData = CSVUtil.LoadAllColumns(file.Value.File);
-                        m_Data.Add(file.Key, loadedData.ConvertUsing((obj) => { return obj.ToArray(); }));
+                        Dictionary<string, List<string>> loadedData = file.Value.UseAsset ? CSVUtil.LoadAllColumns(file.Value.File) : CSVUtil.LoadAllColumns(file.Value.Path, file.Value.FileName);
+                        m_Data.Add(file.Key, loadedData.ConvertUsing((obj) => obj.ToArray()));
                     }
                     else
                     {
-                        Dictionary<string, List<string>> loadedData = CSVUtil.LoadSingleColumn(file.Value.File, file.Value.Columns[0]);
-                        m_Data.Add(file.Key, loadedData.ConvertUsing((obj) => { return obj.ToArray(); }));
+                        Dictionary<string, List<string>> loadedData = file.Value.UseAsset ? CSVUtil.LoadSingleColumn(file.Value.File, file.Value.Columns[0]) : CSVUtil.LoadSingleColumn(file.Value.Path, file.Value.FileName, file.Value.Columns[0]);
+                        m_Data.Add(file.Key, loadedData.ConvertUsing((obj) => obj.ToArray()));
                     }
                 }
                 else
                 {
-                    Dictionary<string, List<string>> loadedData = CSVUtil.LoadMultipleColumns(file.Value.File, file.Value.Columns);
-                    m_Data.Add(file.Key, loadedData.ConvertUsing((obj) => { return obj.ToArray(); }));
+                    Dictionary<string, List<string>> loadedData = file.Value.UseAsset ? CSVUtil.LoadMultipleColumns(file.Value.File, file.Value.Columns) : CSVUtil.LoadMultipleColumns(file.Value.Path, file.Value.FileName, file.Value.Columns);
+                    m_Data.Add(file.Key, loadedData.ConvertUsing((obj) => obj.ToArray()));
                 }
             }
 
