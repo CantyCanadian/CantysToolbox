@@ -5,32 +5,21 @@
 ///
 ///====================================================================================================
 
-<<<<<<< HEAD
-=======
 #if UNITY_EDITOR
-
->>>>>>> 01b738a6f3536b6b71010891aa683b207d2cd928
-using UnityEngine;
 using UnityEditor;
+#endif
+
+using UnityEngine;
 
 namespace Canty
 {
     /// <summary>
-<<<<<<< HEAD
     /// Display a serialized property in Unity's editor window in a non-modifiable way.
-=======
-    /// Display a serialized property in Unity's editor window.
->>>>>>> 01b738a6f3536b6b71010891aa683b207d2cd928
     /// </summary>
-    public class ReadOnlyAttribute : PropertyAttribute
-    {
-    }
-
-<<<<<<< HEAD
+    public class ReadOnlyAttribute : PropertyAttribute { }
+    
 #if UNITY_EDITOR
-=======
-    /// Attribute taken from It3ration on Unity Answers.
->>>>>>> 01b738a6f3536b6b71010891aa683b207d2cd928
+
     [CustomPropertyDrawer(typeof(ReadOnlyAttribute))]
     public class ReadOnlyDrawer : PropertyDrawer
     {
@@ -46,11 +35,6 @@ namespace Canty
             GUI.enabled = true;
         }
     }
-<<<<<<< HEAD
-#endif
-}
-=======
-}
 
 #endif
->>>>>>> 01b738a6f3536b6b71010891aa683b207d2cd928
+}
